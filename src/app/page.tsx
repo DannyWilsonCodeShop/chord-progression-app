@@ -16,7 +16,7 @@ export default function Home() {
   const [keyboardMapping, setKeyboardMapping] = useState<Record<string, string>>({});
   const [synth, setSynth] = useState<Tone.PolySynth | null>(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  const [, setShowSubscriptionModal] = useState(false);
 
   // Initialize audio context and synthesizer (legacy)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

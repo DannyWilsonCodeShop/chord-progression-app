@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 export default function CancelPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center p-8">
@@ -12,12 +14,12 @@ export default function CancelPage() {
           <p className="text-gray-400 mb-6">
             No worries! You can still use MPC Studio for free. Upgrade anytime to unlock recording and premium features.
           </p>
-          <a
+          <Link
             href="/"
             className="bg-green-600 hover:bg-green-700 text-black font-bold py-3 px-6 rounded-lg transition-colors font-mono inline-block"
           >
             BACK TO MPC STUDIO
-          </a>
+          </Link>
         </div>
       </div>
     </div>

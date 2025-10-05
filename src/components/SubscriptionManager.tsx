@@ -86,7 +86,7 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
       {isSubscribed ? (
         <div>
           <div className="bg-green-900 border border-green-700 text-green-300 px-4 py-3 rounded mb-4">
-            ✅ You're subscribed to MPC Studio Pro!
+            ✅ You&apos;re subscribed to MPC Studio Pro!
           </div>
           
           <div className="space-y-4">

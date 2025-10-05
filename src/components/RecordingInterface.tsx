@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import * as Tone from 'tone';
 
 interface RecordingInterfaceProps {
@@ -29,7 +29,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
     try {
       // Create audio context from Tone.js master output
       const destination = Tone.getDestination();
-      const audioContext = destination.context;
+      const audioContext = destination.context as unknown as AudioContext;
       audioContextRef.current = audioContext;
 
       // Create media stream from audio context

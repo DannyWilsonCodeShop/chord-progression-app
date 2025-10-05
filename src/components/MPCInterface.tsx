@@ -85,9 +85,9 @@ export default function MPCInterface({
         },
       }).toDestination();
 
-      const drumsSampler = new Tone.NoiseSynth({
-        noise: {
-          type: 'white',
+      const drumsSampler = new Tone.Synth({
+        oscillator: {
+          type: 'square',
         },
         envelope: {
           attack: 0.005,
