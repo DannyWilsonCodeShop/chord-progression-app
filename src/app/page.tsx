@@ -120,7 +120,14 @@ function generateKeyboardMapping(key: KeySignature, progression: ChordProgressio
       'IV': 'F-A-C',
       'V': 'G-B-D',
       'vi': 'A-C-E',
-      'vii°': 'B-D-F'
+      'vii°': 'B-D-F',
+      'I7': 'C-E-G-Bb',
+      'ii7': 'D-F-A-C',
+      'iii7': 'E-G-B-D',
+      'IV7': 'F-A-C-Eb',
+      'V7': 'G-B-D-F',
+      'vi7': 'A-C-E-G',
+      'vii°7': 'B-D-F-Ab'
     },
     'G': {
       'I': 'G-B-D',
@@ -129,7 +136,14 @@ function generateKeyboardMapping(key: KeySignature, progression: ChordProgressio
       'IV': 'C-E-G',
       'V': 'D-F#-A',
       'vi': 'E-G-B',
-      'vii°': 'F#-A-C'
+      'vii°': 'F#-A-C',
+      'I7': 'G-B-D-F',
+      'ii7': 'A-C-E-G',
+      'iii7': 'B-D-F#-A',
+      'IV7': 'C-E-G-Bb',
+      'V7': 'D-F#-A-C',
+      'vi7': 'E-G-B-D',
+      'vii°7': 'F#-A-C-Eb'
     },
     'D': {
       'I': 'D-F#-A',
@@ -138,7 +152,14 @@ function generateKeyboardMapping(key: KeySignature, progression: ChordProgressio
       'IV': 'G-B-D',
       'V': 'A-C#-E',
       'vi': 'B-D-F#',
-      'vii°': 'C#-E-G'
+      'vii°': 'C#-E-G',
+      'I7': 'D-F#-A-C',
+      'ii7': 'E-G-B-D',
+      'iii7': 'F#-A-C#-E',
+      'IV7': 'G-B-D-F',
+      'V7': 'A-C#-E-G',
+      'vi7': 'B-D-F#-A',
+      'vii°7': 'C#-E-G-Bb'
     },
     'A': {
       'I': 'A-C#-E',
@@ -147,7 +168,14 @@ function generateKeyboardMapping(key: KeySignature, progression: ChordProgressio
       'IV': 'D-F#-A',
       'V': 'E-G#-B',
       'vi': 'F#-A-C#',
-      'vii°': 'G#-B-D'
+      'vii°': 'G#-B-D',
+      'I7': 'A-C#-E-G',
+      'ii7': 'B-D-F#-A',
+      'iii7': 'C#-E-G#-B',
+      'IV7': 'D-F#-A-C',
+      'V7': 'E-G#-B-D',
+      'vi7': 'F#-A-C#-E',
+      'vii°7': 'G#-B-D-F'
     },
     'E': {
       'I': 'E-G#-B',
@@ -156,7 +184,14 @@ function generateKeyboardMapping(key: KeySignature, progression: ChordProgressio
       'IV': 'A-C#-E',
       'V': 'B-D#-F#',
       'vi': 'C#-E-G#',
-      'vii°': 'D#-F#-A'
+      'vii°': 'D#-F#-A',
+      'I7': 'E-G#-B-D',
+      'ii7': 'F#-A-C#-E',
+      'iii7': 'G#-B-D#-F#',
+      'IV7': 'A-C#-E-G',
+      'V7': 'B-D#-F#-A',
+      'vi7': 'C#-E-G#-B',
+      'vii°7': 'D#-F#-A-C'
     }
   };
 
@@ -170,14 +205,17 @@ function generateKeyboardMapping(key: KeySignature, progression: ChordProgressio
 
   const chords = progressionMap[progression];
   const keyChords = chordMaps[key];
-  const keyboardKeys = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k'];
+  
+  // Use ASDF and JKL; keys for 8 pads
+  const keyboardKeys = ['a', 's', 'd', 'f', 'j', 'k', 'l', ';'];
 
   const mapping: Record<string, string> = {};
   
-  chords.forEach((chord, index) => {
-    if (keyboardKeys[index]) {
-      mapping[keyboardKeys[index]] = keyChords[chord as keyof typeof keyChords] || chord;
-    }
+  // Map chords to keys, cycling through if we have more keys than chords
+  keyboardKeys.forEach((key, index) => {
+    const chordIndex = index % chords.length;
+    const chord = chords[chordIndex];
+    mapping[key] = keyChords[chord as keyof typeof keyChords] || chord;
   });
 
   return mapping;

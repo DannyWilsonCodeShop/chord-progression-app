@@ -36,53 +36,28 @@ export default function MPCInterface({
     try {
       await Tone.start();
       
-      // Create realistic instrument samplers
-      const pianoSampler = new Tone.Sampler({
-        urls: {
-          C4: "https://tonejs.github.io/audio/casio/C4.mp3",
-          "C#4": "https://tonejs.github.io/audio/casio/Cs4.mp3",
-          D4: "https://tonejs.github.io/audio/casio/D4.mp3",
-          "D#4": "https://tonejs.github.io/audio/casio/Ds4.mp3",
-          E4: "https://tonejs.github.io/audio/casio/E4.mp3",
-          F4: "https://tonejs.github.io/audio/casio/F4.mp3",
-          "F#4": "https://tonejs.github.io/audio/casio/Fs4.mp3",
-          G4: "https://tonejs.github.io/audio/casio/G4.mp3",
-          "G#4": "https://tonejs.github.io/audio/casio/Gs4.mp3",
-          A4: "https://tonejs.github.io/audio/casio/A4.mp3",
-          "A#4": "https://tonejs.github.io/audio/casio/As4.mp3",
-          B4: "https://tonejs.github.io/audio/casio/B4.mp3",
-        },
-        onload: () => console.log('Piano loaded'),
-      }).toDestination();
-
-      const guitarSampler = new Tone.Sampler({
-        urls: {
-          C3: "https://tonejs.github.io/audio/guitar/C3.mp3",
-          "C#3": "https://tonejs.github.io/audio/guitar/Cs3.mp3",
-          D3: "https://tonejs.github.io/audio/guitar/D3.mp3",
-          "D#3": "https://tonejs.github.io/audio/guitar/Ds3.mp3",
-          E3: "https://tonejs.github.io/audio/guitar/E3.mp3",
-          F3: "https://tonejs.github.io/audio/guitar/F3.mp3",
-          "F#3": "https://tonejs.github.io/audio/guitar/Fs3.mp3",
-          G3: "https://tonejs.github.io/audio/guitar/G3.mp3",
-          "G#3": "https://tonejs.github.io/audio/guitar/Gs3.mp3",
-          A3: "https://tonejs.github.io/audio/guitar/A3.mp3",
-          "A#3": "https://tonejs.github.io/audio/guitar/As3.mp3",
-          B3: "https://tonejs.github.io/audio/guitar/B3.mp3",
-        },
-        onload: () => console.log('Guitar loaded'),
-      }).toDestination();
-
-      // Create synth for bass and synth instruments
-      const synthSampler = new Tone.Synth({
+      // Create reliable synth-based instruments (no external dependencies)
+      const pianoSampler = new Tone.Synth({
         oscillator: {
-          type: 'sawtooth',
+          type: 'triangle',
         },
         envelope: {
           attack: 0.02,
           decay: 0.1,
           sustain: 0.3,
           release: 1.2,
+        },
+      }).toDestination();
+
+      const guitarSampler = new Tone.Synth({
+        oscillator: {
+          type: 'sawtooth',
+        },
+        envelope: {
+          attack: 0.01,
+          decay: 0.2,
+          sustain: 0.4,
+          release: 0.8,
         },
       }).toDestination();
 
@@ -98,14 +73,28 @@ export default function MPCInterface({
         },
       }).toDestination();
 
-      const drumsSampler = new Tone.Sampler({
-        urls: {
-          C1: "https://tonejs.github.io/audio/drum-samples/kick.mp3",
-          "C#1": "https://tonejs.github.io/audio/drum-samples/snare.mp3",
-          D1: "https://tonejs.github.io/audio/drum-samples/hihat.mp3",
-          "D#1": "https://tonejs.github.io/audio/drum-samples/openhat.mp3",
+      const synthSampler = new Tone.Synth({
+        oscillator: {
+          type: 'square',
         },
-        onload: () => console.log('Drums loaded'),
+        envelope: {
+          attack: 0.01,
+          decay: 0.1,
+          sustain: 0.2,
+          release: 0.5,
+        },
+      }).toDestination();
+
+      const drumsSampler = new Tone.NoiseSynth({
+        noise: {
+          type: 'white',
+        },
+        envelope: {
+          attack: 0.005,
+          decay: 0.1,
+          sustain: 0.01,
+          release: 0.1,
+        },
       }).toDestination();
 
       setSamplers({
@@ -133,14 +122,13 @@ export default function MPCInterface({
     notes.forEach((note, index) => {
       const delay = index * 0.05; // Slight stagger for chord effect
       
-      if (selectedInstrument === 'piano' || selectedInstrument === 'guitar' || selectedInstrument === 'drums') {
-        sampler.triggerAttackRelease(note, '8n', Tone.now() + delay, volume);
-      } else {
-        // For synth and bass, use different octaves
-        const octave = selectedInstrument === 'bass' ? 2 : 4;
-        const synthNote = `${note}${octave}`;
-        sampler.triggerAttackRelease(synthNote, '8n', Tone.now() + delay, volume);
-      }
+      // Determine octave based on instrument
+      let octave = 4; // Default octave
+      if (selectedInstrument === 'bass') octave = 2;
+      if (selectedInstrument === 'drums') octave = 1;
+      
+      const fullNote = `${note}${octave}`;
+      sampler.triggerAttackRelease(fullNote, '8n', Tone.now() + delay, volume);
     });
   }, [samplers, selectedInstrument, isAudioInitialized]);
 
