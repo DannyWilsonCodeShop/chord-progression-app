@@ -5,6 +5,8 @@ import * as Tone from 'tone';
 import ChordKeyboard from '@/components/ChordKeyboard';
 import ChordSelector from '@/components/ChordSelector';
 import MPCInterface from '@/components/MPCInterface';
+import RecordingInterface from '@/components/RecordingInterface';
+import SubscriptionManager from '@/components/SubscriptionManager';
 import { ChordProgression, KeySignature } from '@/types/chords';
 
 export default function Home() {
@@ -13,6 +15,8 @@ export default function Home() {
   const [selectedProgression, setSelectedProgression] = useState<ChordProgression>('I-V-vi-IV');
   const [keyboardMapping, setKeyboardMapping] = useState<Record<string, string>>({});
   const [synth, setSynth] = useState<Tone.PolySynth | null>(null);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
 
   // Initialize audio context and synthesizer (legacy)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -68,7 +72,7 @@ export default function Home() {
         </header>
 
         {/* Main Interface */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Settings Panel */}
           <div className="lg:col-span-1">
             <ChordSelector
@@ -85,6 +89,19 @@ export default function Home() {
               selectedKey={selectedKey}
               selectedProgression={selectedProgression}
               keyboardMapping={keyboardMapping}
+            />
+          </div>
+
+          {/* Subscription & Recording Panel */}
+          <div className="lg:col-span-1 space-y-6">
+            <SubscriptionManager
+              isSubscribed={isSubscribed}
+              onSubscriptionUpdate={setIsSubscribed}
+            />
+            
+            <RecordingInterface
+              isSubscribed={isSubscribed}
+              onUpgrade={() => setShowSubscriptionModal(true)}
             />
           </div>
         </div>
