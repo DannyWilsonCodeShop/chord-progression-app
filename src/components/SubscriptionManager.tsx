@@ -26,7 +26,7 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          priceId: 'price_1234567890', // Replace with your actual price ID
+          priceId: 'price_1SEyAqRtvxb94uiE7Xa4LmJp',
         }),
       });
 
