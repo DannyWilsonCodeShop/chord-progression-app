@@ -51,23 +51,23 @@ export default function ChordSelector({
   onProgressionChange,
 }: ChordSelectorProps) {
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h3 className="text-xl font-semibold mb-6">Chord Settings</h3>
+    <div className="bg-gray-900 rounded-lg shadow-lg p-6 border-2 border-gray-700">
+      <h3 className="text-xl font-semibold mb-6 text-green-400 font-mono tracking-wider">CHORD SETTINGS</h3>
       
       {/* Key Selection */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-3">
-          Select Key Signature
+        <label className="block text-sm font-medium text-gray-300 mb-3 font-mono">
+          SELECT KEY SIGNATURE
         </label>
         <div className="grid grid-cols-5 gap-2">
           {keys.map((key) => (
             <button
               key={key}
               onClick={() => onKeyChange(key)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg font-medium transition-colors font-mono ${
                 selectedKey === key
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-green-600 text-black'
+                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
               }`}
             >
               {key}
@@ -78,8 +78,8 @@ export default function ChordSelector({
 
       {/* Progression Selection */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
-          Select Chord Progression
+        <label className="block text-sm font-medium text-gray-300 mb-3 font-mono">
+          SELECT CHORD PROGRESSION
         </label>
         <div className="space-y-2">
           {progressions.map((progression) => (
@@ -88,27 +88,27 @@ export default function ChordSelector({
               onClick={() => onProgressionChange(progression.value)}
               className={`w-full text-left p-4 rounded-lg border-2 transition-colors ${
                 selectedProgression === progression.value
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                  ? 'border-green-500 bg-green-900'
+                  : 'border-gray-600 hover:border-gray-500 hover:bg-gray-800'
               }`}
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="font-semibold text-gray-800">
+                  <div className="font-semibold text-white font-mono">
                     {progression.name}
                   </div>
-                  <div className="text-sm text-gray-600 mt-1">
+                  <div className="text-sm text-gray-300 mt-1">
                     {progression.description}
                   </div>
-                  <div className="text-xs text-gray-500 mt-2">
+                  <div className="text-xs text-gray-400 mt-2">
                     Examples: {progression.examples.join(', ')}
                   </div>
                 </div>
                 <div className="ml-4">
                   <div className={`w-4 h-4 rounded-full border-2 ${
                     selectedProgression === progression.value
-                      ? 'bg-blue-500 border-blue-500'
-                      : 'border-gray-300'
+                      ? 'bg-green-500 border-green-500'
+                      : 'border-gray-500'
                   }`} />
                 </div>
               </div>

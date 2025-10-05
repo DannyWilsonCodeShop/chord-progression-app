@@ -7,6 +7,8 @@ export type ChordProgression =
   | 'ii-V-I' 
   | 'I-IV-V-I';
 
+export type Instrument = 'piano' | 'guitar' | 'bass' | 'synth' | 'drums';
+
 export interface Chord {
   name: string;
   notes: string[];

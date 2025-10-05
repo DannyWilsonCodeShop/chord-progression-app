@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import * as Tone from 'tone';
 import ChordKeyboard from '@/components/ChordKeyboard';
 import ChordSelector from '@/components/ChordSelector';
+import MPCInterface from '@/components/MPCInterface';
 import { ChordProgression, KeySignature } from '@/types/chords';
 
 export default function Home() {
@@ -13,7 +14,8 @@ export default function Home() {
   const [keyboardMapping, setKeyboardMapping] = useState<Record<string, string>>({});
   const [synth, setSynth] = useState<Tone.PolySynth | null>(null);
 
-  // Initialize audio context and synthesizer
+  // Initialize audio context and synthesizer (legacy)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const initializeAudio = useCallback(async () => {
     try {
       await Tone.start();
@@ -53,57 +55,56 @@ export default function Home() {
   }, [synth, isAudioInitialized]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-      <div className="max-w-6xl mx-auto">
-        <header className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-800 mb-4">
-            Chord Progression App
+    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <header className="text-center mb-8">
+          <h1 className="text-6xl font-bold text-green-400 mb-4 font-mono tracking-wider sound-system-text">
+            MPC STUDIO
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Create beautiful chord progressions with just your keyboard
+          <p className="text-xl text-gray-300 mb-8 font-mono">
+            Professional Music Production Center
           </p>
-          
-          {!isAudioInitialized && (
-            <button
-              onClick={initializeAudio}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
-            >
-              Initialize Audio
-            </button>
-          )}
         </header>
 
-        {isAudioInitialized && (
-          <>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-              <ChordSelector
-                selectedKey={selectedKey}
-                selectedProgression={selectedProgression}
-                onKeyChange={setSelectedKey}
-                onProgressionChange={setSelectedProgression}
-              />
-              
-              <div className="bg-white rounded-lg shadow-lg p-6">
-                <h3 className="text-xl font-semibold mb-4">Keyboard Mapping</h3>
-                <div className="grid grid-cols-4 gap-2">
-                  {Object.entries(keyboardMapping).map(([key, chord]) => (
-                    <div key={key} className="text-center">
-                      <div className="bg-gray-100 rounded p-2 mb-1 font-mono text-sm">
-                        {key.toUpperCase()}
-                      </div>
-                      <div className="text-xs text-gray-600">{chord}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <ChordKeyboard
-              keyboardMapping={keyboardMapping}
-              onChordPlay={playChord}
+        {/* Main Interface */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Settings Panel */}
+          <div className="lg:col-span-1">
+            <ChordSelector
+              selectedKey={selectedKey}
+              selectedProgression={selectedProgression}
+              onKeyChange={setSelectedKey}
+              onProgressionChange={setSelectedProgression}
             />
-          </>
-        )}
+          </div>
+
+          {/* MPC Interface */}
+          <div className="lg:col-span-2">
+            <MPCInterface
+              selectedKey={selectedKey}
+              selectedProgression={selectedProgression}
+              keyboardMapping={keyboardMapping}
+            />
+          </div>
+        </div>
+
+        {/* Legacy Interface Toggle */}
+        <div className="mt-8 text-center">
+          <details className="bg-gray-800 rounded-lg p-4">
+            <summary className="text-green-400 font-mono cursor-pointer">
+              LEGACY INTERFACE
+            </summary>
+            <div className="mt-4">
+              {isAudioInitialized && (
+                <ChordKeyboard
+                  keyboardMapping={keyboardMapping}
+                  onChordPlay={playChord}
+                />
+              )}
+            </div>
+          </details>
+        </div>
       </div>
     </main>
   );

@@ -26,7 +26,59 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-/* Custom styles for chord progression app */
+/* Custom styles for MPC interface */
+.mpc-container {
+  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  box-shadow: 
+    0 0 50px rgba(34, 197, 94, 0.1),
+    inset 0 0 50px rgba(0, 0, 0, 0.3);
+}
+
+.mpc-pad {
+  background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+  border: 2px solid #333;
+  transition: all 0.1s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.mpc-pad::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.mpc-pad:hover::before {
+  opacity: 1;
+}
+
+.mpc-pad:active,
+.mpc-pad.pressed {
+  background: linear-gradient(145deg, #22c55e, #16a34a);
+  border-color: #22c55e;
+  transform: scale(0.95);
+  box-shadow: 
+    0 0 20px rgba(34, 197, 94, 0.5),
+    inset 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Sound system aesthetic */
+.sound-system-text {
+  text-shadow: 0 0 10px currentColor;
+  font-family: 'Courier New', monospace;
+}
+
+.glow-effect {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+}
+
+/* Legacy chord key styles for compatibility */
 .chord-key {
   @apply bg-white border-2 border-gray-300 rounded-lg p-4 text-center cursor-pointer transition-all duration-150 hover:bg-gray-50 hover:border-blue-400;
 }
