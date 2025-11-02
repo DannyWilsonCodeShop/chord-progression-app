@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import * as Tone from 'tone';
 import { Instrument, KeySignature, ChordProgression } from '@/types/chords';
 
 interface MPCInterfaceProps {
@@ -15,135 +14,175 @@ interface PadState {
   velocity: number;
 }
 
+type SoundType = 'piano' | 'ep';
+
 export default function MPCInterface({
   selectedKey,
   selectedProgression,
   keyboardMapping,
 }: MPCInterfaceProps) {
   const [selectedInstrument, setSelectedInstrument] = useState<Instrument>('piano');
+  const [selectedChordSound, setSelectedChordSound] = useState<SoundType>('ep');
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
   const [pads, setPads] = useState<Record<string, PadState>>({});
-  const [samplers, setSamplers] = useState<Record<Instrument, Tone.Sampler | Tone.Synth | null>>({
-    piano: null,
-    guitar: null,
-    bass: null,
-    synth: null,
-    drums: null,
-  });
+  const [chordAudios, setChordAudios] = useState<Record<string, HTMLAudioElement>>({});
+  const [bassAudios, setBassAudios] = useState<Record<string, HTMLAudioElement>>({});
 
-  // Initialize audio context and samplers
+  // Sound file mappings for C major diatonic chords
+  const getChordSoundPath = useCallback((chordName: string, soundType: SoundType): string | null => {
+    const chordMap: Record<string, { piano: string; ep: string }> = {
+      'C': { piano: '/sounds/piano/chords/Piano - C.mp3', ep: '/sounds/ep/chords/EP - C1.mp3' },
+      'Dm': { piano: '/sounds/piano/chords/Piano -  D min.mp3', ep: '/sounds/ep/chords/EP - Dm.mp3' },
+      'Em': { piano: '/sounds/piano/chords/Piano -  E min.mp3', ep: '/sounds/ep/chords/EP - Em.mp3' },
+      'F': { piano: '/sounds/piano/chords/Piano - F.mp3', ep: '/sounds/ep/chords/EP - F.mp3' },
+      'G': { piano: '/sounds/piano/chords/Piano - G.mp3', ep: '/sounds/ep/chords/EP - G.mp3' },
+      'Am': { piano: '/sounds/piano/chords/Piano -  A min.mp3', ep: '/sounds/ep/chords/EP - Am.mp3' },
+      'Bdim': { piano: '/sounds/piano/chords/Piano -  B dim.mp3', ep: '/sounds/ep/chords/EP - B Dim.mp3' },
+      'C2': { piano: '/sounds/piano/chords/Piano - C2.mp3', ep: '/sounds/ep/chords/EP - C2.mp3' },
+    };
+    
+    return chordMap[chordName]?.[soundType] || null;
+  }, []);
+
+  // Sound file mappings for bass notes (piano-style layout)
+  const getBassSoundPath = useCallback((note: string): string => {
+    const bassMap: Record<string, string> = {
+      'C': '/sounds/bass/tones/Bass/Bass - C1.mp3',
+      'C#': '/sounds/bass/tones/Bass/Bass - C#.mp3',
+      'D': '/sounds/bass/tones/Bass/Bass - D.mp3',
+      'D#': '/sounds/bass/tones/Bass/Bass - D#.mp3',
+      'E': '/sounds/bass/tones/Bass/Bass - E.mp3',
+      'F': '/sounds/bass/tones/Bass/Bass - F.mp3',
+      'F#': '/sounds/bass/tones/Bass/Bass - F#.mp3',
+      'G': '/sounds/bass/tones/Bass/Bass - G.mp3',
+      'G#': '/sounds/bass/tones/Bass/Bass - G#.mp3',
+      'A': '/sounds/bass/tones/Bass/Bass - A.mp3',
+      'A#': '/sounds/bass/tones/Bass/Bass - A#.mp3',
+      'B': '/sounds/bass/tones/Bass/Bass - B.mp3',
+      'C2': '/sounds/bass/tones/Bass/Bass - C2.mp3',
+    };
+    
+    return bassMap[note] || '';
+  }, []);
+
+  // Initialize audio with actual sound files
   const initializeAudio = useCallback(async () => {
     try {
-      await Tone.start();
+      // Load chord sounds
+      const chordSounds: Record<string, HTMLAudioElement> = {};
+      const chordNames = ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim', 'C2'];
       
-      // Create reliable synth-based instruments (no external dependencies)
-      const pianoSampler = new Tone.Synth({
-        oscillator: {
-          type: 'triangle',
-        },
-        envelope: {
-          attack: 0.02,
-          decay: 0.1,
-          sustain: 0.3,
-          release: 1.2,
-        },
-      }).toDestination();
-
-      const guitarSampler = new Tone.Synth({
-        oscillator: {
-          type: 'sawtooth',
-        },
-        envelope: {
-          attack: 0.01,
-          decay: 0.2,
-          sustain: 0.4,
-          release: 0.8,
-        },
-      }).toDestination();
-
-      const bassSampler = new Tone.Synth({
-        oscillator: {
-          type: 'sine',
-        },
-        envelope: {
-          attack: 0.02,
-          decay: 0.2,
-          sustain: 0.4,
-          release: 1.5,
-        },
-      }).toDestination();
-
-      const synthSampler = new Tone.Synth({
-        oscillator: {
-          type: 'square',
-        },
-        envelope: {
-          attack: 0.01,
-          decay: 0.1,
-          sustain: 0.2,
-          release: 0.5,
-        },
-      }).toDestination();
-
-      const drumsSampler = new Tone.Synth({
-        oscillator: {
-          type: 'square',
-        },
-        envelope: {
-          attack: 0.005,
-          decay: 0.1,
-          sustain: 0.01,
-          release: 0.1,
-        },
-      }).toDestination();
-
-      setSamplers({
-        piano: pianoSampler,
-        guitar: guitarSampler,
-        bass: bassSampler,
-        synth: synthSampler,
-        drums: drumsSampler,
+      chordNames.forEach(chord => {
+        const path = getChordSoundPath(chord, selectedChordSound);
+        if (path) {
+          chordSounds[chord] = new Audio(path);
+          chordSounds[chord].preload = 'auto';
+        }
       });
 
+      // Load bass sounds
+      const bassSounds: Record<string, HTMLAudioElement> = {};
+      const bassNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B', 'C2'];
+      
+      bassNotes.forEach(note => {
+        const path = getBassSoundPath(note);
+        if (path) {
+          bassSounds[note] = new Audio(path);
+          bassSounds[note].preload = 'auto';
+        }
+      });
+
+      setChordAudios(chordSounds);
+      setBassAudios(bassSounds);
       setIsAudioInitialized(true);
     } catch (error) {
       console.error('Failed to initialize audio:', error);
     }
-  }, []);
+  }, [selectedChordSound, getChordSoundPath, getBassSoundPath]);
 
-  // Play chord with selected instrument
-  const playChord = useCallback((chord: string, padKey: string, velocity: number = 0.8) => {
-    const sampler = samplers[selectedInstrument];
-    if (!sampler || !isAudioInitialized) return;
-
-    const notes = chord.split('-');
-    const volume = Math.max(0.1, Math.min(1, velocity));
-
-    notes.forEach((note, index) => {
-      const delay = index * 0.05; // Slight stagger for chord effect
+  // Reload chord sounds when sound type changes
+  useEffect(() => {
+    if (isAudioInitialized) {
+      const chordSounds: Record<string, HTMLAudioElement> = {};
+      const chordNames = ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim', 'C2'];
       
-      // Determine octave based on instrument
-      let octave = 4; // Default octave
-      if (selectedInstrument === 'bass') octave = 2;
-      if (selectedInstrument === 'drums') octave = 1;
-      
-      const fullNote = `${note}${octave}`;
-      sampler.triggerAttackRelease(fullNote, '8n', Tone.now() + delay, volume);
-    });
-  }, [samplers, selectedInstrument, isAudioInitialized]);
+      chordNames.forEach(chord => {
+        const path = getChordSoundPath(chord, selectedChordSound);
+        if (path) {
+          chordSounds[chord] = new Audio(path);
+          chordSounds[chord].preload = 'auto';
+        }
+      });
 
-  // Handle pad press
-  const handlePadPress = useCallback((padKey: string, velocity: number = 0.8) => {
-    const chord = keyboardMapping[padKey];
-    if (!chord) return;
+      setChordAudios(chordSounds);
+    }
+  }, [selectedChordSound, isAudioInitialized, getChordSoundPath]);
 
+  // Keyboard mappings for chords and bass
+  const chordKeyMap: Record<string, string> = {
+    'a': 'C',
+    's': 'Dm',
+    'd': 'Em',
+    'f': 'F',
+    'j': 'G',
+    'k': 'Am',
+    'l': 'Bdim',
+    ';': 'C2',
+  };
+
+  const bassKeyMap: Record<string, string> = {
+    // White keys (natural notes)
+    'z': 'C',
+    'x': 'D',
+    'c': 'E',
+    'v': 'F',
+    'b': 'G',
+    'n': 'A',
+    'm': 'B',
+    ',': 'C2',
+    // Black keys (sharps)
+    's': 'C#',
+    'd': 'D#',
+    'g': 'F#',
+    'h': 'G#',
+    'j': 'A#',
+  };
+
+  // Play chord
+  const playChord = useCallback((chordName: string) => {
+    if (!isAudioInitialized) return;
+
+    const audio = chordAudios[chordName];
+    if (audio) {
+      // Clone and play to allow overlapping sounds
+      const sound = audio.cloneNode() as HTMLAudioElement;
+      sound.volume = 0.7;
+      sound.play().catch(err => console.error('Error playing chord:', err));
+    }
+  }, [chordAudios, isAudioInitialized]);
+
+  // Play bass note
+  const playBass = useCallback((note: string) => {
+    if (!isAudioInitialized) return;
+
+    const audio = bassAudios[note];
+    if (audio) {
+      // Clone and play to allow overlapping sounds
+      const sound = audio.cloneNode() as HTMLAudioElement;
+      sound.volume = 0.8;
+      sound.play().catch(err => console.error('Error playing bass:', err));
+    }
+  }, [bassAudios, isAudioInitialized]);
+
+  // Handle pad press (for chord pads)
+  const handlePadPress = useCallback((chordName: string, padKey: string) => {
     setPads(prev => ({
       ...prev,
-      [padKey]: { isPressed: true, velocity }
+      [padKey]: { isPressed: true, velocity: 0.8 }
     }));
 
-    playChord(chord, padKey, velocity);
-  }, [keyboardMapping, playChord]);
+    playChord(chordName);
+  }, [playChord]);
 
   // Handle pad release
   const handlePadRelease = useCallback((padKey: string) => {
@@ -153,21 +192,51 @@ export default function MPCInterface({
     }));
   }, []);
 
-  // Handle keyboard events
+  // Handle keyboard events for both chords and bass
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
-      if (keyboardMapping[key] && !pads[key]?.isPressed) {
-        event.preventDefault();
-        handlePadPress(key, 0.8);
+      
+      // Priority: Check bass keys first, then chord keys
+      // For overlapping keys (s, d, j), bass takes priority when selectedInstrument is 'bass'
+      if (selectedInstrument === 'bass' && bassKeyMap[key]) {
+        if (!pads[`bass-${key}`]?.isPressed) {
+          event.preventDefault();
+          setPads(prev => ({
+            ...prev,
+            [`bass-${key}`]: { isPressed: true, velocity: 0.8 }
+          }));
+          playBass(bassKeyMap[key]);
+        }
+      } else if (chordKeyMap[key]) {
+        if (!pads[`chord-${key}`]?.isPressed) {
+          event.preventDefault();
+          setPads(prev => ({
+            ...prev,
+            [`chord-${key}`]: { isPressed: true, velocity: 0.8 }
+          }));
+          playChord(chordKeyMap[key]);
+        }
       }
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
-      if (keyboardMapping[key]) {
+      
+      if (bassKeyMap[key]) {
         event.preventDefault();
-        handlePadRelease(key);
+        setPads(prev => ({
+          ...prev,
+          [`bass-${key}`]: { isPressed: false, velocity: 0 }
+        }));
+      }
+      
+      if (chordKeyMap[key]) {
+        event.preventDefault();
+        setPads(prev => ({
+          ...prev,
+          [`chord-${key}`]: { isPressed: false, velocity: 0 }
+        }));
       }
     };
 
@@ -178,7 +247,7 @@ export default function MPCInterface({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [keyboardMapping, pads, handlePadPress, handlePadRelease]);
+  }, [chordKeyMap, bassKeyMap, pads, playChord, playBass, selectedInstrument]);
 
   return (
     <div className="mpc-container bg-black rounded-3xl p-8 shadow-2xl border-4 border-gray-800">
@@ -205,38 +274,39 @@ export default function MPCInterface({
 
       {isAudioInitialized && (
         <>
-          {/* Instrument Selector */}
+          {/* Sound Type Selector */}
           <div className="mb-8">
             <div className="text-center mb-4">
-              <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">INSTRUMENTS</h3>
+              <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">CHORD SOUND</h3>
             </div>
-            <div className="grid grid-cols-5 gap-2">
-              {(['piano', 'guitar', 'bass', 'synth', 'drums'] as Instrument[]).map((instrument) => (
+            <div className="grid grid-cols-2 gap-2 max-w-md mx-auto">
+              {(['ep', 'piano'] as SoundType[]).map((soundType) => (
                 <button
-                  key={instrument}
-                  onClick={() => setSelectedInstrument(instrument)}
+                  key={soundType}
+                  onClick={() => setSelectedChordSound(soundType)}
                   className={`px-4 py-3 rounded-lg font-mono tracking-wider transition-all ${
-                    selectedInstrument === instrument
+                    selectedChordSound === soundType
                       ? 'bg-green-600 text-black font-bold'
                       : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                   }`}
                 >
-                  {instrument.toUpperCase()}
+                  {soundType === 'ep' ? 'ELECTRIC PIANO' : 'PIANO'}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* MPC Pads */}
+          {/* Chord Pads */}
           <div className="mb-8">
             <div className="text-center mb-4">
-              <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">PAD BANK</h3>
+              <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">C MAJOR CHORDS</h3>
+              <p className="text-xs text-gray-400 font-mono">Keys: A S D F J K L ;</p>
             </div>
             <div className="grid grid-cols-4 gap-4">
-              {Object.entries(keyboardMapping).map(([key, chord]) => (
+              {Object.entries(chordKeyMap).map(([key, chord]) => (
                 <button
                   key={key}
-                  onMouseDown={() => handlePadPress(key, 0.8)}
+                  onMouseDown={() => handlePadPress(chord, key)}
                   onMouseUp={() => handlePadRelease(key)}
                   onMouseLeave={() => handlePadRelease(key)}
                   className={`mpc-pad relative aspect-square rounded-xl font-mono transition-all duration-100 ${
@@ -251,15 +321,131 @@ export default function MPCInterface({
                   }}
                 >
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                    <div className="text-2xl font-bold mb-1">
+                    <div className="text-3xl font-bold mb-2">
                       {key.toUpperCase()}
                     </div>
-                    <div className="text-xs text-gray-300 text-center leading-tight">
+                    <div className="text-sm text-gray-300 font-semibold">
                       {chord}
                     </div>
                   </div>
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Mode Selector */}
+          <div className="mb-8">
+            <div className="text-center mb-4">
+              <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">MODE</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-2 max-w-md mx-auto">
+              <button
+                onClick={() => setSelectedInstrument('piano')}
+                className={`px-4 py-3 rounded-lg font-mono tracking-wider transition-all ${
+                  selectedInstrument === 'piano'
+                    ? 'bg-blue-600 text-white font-bold'
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                }`}
+              >
+                CHORD MODE
+              </button>
+              <button
+                onClick={() => setSelectedInstrument('bass')}
+                className={`px-4 py-3 rounded-lg font-mono tracking-wider transition-all ${
+                  selectedInstrument === 'bass'
+                    ? 'bg-purple-600 text-white font-bold'
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                }`}
+              >
+                BASS MODE
+              </button>
+            </div>
+          </div>
+
+          {/* Bass Keyboard - Piano Layout */}
+          <div className="mb-8">
+            <div className="text-center mb-4">
+              <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">BASS KEYBOARD</h3>
+              <p className="text-xs text-gray-400 font-mono">White Keys: Z X C V B N M , | Black Keys: S D G H J</p>
+            </div>
+            
+            {/* Piano-style layout */}
+            <div className="relative bg-gray-900 rounded-lg p-6 max-w-4xl mx-auto">
+              {/* Black keys row */}
+              <div className="flex justify-start items-start mb-2 pl-12 gap-2">
+                {[
+                  { key: 's', note: 'C#' },
+                  { key: 'd', note: 'D#' },
+                  { key: 'spacer1', note: '' },
+                  { key: 'g', note: 'F#' },
+                  { key: 'h', note: 'G#' },
+                  { key: 'j', note: 'A#' },
+                ].map((item) => 
+                  item.key.startsWith('spacer') ? (
+                    <div key={item.key} className="w-16"></div>
+                  ) : (
+                    <button
+                      key={item.key}
+                      onMouseDown={() => {
+                        setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: true, velocity: 0.8 } }));
+                        playBass(item.note);
+                      }}
+                      onMouseUp={() => handlePadRelease(`bass-${item.key}`)}
+                      onMouseLeave={() => handlePadRelease(`bass-${item.key}`)}
+                      className={`w-16 h-24 rounded-lg font-mono text-white font-bold transition-all ${
+                        pads[`bass-${item.key}`]?.isPressed
+                          ? 'bg-purple-600 scale-95'
+                          : 'bg-gray-700 hover:bg-gray-600'
+                      }`}
+                      style={{
+                        boxShadow: pads[`bass-${item.key}`]?.isPressed 
+                          ? '0 0 15px rgba(147, 51, 234, 0.5)' 
+                          : 'none',
+                      }}
+                    >
+                      <div className="text-xl">{item.key.toUpperCase()}</div>
+                      <div className="text-xs mt-1">{item.note}</div>
+                    </button>
+                  )
+                )}
+              </div>
+              
+              {/* White keys row */}
+              <div className="flex justify-start items-start gap-2">
+                {[
+                  { key: 'z', note: 'C' },
+                  { key: 'x', note: 'D' },
+                  { key: 'c', note: 'E' },
+                  { key: 'v', note: 'F' },
+                  { key: 'b', note: 'G' },
+                  { key: 'n', note: 'A' },
+                  { key: 'm', note: 'B' },
+                  { key: ',', note: 'C2' },
+                ].map((item) => (
+                  <button
+                    key={item.key}
+                    onMouseDown={() => {
+                      setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: true, velocity: 0.8 } }));
+                      playBass(item.note);
+                    }}
+                    onMouseUp={() => handlePadRelease(`bass-${item.key}`)}
+                    onMouseLeave={() => handlePadRelease(`bass-${item.key}`)}
+                    className={`w-16 h-32 rounded-lg font-mono font-bold transition-all ${
+                      pads[`bass-${item.key}`]?.isPressed
+                        ? 'bg-blue-500 text-white scale-95'
+                        : 'bg-white text-black hover:bg-gray-200'
+                    }`}
+                    style={{
+                      boxShadow: pads[`bass-${item.key}`]?.isPressed 
+                        ? '0 0 15px rgba(59, 130, 246, 0.5)' 
+                        : '0 2px 4px rgba(0,0,0,0.2)',
+                    }}
+                  >
+                    <div className="text-xl">{item.key.toUpperCase()}</div>
+                    <div className="text-sm mt-2">{item.note}</div>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -274,8 +460,8 @@ export default function MPCInterface({
               <div className="text-white font-mono text-xl">{selectedKey}</div>
             </div>
             <div className="bg-gray-900 rounded-lg p-4">
-              <div className="text-green-400 font-mono text-sm mb-2">PROGRESSION</div>
-              <div className="text-white font-mono text-lg">{selectedProgression}</div>
+              <div className="text-green-400 font-mono text-sm mb-2">MODE</div>
+              <div className="text-white font-mono text-lg">{selectedInstrument === 'bass' ? 'BASS' : 'CHORDS'}</div>
             </div>
           </div>
         </>
