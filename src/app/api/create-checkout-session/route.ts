@@ -15,7 +15,8 @@ export async function POST(request: NextRequest) {
       apiVersion: '2025-09-30.clover',
     });
 
-    const { priceId } = await request.json();
+    // Get priceId from request (currently using hardcoded price)
+    await request.json();
 
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({

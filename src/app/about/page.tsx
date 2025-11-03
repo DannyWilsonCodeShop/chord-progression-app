@@ -51,14 +51,14 @@ export default function AboutPage() {
               
               <div className="space-y-4 text-lg leading-relaxed">
                 <p>
-                  Welcome! I'm <span className="text-green-400 font-semibold">Danny Wilson</span>, 
+                  Welcome! I&apos;m <span className="text-green-400 font-semibold">Danny Wilson</span>, 
                   a passionate music technologist and developer who believes in making music 
                   creation accessible to everyone.
                 </p>
 
                 <p>
                   As the creator of <span className="text-green-400 font-mono">MPC Studio</span>, 
-                  I've combined my love for music production with cutting-edge web technology 
+                  I&apos;ve combined my love for music production with cutting-edge web technology 
                   to bring professional-grade chord progression tools right to your browser.
                 </p>
 
@@ -71,7 +71,7 @@ export default function AboutPage() {
 
                 <p>
                   Through <span className="text-purple-400 font-semibold">Atlanta Creative Exchange</span>, 
-                  I'm dedicated to building tools that empower musicians, producers, and 
+                  I&apos;m dedicated to building tools that empower musicians, producers, and 
                   creatives to bring their ideas to life.
                 </p>
 

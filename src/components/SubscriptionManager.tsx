@@ -1,16 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
 
 interface SubscriptionManagerProps {
   isSubscribed: boolean;
+  // onSubscriptionUpdate will be used when subscription state management is implemented
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSubscriptionUpdate: (subscribed: boolean) => void;
 }
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-
-export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate }: SubscriptionManagerProps) {
+export default function SubscriptionManager({ isSubscribed }: SubscriptionManagerProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
 

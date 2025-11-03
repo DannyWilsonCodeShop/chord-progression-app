@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Instrument, KeySignature, ChordProgression } from '@/types/chords';
 
 interface MPCInterfaceProps {
   selectedKey: KeySignature;
   selectedProgression: ChordProgression;
+  // keyboardMapping is kept for future use/legacy compatibility
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   keyboardMapping: Record<string, string>;
 }
 
@@ -27,7 +29,7 @@ export default function MPCInterface({
   const [pads, setPads] = useState<Record<string, PadState>>({});
   const [chordAudios, setChordAudios] = useState<Record<string, HTMLAudioElement>>({});
   const [bassAudios, setBassAudios] = useState<Record<string, HTMLAudioElement>>({});
-  const [isSubscribed, setIsSubscribed] = useState(false); // TODO: Connect to actual subscription state
+  const [isSubscribed] = useState(false); // TODO: Connect to actual subscription state
   const [activeSounds, setActiveSounds] = useState<Record<string, HTMLAudioElement>>({}); // Track active playing sounds
 
   // Sound file mappings for C major diatonic chords
@@ -120,8 +122,8 @@ export default function MPCInterface({
     }
   }, [selectedChordSound, isAudioInitialized, getChordSoundPath]);
 
-  // Keyboard mappings for chords and bass
-  const chordKeyMap: Record<string, string> = {
+  // Keyboard mappings for chords and bass (memoized to prevent recreating on every render)
+  const chordKeyMap = useMemo(() => ({
     'a': 'C',
     's': 'Dm',
     'd': 'Em',
@@ -130,9 +132,9 @@ export default function MPCInterface({
     'k': 'Am',
     'l': 'Bdim',
     ';': 'C2',
-  };
+  }), []);
 
-  const bassKeyMap: Record<string, string> = {
+  const bassKeyMap = useMemo(() => ({
     // White keys (natural notes)
     'z': 'C',
     'x': 'D',
@@ -148,7 +150,7 @@ export default function MPCInterface({
     'g': 'F#',
     'h': 'G#',
     'j': 'A#',
-  };
+  }), []);
 
   // Play chord (organ-style - sustain while held)
   const playChord = useCallback((chordName: string, keyId: string) => {
