@@ -71,20 +71,20 @@ export default function MPCInterface({
     return null;
   }, []);
 
-  // Sound file mappings for bass notes (piano-style layout)
+  // Sound file mappings for bass notes
   const getBassSoundPath = useCallback((note: string): string => {
     const bassMap: Record<string, string> = {
       'C': '/sounds/bass/tones/Bass/Bass - C1.mp3',
-      'C#': '/sounds/bass/tones/Bass/Bass - C#.mp3',
+      'C#': '/sounds/bass/tones/Bass/Bass - C%23.mp3', // URL-encoded #
       'D': '/sounds/bass/tones/Bass/Bass - D.mp3',
-      'D#': '/sounds/bass/tones/Bass/Bass - D#.mp3',
+      'D#': '/sounds/bass/tones/Bass/Bass - D%23.mp3',
       'E': '/sounds/bass/tones/Bass/Bass - E.mp3',
       'F': '/sounds/bass/tones/Bass/Bass - F.mp3',
-      'F#': '/sounds/bass/tones/Bass/Bass - F#.mp3',
+      'F#': '/sounds/bass/tones/Bass/Bass - F%23.mp3',
       'G': '/sounds/bass/tones/Bass/Bass - G.mp3',
-      'G#': '/sounds/bass/tones/Bass/Bass - G#.mp3',
+      'G#': '/sounds/bass/tones/Bass/Bass - G%23.mp3',
       'A': '/sounds/bass/tones/Bass/Bass - A.mp3',
-      'A#': '/sounds/bass/tones/Bass/Bass - A#.mp3',
+      'A#': '/sounds/bass/tones/Bass/Bass - A%23.mp3',
       'B': '/sounds/bass/tones/Bass/Bass - B.mp3',
       'C2': '/sounds/bass/tones/Bass/Bass - C2.mp3',
     };
@@ -126,6 +126,13 @@ export default function MPCInterface({
       console.error('Failed to initialize audio:', error);
     }
   }, [selectedChordSound, getChordSoundPath, getBassSoundPath]);
+
+  // Auto-switch to Piano when chromatic is selected
+  useEffect(() => {
+    if (selectedProgression === 'chromatic' && selectedChordSound === 'ep') {
+      setSelectedChordSound('piano');
+    }
+  }, [selectedProgression, selectedChordSound]);
 
   // Reload chord sounds when sound type or progression changes
   useEffect(() => {
@@ -421,20 +428,38 @@ export default function MPCInterface({
               <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">CHORD SOUND</h3>
             </div>
             <div className="grid grid-cols-2 gap-2 max-w-md mx-auto">
-              {(['ep', 'piano'] as SoundType[]).map((soundType) => (
-                <button
-                  key={soundType}
-                  onClick={() => setSelectedChordSound(soundType)}
-                  className={`px-4 py-3 rounded-lg font-mono tracking-wider transition-all ${
-                    selectedChordSound === soundType
-                      ? 'bg-green-600 text-black font-bold'
-                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                  }`}
-                >
-                  {soundType === 'ep' ? 'ELECTRIC PIANO' : 'PIANO'}
-                </button>
-              ))}
+              {(['piano', 'ep'] as SoundType[]).map((soundType) => {
+                const isDisabled = soundType === 'ep' && selectedProgression === 'chromatic';
+                return (
+                  <button
+                    key={soundType}
+                    onClick={() => {
+                      if (isDisabled) {
+                        alert('Chromatic progression only supports Piano sounds');
+                      } else {
+                        setSelectedChordSound(soundType);
+                      }
+                    }}
+                    disabled={isDisabled}
+                    className={`px-4 py-3 rounded-lg font-mono tracking-wider transition-all ${
+                      selectedChordSound === soundType
+                        ? 'bg-green-600 text-black font-bold'
+                        : isDisabled
+                        ? 'bg-gray-900 text-gray-600 cursor-not-allowed opacity-50'
+                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    }`}
+                  >
+                    {soundType === 'ep' ? 'ELECTRIC PIANO' : 'PIANO'}
+                    {isDisabled && <span className="ml-2">⚠️</span>}
+                  </button>
+                );
+              })}
             </div>
+            {selectedProgression === 'chromatic' && (
+              <p className="text-center text-xs text-yellow-400 mt-2 font-mono">
+                ⚠️ Chromatic mode uses Piano sound only
+              </p>
+            )}
           </div>
 
           {/* Chord Pads */}

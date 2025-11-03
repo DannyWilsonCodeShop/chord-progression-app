@@ -22,10 +22,10 @@ const progressions = [
   },
   {
     value: 'chromatic' as ChordProgression,
-    name: 'Chromatic (All Chord Types) 🔒',
+    name: 'Chromatic (All Chord Types)',
     description: 'All 12 chromatic notes with Aug/Major/Minor/Dim - 48 chords total',
-    examples: ['Premium Feature - Subscribe to unlock'],
-    locked: true,
+    examples: ['Piano sound only - Row 1=Aug, Q=Major, A=Minor, Z=Dim'],
+    locked: false,
   },
   {
     value: 'I-V-vi-IV' as ChordProgression,
