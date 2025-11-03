@@ -108,9 +108,19 @@ export default function MPCInterface({
     return filename ? `/sounds/bass/tones/Bass/${encodeURIComponent(filename)}` : '';
   }, []);
 
-  // Initialize audio with actual sound files
+  // Initialize audio with actual sound files (mobile-optimized)
   const initializeAudio = useCallback(async () => {
     try {
+      // Create a dummy audio context and play silence to unlock audio on mobile
+      const dummyAudio = new Audio();
+      dummyAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+      const unlockPromise = dummyAudio.play();
+      if (unlockPromise) {
+        await unlockPromise.then(() => dummyAudio.pause()).catch(() => {
+          console.log('Audio unlock failed - user gesture may be required');
+        });
+      }
+
       // Load chord sounds
       const chordSounds: Record<string, HTMLAudioElement> = {};
       const chordNames = ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim', 'C2'];
@@ -120,6 +130,8 @@ export default function MPCInterface({
         if (path) {
           chordSounds[chord] = new Audio(path);
           chordSounds[chord].preload = 'auto';
+          // Unlock each audio element for mobile
+          chordSounds[chord].load();
         }
       });
 
@@ -132,12 +144,16 @@ export default function MPCInterface({
         if (path) {
           bassSounds[note] = new Audio(path);
           bassSounds[note].preload = 'auto';
+          // Unlock each audio element for mobile
+          bassSounds[note].load();
         }
       });
 
       setChordAudios(chordSounds);
       setBassAudios(bassSounds);
       setIsAudioInitialized(true);
+      
+      console.log('Audio initialized successfully for mobile and desktop');
     } catch (error) {
       console.error('Failed to initialize audio:', error);
     }
@@ -167,6 +183,7 @@ export default function MPCInterface({
             if (path) {
               chordSounds[chordName] = new Audio(path);
               chordSounds[chordName].preload = 'auto';
+              chordSounds[chordName].load(); // Mobile: unlock audio
             }
           });
         });
@@ -179,6 +196,7 @@ export default function MPCInterface({
           if (path) {
             chordSounds[chord] = new Audio(path);
             chordSounds[chord].preload = 'auto';
+            chordSounds[chord].load(); // Mobile: unlock audio
           }
         });
       }
@@ -259,7 +277,7 @@ export default function MPCInterface({
     ' ': 'C2', // Spacebar
   }), []);
 
-  // Play chord (organ-style - sustain while held)
+  // Play chord (organ-style - sustain while held) with mobile support
   const playChord = useCallback((chordName: string, keyId: string) => {
     if (!isAudioInitialized) return;
 
@@ -269,14 +287,29 @@ export default function MPCInterface({
       const sound = audio.cloneNode() as HTMLAudioElement;
       sound.volume = 0.7;
       sound.loop = true; // Loop for sustained organ-like effect
-      sound.play().catch(err => console.error('Error playing chord:', err));
+      
+      // Mobile-friendly play with promise handling
+      const playPromise = sound.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // Playback started successfully
+            console.log('Playing chord:', chordName);
+          })
+          .catch(err => {
+            console.error('Error playing chord:', err);
+            // Retry without loop for mobile compatibility
+            sound.loop = false;
+            sound.play().catch(e => console.error('Retry failed:', e));
+          });
+      }
       
       // Store active sound for later stopping
       setActiveSounds(prev => ({ ...prev, [keyId]: sound }));
     }
   }, [chordAudios, isAudioInitialized]);
 
-  // Play bass note (organ-style - sustain while held)
+  // Play bass note (organ-style - sustain while held) with mobile support
   const playBass = useCallback((note: string, keyId: string) => {
     if (!isAudioInitialized) return;
 
@@ -286,7 +319,22 @@ export default function MPCInterface({
       const sound = audio.cloneNode() as HTMLAudioElement;
       sound.volume = 0.8;
       sound.loop = true; // Loop for sustained organ-like effect
-      sound.play().catch(err => console.error('Error playing bass:', err));
+      
+      // Mobile-friendly play with promise handling
+      const playPromise = sound.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // Playback started successfully
+            console.log('Playing bass:', note);
+          })
+          .catch(err => {
+            console.error('Error playing bass:', err);
+            // Retry without loop for mobile compatibility
+            sound.loop = false;
+            sound.play().catch(e => console.error('Retry failed:', e));
+          });
+      }
       
       // Store active sound for later stopping
       setActiveSounds(prev => ({ ...prev, [keyId]: sound }));

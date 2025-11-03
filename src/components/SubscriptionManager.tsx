@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getCurrentUser } from 'aws-amplify/auth';
 
 interface SubscriptionManagerProps {
   isSubscribed: boolean;
@@ -16,6 +17,16 @@ export default function SubscriptionManager({ isSubscribed }: SubscriptionManage
     setError('');
 
     try {
+      // Get current authenticated user
+      const user = await getCurrentUser();
+      const email = user.signInDetails?.loginId;
+
+      if (!email) {
+        setError('Please log in to subscribe');
+        setLoading(false);
+        return;
+      }
+
       // Create checkout session
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
@@ -23,11 +34,16 @@ export default function SubscriptionManager({ isSubscribed }: SubscriptionManage
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          priceId: 'price_1SEyAqRtvxb94uiE7Xa4LmJp',
+          email,
         }),
       });
 
-      const { url } = await response.json();
+      const { url, error: apiError } = await response.json();
+
+      if (apiError) {
+        setError(apiError);
+        return;
+      }
 
       if (url) {
         // Redirect to Stripe Checkout
@@ -114,7 +130,7 @@ export default function SubscriptionManager({ isSubscribed }: SubscriptionManage
               MPC STUDIO PRO
             </div>
             <div className="text-2xl font-bold text-white mb-1">
-              $3.99
+              $9.99
             </div>
             <div className="text-gray-400 text-sm">
               per month
@@ -139,7 +155,7 @@ export default function SubscriptionManager({ isSubscribed }: SubscriptionManage
               disabled={loading}
               className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-black font-bold py-3 px-4 rounded-lg transition-colors font-mono"
             >
-              {loading ? 'PROCESSING...' : 'SUBSCRIBE NOW - $3.99/MONTH'}
+              {loading ? 'PROCESSING...' : 'SUBSCRIBE NOW - $9.99/MONTH'}
             </button>
 
             <div className="text-center text-xs text-gray-500">

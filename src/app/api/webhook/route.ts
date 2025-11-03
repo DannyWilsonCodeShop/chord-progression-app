@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '@/../../amplify/data/resource';
+
+const client = generateClient<Schema>();
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,34 +36,90 @@ export async function POST(request: NextRequest) {
   // Handle the event
   switch (event.type) {
     case 'customer.subscription.created':
-      const subscriptionCreated = event.data.object as Stripe.Subscription;
-      console.log('Subscription created:', subscriptionCreated.id);
-      // Update user subscription status in your database
-      break;
+    case 'customer.subscription.updated': {
+      const subscription = event.data.object as Stripe.Subscription;
+      console.log(`Subscription ${event.type}:`, subscription.id);
+      
+      // Get customer email
+      const customer = await stripe.customers.retrieve(subscription.customer as string) as Stripe.Customer;
+      
+      // Find or create user in database
+      const { data: users } = await client.models.User.list({
+        filter: { email: { eq: customer.email || '' } },
+      });
 
-    case 'customer.subscription.updated':
-      const subscriptionUpdated = event.data.object as Stripe.Subscription;
-      console.log('Subscription updated:', subscriptionUpdated.id);
-      // Update user subscription status in your database
-      break;
+      const subscriptionStatus = subscription.status === 'active' ? 'active' : 
+                                 subscription.status === 'canceled' ? 'cancelled' : 'past_due';
 
-    case 'customer.subscription.deleted':
-      const subscriptionDeleted = event.data.object as Stripe.Subscription;
-      console.log('Subscription deleted:', subscriptionDeleted.id);
-      // Update user subscription status in your database
+      if (users && users.length > 0) {
+        // Update existing user
+        await client.models.User.update({
+          id: users[0].id,
+          stripeCustomerId: customer.id,
+          subscriptionId: subscription.id,
+          subscriptionStatus,
+          subscriptionPriceId: subscription.items.data[0]?.price.id,
+          subscriptionCurrentPeriodEnd: new Date(subscription.current_period_end * 1000).toISOString(),
+        });
+      } else {
+        // Create new user record
+        await client.models.User.create({
+          email: customer.email || '',
+          stripeCustomerId: customer.id,
+          subscriptionId: subscription.id,
+          subscriptionStatus,
+          subscriptionPriceId: subscription.items.data[0]?.price.id,
+          subscriptionCurrentPeriodEnd: new Date(subscription.current_period_end * 1000).toISOString(),
+        });
+      }
       break;
+    }
 
-    case 'invoice.payment_succeeded':
+    case 'customer.subscription.deleted': {
+      const subscription = event.data.object as Stripe.Subscription;
+      console.log('Subscription deleted:', subscription.id);
+      
+      const customer = await stripe.customers.retrieve(subscription.customer as string) as Stripe.Customer;
+      
+      // Update user subscription status
+      const { data: users } = await client.models.User.list({
+        filter: { email: { eq: customer.email || '' } },
+      });
+
+      if (users && users.length > 0) {
+        await client.models.User.update({
+          id: users[0].id,
+          subscriptionStatus: 'cancelled',
+        });
+      }
+      break;
+    }
+
+    case 'invoice.payment_succeeded': {
       const invoice = event.data.object as Stripe.Invoice;
       console.log('Payment succeeded:', invoice.id);
-      // Handle successful payment
+      // Subscription is already active from subscription.updated event
       break;
+    }
 
-    case 'invoice.payment_failed':
+    case 'invoice.payment_failed': {
       const failedInvoice = event.data.object as Stripe.Invoice;
       console.log('Payment failed:', failedInvoice.id);
-      // Handle failed payment
+      
+      if (failedInvoice.customer_email) {
+        const { data: users } = await client.models.User.list({
+          filter: { email: { eq: failedInvoice.customer_email } },
+        });
+
+        if (users && users.length > 0) {
+          await client.models.User.update({
+            id: users[0].id,
+            subscriptionStatus: 'past_due',
+          });
+        }
+      }
       break;
+    }
 
     default:
       console.log(`Unhandled event type: ${event.type}`);

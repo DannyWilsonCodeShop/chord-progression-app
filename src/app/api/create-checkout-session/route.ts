@@ -15,12 +15,20 @@ export async function POST(request: NextRequest) {
       apiVersion: '2025-09-30.clover',
     });
 
-    // Get priceId from request (currently using hardcoded price)
-    await request.json();
+    // Get user email from request
+    const { email } = await request.json();
+
+    if (!email) {
+      return NextResponse.json(
+        { error: 'Email is required' },
+        { status: 400 }
+      );
+    }
 
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
+      customer_email: email,
       line_items: [
         {
           price: 'price_1SEyAqRtvxb94uiE7Xa4LmJp',
@@ -31,7 +39,7 @@ export async function POST(request: NextRequest) {
       success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/cancel`,
       metadata: {
-        // Add any user-specific metadata here
+        userEmail: email,
       },
     });
 

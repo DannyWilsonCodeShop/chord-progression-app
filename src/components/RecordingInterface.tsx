@@ -2,6 +2,12 @@
 
 import { useState, useRef } from 'react';
 import * as Tone from 'tone';
+import { uploadData } from 'aws-amplify/storage';
+import { generateClient } from 'aws-amplify/data';
+import { getCurrentUser } from 'aws-amplify/auth';
+import type { Schema } from '@/../../amplify/data/resource';
+
+const client = generateClient<Schema>();
 
 interface RecordingInterfaceProps {
   isSubscribed: boolean;
@@ -53,14 +59,24 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
         }
       };
 
-      mediaRecorder.onstop = () => {
+      mediaRecorder.onstop = async () => {
         const blob = new Blob(recordedChunks, { type: 'audio/webm' });
         const url = URL.createObjectURL(blob);
         setAudioUrl(url);
         
-        // Save recording to list
+        const recordingName = `Recording ${recordings.length + 1}`;
+        
+        // Save to cloud if subscribed
+        if (isSubscribed) {
+          const saved = await saveToCloud(blob, recordingName);
+          if (saved) {
+            console.log('Recording saved to cloud successfully');
+          }
+        }
+        
+        // Save recording to local list
         const newRecording = {
-          name: `Recording ${recordings.length + 1}`,
+          name: recordingName,
           url,
           date: new Date()
         };
@@ -106,6 +122,39 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
     }
   };
 
+  const saveToCloud = async (blob: Blob, name: string) => {
+    try {
+      const user = await getCurrentUser();
+      const userId = user.userId;
+      const timestamp = Date.now();
+      const s3Key = `recordings/${userId}/${timestamp}-${name}.webm`;
+
+      // Upload to S3
+      const uploadResult = await uploadData({
+        key: s3Key,
+        data: blob,
+        options: {
+          contentType: 'audio/webm',
+        },
+      }).result;
+
+      // Save metadata to database
+      await client.models.Recording.create({
+        userId,
+        fileName: `${name}.webm`,
+        s3Key,
+        duration: 0, // TODO: Calculate actual duration
+        fileSize: blob.size,
+      });
+
+      console.log('Recording saved to cloud:', uploadResult);
+      return true;
+    } catch (error) {
+      console.error('Error saving to cloud:', error);
+      return false;
+    }
+  };
+
   const downloadRecording = (recording: {name: string, url: string}) => {
     const link = document.createElement('a');
     link.href = recording.url;
@@ -143,7 +192,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
             onClick={onUpgrade}
             className="bg-green-600 hover:bg-green-700 text-black font-bold py-3 px-6 rounded-lg transition-colors font-mono"
           >
-            UPGRADE TO PRO - $3.99/MONTH
+            UPGRADE TO PRO - $9.99/MONTH
           </button>
         </div>
       ) : (
