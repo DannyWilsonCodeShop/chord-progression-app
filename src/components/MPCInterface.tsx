@@ -27,6 +27,8 @@ export default function MPCInterface({
   const [pads, setPads] = useState<Record<string, PadState>>({});
   const [chordAudios, setChordAudios] = useState<Record<string, HTMLAudioElement>>({});
   const [bassAudios, setBassAudios] = useState<Record<string, HTMLAudioElement>>({});
+  const [isSubscribed, setIsSubscribed] = useState(false); // TODO: Connect to actual subscription state
+  const [activeSounds, setActiveSounds] = useState<Record<string, HTMLAudioElement>>({}); // Track active playing sounds
 
   // Sound file mappings for C major diatonic chords
   const getChordSoundPath = useCallback((chordName: string, soundType: SoundType): string | null => {
@@ -148,8 +150,8 @@ export default function MPCInterface({
     'j': 'A#',
   };
 
-  // Play chord
-  const playChord = useCallback((chordName: string) => {
+  // Play chord (organ-style - sustain while held)
+  const playChord = useCallback((chordName: string, keyId: string) => {
     if (!isAudioInitialized) return;
 
     const audio = chordAudios[chordName];
@@ -157,12 +159,16 @@ export default function MPCInterface({
       // Clone and play to allow overlapping sounds
       const sound = audio.cloneNode() as HTMLAudioElement;
       sound.volume = 0.7;
+      sound.loop = true; // Loop for sustained organ-like effect
       sound.play().catch(err => console.error('Error playing chord:', err));
+      
+      // Store active sound for later stopping
+      setActiveSounds(prev => ({ ...prev, [keyId]: sound }));
     }
   }, [chordAudios, isAudioInitialized]);
 
-  // Play bass note
-  const playBass = useCallback((note: string) => {
+  // Play bass note (organ-style - sustain while held)
+  const playBass = useCallback((note: string, keyId: string) => {
     if (!isAudioInitialized) return;
 
     const audio = bassAudios[note];
@@ -170,19 +176,40 @@ export default function MPCInterface({
       // Clone and play to allow overlapping sounds
       const sound = audio.cloneNode() as HTMLAudioElement;
       sound.volume = 0.8;
+      sound.loop = true; // Loop for sustained organ-like effect
       sound.play().catch(err => console.error('Error playing bass:', err));
+      
+      // Store active sound for later stopping
+      setActiveSounds(prev => ({ ...prev, [keyId]: sound }));
     }
   }, [bassAudios, isAudioInitialized]);
 
+  // Stop sound (when key is released)
+  const stopSound = useCallback((keyId: string) => {
+    const sound = activeSounds[keyId];
+    if (sound) {
+      sound.pause();
+      sound.currentTime = 0;
+      setActiveSounds(prev => {
+        const newSounds = { ...prev };
+        delete newSounds[keyId];
+        return newSounds;
+      });
+    }
+  }, [activeSounds]);
+
   // Handle pad press (for chord pads)
   const handlePadPress = useCallback((chordName: string, padKey: string) => {
+    // Don't re-trigger if already pressed
+    if (pads[padKey]?.isPressed) return;
+    
     setPads(prev => ({
       ...prev,
       [padKey]: { isPressed: true, velocity: 0.8 }
     }));
 
-    playChord(chordName);
-  }, [playChord]);
+    playChord(chordName, `chord-${padKey}`);
+  }, [playChord, pads]);
 
   // Handle pad release
   const handlePadRelease = useCallback((padKey: string) => {
@@ -190,32 +217,39 @@ export default function MPCInterface({
       ...prev,
       [padKey]: { isPressed: false, velocity: 0 }
     }));
-  }, []);
+    
+    // Stop the sound when pad is released
+    stopSound(`chord-${padKey}`);
+  }, [stopSound]);
 
   // Handle keyboard events for both chords and bass
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
       
-      // Priority: Check bass keys first, then chord keys
-      // For overlapping keys (s, d, j), bass takes priority when selectedInstrument is 'bass'
+      // Priority logic: Bass mode gets overlapping keys (s, d, g, h, j)
+      // In bass mode, ALL bass keys (including overlapping ones) play bass
+      // In chord mode, chord keys play chords
+      
       if (selectedInstrument === 'bass' && bassKeyMap[key]) {
+        // BASS MODE - play bass notes
         if (!pads[`bass-${key}`]?.isPressed) {
           event.preventDefault();
           setPads(prev => ({
             ...prev,
             [`bass-${key}`]: { isPressed: true, velocity: 0.8 }
           }));
-          playBass(bassKeyMap[key]);
+          playBass(bassKeyMap[key], `bass-${key}`);
         }
-      } else if (chordKeyMap[key]) {
+      } else if (selectedInstrument !== 'bass' && chordKeyMap[key]) {
+        // CHORD MODE - play chords (only when NOT in bass mode)
         if (!pads[`chord-${key}`]?.isPressed) {
           event.preventDefault();
           setPads(prev => ({
             ...prev,
             [`chord-${key}`]: { isPressed: true, velocity: 0.8 }
           }));
-          playChord(chordKeyMap[key]);
+          playChord(chordKeyMap[key], `chord-${key}`);
         }
       }
     };
@@ -223,20 +257,24 @@ export default function MPCInterface({
     const handleKeyUp = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
       
-      if (bassKeyMap[key]) {
+      // Stop bass sounds
+      if (bassKeyMap[key] && selectedInstrument === 'bass') {
         event.preventDefault();
         setPads(prev => ({
           ...prev,
           [`bass-${key}`]: { isPressed: false, velocity: 0 }
         }));
+        stopSound(`bass-${key}`);
       }
       
-      if (chordKeyMap[key]) {
+      // Stop chord sounds
+      if (chordKeyMap[key] && selectedInstrument !== 'bass') {
         event.preventDefault();
         setPads(prev => ({
           ...prev,
           [`chord-${key}`]: { isPressed: false, velocity: 0 }
         }));
+        stopSound(`chord-${key}`);
       }
     };
 
@@ -247,7 +285,7 @@ export default function MPCInterface({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [chordKeyMap, bassKeyMap, pads, playChord, playBass, selectedInstrument]);
+  }, [chordKeyMap, bassKeyMap, pads, playChord, playBass, stopSound, selectedInstrument]);
 
   return (
     <div className="mpc-container bg-black rounded-3xl p-8 shadow-2xl border-4 border-gray-800">
@@ -280,20 +318,40 @@ export default function MPCInterface({
               <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">CHORD SOUND</h3>
             </div>
             <div className="grid grid-cols-2 gap-2 max-w-md mx-auto">
-              {(['ep', 'piano'] as SoundType[]).map((soundType) => (
-                <button
-                  key={soundType}
-                  onClick={() => setSelectedChordSound(soundType)}
-                  className={`px-4 py-3 rounded-lg font-mono tracking-wider transition-all ${
-                    selectedChordSound === soundType
-                      ? 'bg-green-600 text-black font-bold'
-                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                  }`}
-                >
-                  {soundType === 'ep' ? 'ELECTRIC PIANO' : 'PIANO'}
-                </button>
-              ))}
+              {(['ep', 'piano'] as SoundType[]).map((soundType) => {
+                const isLocked = soundType === 'piano' && !isSubscribed;
+                return (
+                  <button
+                    key={soundType}
+                    onClick={() => {
+                      if (isLocked) {
+                        alert('Subscribe to unlock Piano sounds!');
+                      } else {
+                        setSelectedChordSound(soundType);
+                      }
+                    }}
+                    disabled={isLocked}
+                    className={`px-4 py-3 rounded-lg font-mono tracking-wider transition-all relative ${
+                      selectedChordSound === soundType
+                        ? 'bg-green-600 text-black font-bold'
+                        : isLocked
+                        ? 'bg-gray-900 text-gray-600 cursor-not-allowed opacity-50'
+                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    }`}
+                  >
+                    {soundType === 'ep' ? 'ELECTRIC PIANO' : 'PIANO'}
+                    {isLocked && (
+                      <span className="ml-2 text-yellow-400">🔒</span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
+            {!isSubscribed && (
+              <p className="text-center text-xs text-yellow-400 mt-2 font-mono">
+                🔒 Subscribe to unlock Piano sounds
+              </p>
+            )}
           </div>
 
           {/* Chord Pads */}
@@ -387,11 +445,21 @@ export default function MPCInterface({
                     <button
                       key={item.key}
                       onMouseDown={() => {
-                        setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: true, velocity: 0.8 } }));
-                        playBass(item.note);
+                        if (!pads[`bass-${item.key}`]?.isPressed) {
+                          setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: true, velocity: 0.8 } }));
+                          playBass(item.note, `bass-${item.key}`);
+                        }
                       }}
-                      onMouseUp={() => handlePadRelease(`bass-${item.key}`)}
-                      onMouseLeave={() => handlePadRelease(`bass-${item.key}`)}
+                      onMouseUp={() => {
+                        setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: false, velocity: 0 } }));
+                        stopSound(`bass-${item.key}`);
+                      }}
+                      onMouseLeave={() => {
+                        if (pads[`bass-${item.key}`]?.isPressed) {
+                          setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: false, velocity: 0 } }));
+                          stopSound(`bass-${item.key}`);
+                        }
+                      }}
                       className={`w-16 h-24 rounded-lg font-mono text-white font-bold transition-all ${
                         pads[`bass-${item.key}`]?.isPressed
                           ? 'bg-purple-600 scale-95'
@@ -425,11 +493,21 @@ export default function MPCInterface({
                   <button
                     key={item.key}
                     onMouseDown={() => {
-                      setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: true, velocity: 0.8 } }));
-                      playBass(item.note);
+                      if (!pads[`bass-${item.key}`]?.isPressed) {
+                        setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: true, velocity: 0.8 } }));
+                        playBass(item.note, `bass-${item.key}`);
+                      }
                     }}
-                    onMouseUp={() => handlePadRelease(`bass-${item.key}`)}
-                    onMouseLeave={() => handlePadRelease(`bass-${item.key}`)}
+                    onMouseUp={() => {
+                      setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: false, velocity: 0 } }));
+                      stopSound(`bass-${item.key}`);
+                    }}
+                    onMouseLeave={() => {
+                      if (pads[`bass-${item.key}`]?.isPressed) {
+                        setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: false, velocity: 0 } }));
+                        stopSound(`bass-${item.key}`);
+                      }
+                    }}
                     className={`w-16 h-32 rounded-lg font-mono font-bold transition-all ${
                       pads[`bass-${item.key}`]?.isPressed
                         ? 'bg-blue-500 text-white scale-95'
