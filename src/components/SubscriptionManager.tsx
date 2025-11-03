@@ -4,8 +4,6 @@ import { useState } from 'react';
 
 interface SubscriptionManagerProps {
   isSubscribed: boolean;
-  // onSubscriptionUpdate will be used when subscription state management is implemented
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSubscriptionUpdate: (subscribed: boolean) => void;
 }
 

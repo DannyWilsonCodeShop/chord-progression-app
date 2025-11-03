@@ -82,7 +82,7 @@ export default function AboutPage() {
                   <p>
                     My mission is simple: democratize music production by creating intuitive, 
                     powerful tools that remove barriers between inspiration and creation. 
-                    Whether you're a seasoned producer or just starting your musical journey, 
+                    Whether you&apos;re a seasoned producer or just starting your musical journey, 
                     MPC Studio is here to help you make music your way.
                   </p>
                 </div>

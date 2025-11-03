@@ -6,8 +6,6 @@ import { Instrument, KeySignature, ChordProgression } from '@/types/chords';
 interface MPCInterfaceProps {
   selectedKey: KeySignature;
   selectedProgression: ChordProgression;
-  // keyboardMapping is kept for future use/legacy compatibility
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   keyboardMapping: Record<string, string>;
 }
 
@@ -21,7 +19,6 @@ type SoundType = 'piano' | 'ep';
 export default function MPCInterface({
   selectedKey,
   selectedProgression,
-  keyboardMapping,
 }: MPCInterfaceProps) {
   const [selectedInstrument, setSelectedInstrument] = useState<Instrument>('piano');
   const [selectedChordSound, setSelectedChordSound] = useState<SoundType>('ep');
