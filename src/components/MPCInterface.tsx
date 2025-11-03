@@ -31,41 +31,56 @@ export default function MPCInterface({
 
   // Sound file mappings for chords (diatonic + chromatic)
   const getChordSoundPath = useCallback((chordName: string, soundType: SoundType): string | null => {
-    // Diatonic chords - hardcoded for reliability
-    const diatonicMap: Record<string, { piano: string; ep: string }> = {
-      'C': { piano: '/sounds/piano/chords/Piano - C.mp3', ep: '/sounds/ep/chords/EP - C1.mp3' },
-      'Dm': { piano: '/sounds/piano/chords/Piano -  D min.mp3', ep: '/sounds/ep/chords/EP - Dm.mp3' },
-      'Em': { piano: '/sounds/piano/chords/Piano -  E min.mp3', ep: '/sounds/ep/chords/EP - Em.mp3' },
-      'F': { piano: '/sounds/piano/chords/Piano - F.mp3', ep: '/sounds/ep/chords/EP - F.mp3' },
-      'G': { piano: '/sounds/piano/chords/Piano - G.mp3', ep: '/sounds/ep/chords/EP - G.mp3' },
-      'Am': { piano: '/sounds/piano/chords/Piano -  A min.mp3', ep: '/sounds/ep/chords/EP - Am.mp3' },
-      'Bdim': { piano: '/sounds/piano/chords/Piano -  B dim.mp3', ep: '/sounds/ep/chords/EP - B Dim.mp3' },
-      'C2': { piano: '/sounds/piano/chords/Piano - C2.mp3', ep: '/sounds/ep/chords/EP - C2.mp3' },
+    // Complete chromatic mapping (Piano) - using encodeURIComponent for special chars
+    const pianoFilenames: Record<string, string> = {
+      // Natural Major (ONE space)
+      'C': 'Piano - C.mp3', 'D': 'Piano - D.mp3', 'E': 'Piano - E.mp3',
+      'F': 'Piano - F.mp3', 'G': 'Piano - G.mp3', 'A': 'Piano - A.mp3', 'B': 'Piano - B.mp3',
+      // Sharp Major (ONE space)
+      'C#': 'Piano - C#.mp3', 'D#': 'Piano - D#.mp3', 'F#': 'Piano - F#.mp3',
+      'G#': 'Piano - G#.mp3', 'A#': 'Piano - A#.mp3',
+      // Natural Minor (TWO spaces, C uses C1)
+      'Cmin': 'Piano -  C1 min.mp3', 'Dmin': 'Piano -  D min.mp3', 'Emin': 'Piano -  E min.mp3',
+      'Fmin': 'Piano -  F min.mp3', 'Gmin': 'Piano -  G min.mp3', 'Amin': 'Piano -  A min.mp3', 'Bmin': 'Piano -  B min.mp3',
+      // Sharp Minor (TWO spaces)
+      'C#min': 'Piano -  C# min.mp3', 'D#min': 'Piano -  D# min.mp3', 'F#min': 'Piano -  F# min.mp3',
+      'G#min': 'Piano -  G# min.mp3', 'A#min': 'Piano -  A# min.mp3',
+      // Natural Augmented (TWO spaces, C uses C1)
+      'CAug': 'Piano -  C1 Aug.mp3', 'DAug': 'Piano -  D Aug.mp3', 'EAug': 'Piano -  E Aug.mp3',
+      'FAug': 'Piano -  F Aug.mp3', 'GAug': 'Piano -  G Aug.mp3', 'AAug': 'Piano -  A Aug.mp3', 'BAug': 'Piano -  B Aug.mp3',
+      // Sharp Augmented (TWO spaces)
+      'C#Aug': 'Piano -  C# Aug.mp3', 'D#Aug': 'Piano -  D# Aug.mp3', 'F#Aug': 'Piano -  F# Aug.mp3',
+      'G#Aug': 'Piano -  G# Aug.mp3', 'A#Aug': 'Piano -  A# Aug.mp3',
+      // Natural Diminished (TWO spaces, C uses C1, F is special - ONE space)
+      'Cdim': 'Piano -  C1 dim.mp3', 'Ddim': 'Piano -  D dim.mp3', 'Edim': 'Piano -  E dim.mp3',
+      'Fdim': 'Piano - F dim.mp3', 'Gdim': 'Piano -  G dim.mp3', 'Adim': 'Piano -  A dim.mp3', 'Bdim': 'Piano -  B dim.mp3',
+      // Sharp Diminished (TWO spaces)
+      'C#dim': 'Piano -  C# dim.mp3', 'D#dim': 'Piano -  D# dim.mp3', 'F#dim': 'Piano -  F# dim.mp3',
+      'G#dim': 'Piano -  G# dim.mp3', 'A#dim': 'Piano -  A# dim.mp3',
+      // Diatonic alternative names
+      'Dm': 'Piano -  D min.mp3', 'Em': 'Piano -  E min.mp3', 'Am': 'Piano -  A min.mp3',
+      'C2': 'Piano - C2.mp3',
     };
     
-    // Check diatonic first
-    if (diatonicMap[chordName]) {
-      return diatonicMap[chordName][soundType];
-    }
+    // EP Map (diatonic only)
+    const epFilenames: Record<string, string> = {
+      'C': 'EP - C1.mp3', 'Dm': 'EP - Dm.mp3', 'Em': 'EP - Em.mp3',
+      'F': 'EP - F.mp3', 'G': 'EP - G.mp3', 'Am': 'EP - Am.mp3',
+      'Bdim': 'EP - B Dim.mp3', 'C2': 'EP - C2.mp3',
+    };
     
-    // Chromatic chords - build path dynamically (Piano only)
     if (soundType === 'piano') {
-      let root = chordName;
-      let suffix = '';
-      
-      if (chordName.includes('min')) {
-        root = chordName.replace('min', '').trim();
-        suffix = ' min';
-      } else if (chordName.includes('dim')) {
-        root = chordName.replace('dim', '').trim();
-        suffix = ' dim';
-      } else if (chordName.includes('Aug')) {
-        root = chordName.replace('Aug', '').trim();
-        suffix = ' Aug';
+      const filename = pianoFilenames[chordName];
+      if (filename) {
+        // Encode the filename to handle # and other special characters
+        const encodedFilename = encodeURIComponent(filename);
+        return `/sounds/piano/chords/${encodedFilename}`;
       }
-      
-      // Piano files have extra space before note name
-      return `/sounds/piano/chords/Piano - ${root === 'C' || root === 'C2' ? '' : ' '}${root}${suffix}.mp3`;
+    } else {
+      const filename = epFilenames[chordName];
+      if (filename) {
+        return `/sounds/ep/chords/${encodeURIComponent(filename)}`;
+      }
     }
     
     return null;
@@ -73,23 +88,24 @@ export default function MPCInterface({
 
   // Sound file mappings for bass notes
   const getBassSoundPath = useCallback((note: string): string => {
-    const bassMap: Record<string, string> = {
-      'C': '/sounds/bass/tones/Bass/Bass - C1.mp3',
-      'C#': '/sounds/bass/tones/Bass/Bass - C%23.mp3', // URL-encoded #
-      'D': '/sounds/bass/tones/Bass/Bass - D.mp3',
-      'D#': '/sounds/bass/tones/Bass/Bass - D%23.mp3',
-      'E': '/sounds/bass/tones/Bass/Bass - E.mp3',
-      'F': '/sounds/bass/tones/Bass/Bass - F.mp3',
-      'F#': '/sounds/bass/tones/Bass/Bass - F%23.mp3',
-      'G': '/sounds/bass/tones/Bass/Bass - G.mp3',
-      'G#': '/sounds/bass/tones/Bass/Bass - G%23.mp3',
-      'A': '/sounds/bass/tones/Bass/Bass - A.mp3',
-      'A#': '/sounds/bass/tones/Bass/Bass - A%23.mp3',
-      'B': '/sounds/bass/tones/Bass/Bass - B.mp3',
-      'C2': '/sounds/bass/tones/Bass/Bass - C2.mp3',
+    const bassFilenames: Record<string, string> = {
+      'C': 'Bass - C1.mp3',
+      'C#': 'Bass - C#.mp3',
+      'D': 'Bass - D.mp3',
+      'D#': 'Bass - D#.mp3',
+      'E': 'Bass - E.mp3',
+      'F': 'Bass - F.mp3',
+      'F#': 'Bass - F#.mp3',
+      'G': 'Bass - G.mp3',
+      'G#': 'Bass - G#.mp3',
+      'A': 'Bass - A.mp3',
+      'A#': 'Bass - A#.mp3',
+      'B': 'Bass - B.mp3',
+      'C2': 'Bass - C2.mp3',
     };
     
-    return bassMap[note] || '';
+    const filename = bassFilenames[note];
+    return filename ? `/sounds/bass/tones/Bass/${encodeURIComponent(filename)}` : '';
   }, []);
 
   // Initialize audio with actual sound files
