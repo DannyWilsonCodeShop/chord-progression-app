@@ -20,6 +20,12 @@ const progressions = [
     examples: ['All diatonic chords mapped to keyboard: A S D F J K L ;'],
   },
   {
+    value: 'chromatic' as ChordProgression,
+    name: 'Chromatic (All Chord Types)',
+    description: 'All 12 chromatic notes with Aug/Major/Minor/Dim variations',
+    examples: ['Row 1(1-0)=Aug, Row Q=Major, Row A=Minor, Row Z=Dim'],
+  },
+  {
     value: 'I-V-vi-IV' as ChordProgression,
     name: 'I-V-vi-IV',
     description: 'Classic pop progression (C-G-Am-F)',

@@ -6,7 +6,8 @@ export type ChordProgression =
   | 'vi-IV-I-V' 
   | 'I-vi-IV-V' 
   | 'ii-V-I' 
-  | 'I-IV-V-I';
+  | 'I-IV-V-I'
+  | 'chromatic';
 
 export type Instrument = 'piano' | 'guitar' | 'bass' | 'synth' | 'drums';
 
