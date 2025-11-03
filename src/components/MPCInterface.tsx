@@ -230,7 +230,7 @@ export default function MPCInterface({
       // In bass mode, ALL bass keys (including overlapping ones) play bass
       // In chord mode, chord keys play chords
       
-      if (selectedInstrument === 'bass' && bassKeyMap[key]) {
+      if (selectedInstrument === 'bass' && key in bassKeyMap) {
         // BASS MODE - play bass notes
         if (!pads[`bass-${key}`]?.isPressed) {
           event.preventDefault();
@@ -238,9 +238,9 @@ export default function MPCInterface({
             ...prev,
             [`bass-${key}`]: { isPressed: true, velocity: 0.8 }
           }));
-          playBass(bassKeyMap[key], `bass-${key}`);
+          playBass(bassKeyMap[key as keyof typeof bassKeyMap], `bass-${key}`);
         }
-      } else if (selectedInstrument !== 'bass' && chordKeyMap[key]) {
+      } else if (selectedInstrument !== 'bass' && key in chordKeyMap) {
         // CHORD MODE - play chords (only when NOT in bass mode)
         if (!pads[`chord-${key}`]?.isPressed) {
           event.preventDefault();
@@ -248,7 +248,7 @@ export default function MPCInterface({
             ...prev,
             [`chord-${key}`]: { isPressed: true, velocity: 0.8 }
           }));
-          playChord(chordKeyMap[key], `chord-${key}`);
+          playChord(chordKeyMap[key as keyof typeof chordKeyMap], `chord-${key}`);
         }
       }
     };
@@ -257,7 +257,7 @@ export default function MPCInterface({
       const key = event.key.toLowerCase();
       
       // Stop bass sounds
-      if (bassKeyMap[key] && selectedInstrument === 'bass') {
+      if (key in bassKeyMap && selectedInstrument === 'bass') {
         event.preventDefault();
         setPads(prev => ({
           ...prev,
@@ -267,7 +267,7 @@ export default function MPCInterface({
       }
       
       // Stop chord sounds
-      if (chordKeyMap[key] && selectedInstrument !== 'bass') {
+      if (key in chordKeyMap && selectedInstrument !== 'bass') {
         event.preventDefault();
         setPads(prev => ({
           ...prev,
