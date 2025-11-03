@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import * as Tone from 'tone';
 import ChordKeyboard from '@/components/ChordKeyboard';
 import ChordSelector from '@/components/ChordSelector';
@@ -61,6 +62,16 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4">
       <div className="max-w-7xl mx-auto">
+        {/* Navigation */}
+        <nav className="flex justify-end mb-4">
+          <Link 
+            href="/about"
+            className="text-green-400 hover:text-green-300 font-mono text-sm transition-colors px-4 py-2 border border-green-400/30 rounded-lg hover:border-green-400 hover:bg-green-400/10"
+          >
+            ABOUT THE CREATOR
+          </Link>
+        </nav>
+
         {/* Header */}
         <header className="text-center mb-8">
           <h1 className="text-6xl font-bold text-green-400 mb-4 font-mono tracking-wider sound-system-text">
