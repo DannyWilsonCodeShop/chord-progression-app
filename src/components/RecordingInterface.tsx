@@ -2,12 +2,13 @@
 
 import { useState, useRef } from 'react';
 import * as Tone from 'tone';
-import { uploadData } from 'aws-amplify/storage';
-import { generateClient } from 'aws-amplify/data';
-import { getCurrentUser } from 'aws-amplify/auth';
-import type { Schema } from '../../../amplify/data/resource';
+// TODO: Uncomment after Amplify deployment
+// import { uploadData } from 'aws-amplify/storage';
+// import { generateClient } from 'aws-amplify/data';
+// import { getCurrentUser } from 'aws-amplify/auth';
+// import type { Schema } from '../../../amplify/data/resource';
 
-const client = generateClient<Schema>();
+// const client = generateClient<Schema>();
 
 interface RecordingInterfaceProps {
   isSubscribed: boolean;
@@ -122,7 +123,14 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
     }
   };
 
+  // TODO: Uncomment after Amplify deployment
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const saveToCloud = async (blob: Blob, name: string) => {
+    // TODO: Implement after Amplify backend is deployed
+    console.log('Cloud save not yet configured - Amplify backend required');
+    return false;
+    
+    /* Uncomment after Amplify deployment:
     try {
       const user = await getCurrentUser();
       const userId = user.userId;
@@ -143,7 +151,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
         userId,
         fileName: `${name}.webm`,
         s3Key,
-        duration: 0, // TODO: Calculate actual duration
+        duration: 0,
         fileSize: blob.size,
       });
 
@@ -153,6 +161,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
       console.error('Error saving to cloud:', error);
       return false;
     }
+    */
   };
 
   const downloadRecording = (recording: {name: string, url: string}) => {

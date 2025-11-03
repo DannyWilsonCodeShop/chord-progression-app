@@ -3,18 +3,19 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import * as Tone from 'tone';
-import { Amplify } from 'aws-amplify';
-import outputs from '../amplifyconfiguration.json';
-import AuthProvider from '@/components/AuthProvider';
+// import { Amplify } from 'aws-amplify';
+// import outputs from '../amplifyconfiguration.json';
+// import AuthProvider from '@/components/AuthProvider';
 import ChordKeyboard from '@/components/ChordKeyboard';
 import ChordSelector from '@/components/ChordSelector';
 import MPCInterface from '@/components/MPCInterface';
 import RecordingInterface from '@/components/RecordingInterface';
 import SubscriptionManager from '@/components/SubscriptionManager';
 import { ChordProgression, KeySignature } from '@/types/chords';
-import { useSubscription } from '@/hooks/useSubscription';
+// import { useSubscription } from '@/hooks/useSubscription';
 
-Amplify.configure(outputs);
+// TODO: Uncomment after deploying Amplify backend
+// Amplify.configure(outputs);
 
 function HomeContent() {
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
@@ -22,10 +23,11 @@ function HomeContent() {
   const [selectedProgression, setSelectedProgression] = useState<ChordProgression>('I-ii-iii-IV-V-vi-vii°-I');
   const [keyboardMapping, setKeyboardMapping] = useState<Record<string, string>>({});
   const [synth, setSynth] = useState<Tone.PolySynth | null>(null);
+  const [isSubscribed, setIsSubscribed] = useState(false);
   const [, setShowSubscriptionModal] = useState(false);
   
-  // Use real subscription state from database
-  const { isSubscribed, loading: subscriptionLoading, refetch: refetchSubscription } = useSubscription();
+  // TODO: Use real subscription state after Amplify deployment
+  // const { isSubscribed, loading: subscriptionLoading, refetch: refetchSubscription } = useSubscription();
 
   // Initialize audio context and synthesizer (legacy)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -116,7 +118,7 @@ function HomeContent() {
           <div className="lg:col-span-1 space-y-6">
             <SubscriptionManager
               isSubscribed={isSubscribed}
-              onSubscriptionUpdate={refetchSubscription}
+              onSubscriptionUpdate={setIsSubscribed}
             />
             
             <RecordingInterface
@@ -147,14 +149,18 @@ function HomeContent() {
   );
 }
 
+// TODO: Uncomment after Amplify backend deployment
 // Wrap with authentication
-export default function Home() {
-  return (
-    <AuthProvider>
-      <HomeContent />
-    </AuthProvider>
-  );
-}
+// export default function Home() {
+//   return (
+//     <AuthProvider>
+//       <HomeContent />
+//     </AuthProvider>
+//   );
+// }
+
+// Temporary: export without auth wrapper until Amplify is deployed
+export default HomeContent;
 
 // Helper function to generate keyboard mapping
 function generateKeyboardMapping(key: KeySignature, progression: ChordProgression): Record<string, string> {

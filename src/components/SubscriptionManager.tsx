@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { getCurrentUser } from 'aws-amplify/auth';
+// import { getCurrentUser } from 'aws-amplify/auth'; // TODO: Uncomment after Amplify deployment
 
 interface SubscriptionManagerProps {
   isSubscribed: boolean;
@@ -17,12 +17,12 @@ export default function SubscriptionManager({ isSubscribed }: SubscriptionManage
     setError('');
 
     try {
-      // Get current authenticated user
-      const user = await getCurrentUser();
-      const email = user.signInDetails?.loginId;
-
+      // TODO: After Amplify deployment, get email from getCurrentUser()
+      // For now, prompt user for email
+      const email = prompt('Enter your email to subscribe:');
+      
       if (!email) {
-        setError('Please log in to subscribe');
+        setError('Email is required');
         setLoading(false);
         return;
       }
