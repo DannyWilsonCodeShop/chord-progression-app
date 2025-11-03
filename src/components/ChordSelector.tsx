@@ -13,6 +13,12 @@ const keys: KeySignature[] = ['C', 'G', 'D', 'A', 'E'];
 
 const progressions = [
   {
+    value: 'I-ii-iii-IV-V-vi-vii°-I' as ChordProgression,
+    name: 'Full Major Scale',
+    description: 'Complete diatonic scale (C-Dm-Em-F-G-Am-Bdim-C)',
+    examples: ['All diatonic chords mapped to keyboard: A S D F J K L ;'],
+  },
+  {
     value: 'I-V-vi-IV' as ChordProgression,
     name: 'I-V-vi-IV',
     description: 'Classic pop progression (C-G-Am-F)',

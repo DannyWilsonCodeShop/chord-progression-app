@@ -1,6 +1,7 @@
 export type KeySignature = 'C' | 'G' | 'D' | 'A' | 'E';
 
 export type ChordProgression = 
+  | 'I-ii-iii-IV-V-vi-vii°-I'
   | 'I-V-vi-IV' 
   | 'vi-IV-I-V' 
   | 'I-vi-IV-V' 

@@ -13,7 +13,7 @@ import { ChordProgression, KeySignature } from '@/types/chords';
 export default function Home() {
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
   const [selectedKey, setSelectedKey] = useState<KeySignature>('C');
-  const [selectedProgression, setSelectedProgression] = useState<ChordProgression>('I-V-vi-IV');
+  const [selectedProgression, setSelectedProgression] = useState<ChordProgression>('I-ii-iii-IV-V-vi-vii°-I');
   const [keyboardMapping, setKeyboardMapping] = useState<Record<string, string>>({});
   const [synth, setSynth] = useState<Tone.PolySynth | null>(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -224,6 +224,7 @@ function generateKeyboardMapping(key: KeySignature, progression: ChordProgressio
   };
 
   const progressionMap: Record<ChordProgression, string[]> = {
+    'I-ii-iii-IV-V-vi-vii°-I': ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°', 'I'],
     'I-V-vi-IV': ['I', 'V', 'vi', 'IV'],
     'vi-IV-I-V': ['vi', 'IV', 'I', 'V'],
     'I-vi-IV-V': ['I', 'vi', 'IV', 'V'],
