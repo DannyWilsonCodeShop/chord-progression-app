@@ -7,6 +7,7 @@ interface ChordSelectorProps {
   selectedProgression: ChordProgression;
   onKeyChange: (key: KeySignature) => void;
   onProgressionChange: (progression: ChordProgression) => void;
+  isSubscribed?: boolean;
 }
 
 const keys: KeySignature[] = ['C', 'G', 'D', 'A', 'E'];
@@ -55,6 +56,7 @@ export default function ChordSelector({
   selectedProgression,
   onKeyChange,
   onProgressionChange,
+  isSubscribed = false,
 }: ChordSelectorProps) {
   return (
     <div className="bg-gray-900 rounded-lg shadow-lg p-6 border-2 border-gray-700">
@@ -66,20 +68,38 @@ export default function ChordSelector({
           SELECT KEY SIGNATURE
         </label>
         <div className="grid grid-cols-5 gap-2">
-          {keys.map((key) => (
-            <button
-              key={key}
-              onClick={() => onKeyChange(key)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors font-mono ${
-                selectedKey === key
-                  ? 'bg-green-600 text-black'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              {key}
-            </button>
-          ))}
+          {keys.map((key) => {
+            const isLocked = key !== 'C' && !isSubscribed;
+            return (
+              <button
+                key={key}
+                onClick={() => {
+                  if (isLocked) {
+                    alert(`Subscribe to unlock ${key} key signature!`);
+                  } else {
+                    onKeyChange(key);
+                  }
+                }}
+                disabled={isLocked}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors font-mono relative ${
+                  selectedKey === key
+                    ? 'bg-green-600 text-black'
+                    : isLocked
+                    ? 'bg-gray-900 text-gray-600 cursor-not-allowed opacity-50'
+                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                }`}
+              >
+                {key}
+                {isLocked && <span className="ml-1 text-xs">🔒</span>}
+              </button>
+            );
+          })}
         </div>
+        {!isSubscribed && (
+          <p className="text-xs text-yellow-400 mt-2 font-mono">
+            🔒 Subscribe to unlock other key signatures
+          </p>
+        )}
       </div>
 
       {/* Progression Selection */}

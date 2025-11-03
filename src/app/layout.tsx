@@ -8,8 +8,11 @@ export const metadata: Metadata = {
   title: "Chord Progression App - MPC Studio",
   description: "Create and play chord progressions with your keyboard - By Danny Wilson",
   icons: {
-    icon: '/images/6650DCC9-303A-4BC0-A852-FD67BD372CF4_1_102_o.jpeg',
-    apple: '/images/6650DCC9-303A-4BC0-A852-FD67BD372CF4_1_102_o.jpeg',
+    icon: [
+      { url: '/images/favicon.jpg', type: 'image/jpeg' },
+    ],
+    apple: '/images/favicon.jpg',
+    shortcut: '/images/favicon.jpg',
   },
 };
 
@@ -20,6 +23,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/images/favicon.jpg" type="image/jpeg" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   );

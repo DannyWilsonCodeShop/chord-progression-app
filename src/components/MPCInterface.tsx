@@ -119,17 +119,27 @@ export default function MPCInterface({
     }
   }, [selectedChordSound, isAudioInitialized, getChordSoundPath]);
 
-  // Keyboard mappings for chords and bass (memoized to prevent recreating on every render)
-  const chordKeyMap = useMemo(() => ({
-    'a': 'C',
-    's': 'Dm',
-    'd': 'Em',
-    'f': 'F',
-    'j': 'G',
-    'k': 'Am',
-    'l': 'Bdim',
-    ';': 'C2',
-  }), []);
+  // Map selected progression to chords (memoized based on progression)
+  const chordKeyMap = useMemo(() => {
+    const progressionMap: Record<string, string[]> = {
+      'I-ii-iii-IV-V-vi-vii°-I': ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim', 'C2'],
+      'I-V-vi-IV': ['C', 'G', 'Am', 'F', 'C', 'G', 'Am', 'F'], // Repeat to fill 8 keys
+      'vi-IV-I-V': ['Am', 'F', 'C', 'G', 'Am', 'F', 'C', 'G'],
+      'I-vi-IV-V': ['C', 'Am', 'F', 'G', 'C', 'Am', 'F', 'G'],
+      'ii-V-I': ['Dm', 'G', 'C', 'Dm', 'G', 'C', 'Dm', 'G'], // Repeat to fill 8 keys
+      'I-IV-V-I': ['C', 'F', 'G', 'C', 'F', 'G', 'C', 'F'],
+    };
+    
+    const chords = progressionMap[selectedProgression] || progressionMap['I-ii-iii-IV-V-vi-vii°-I'];
+    const keys = ['a', 's', 'd', 'f', 'j', 'k', 'l', ';'];
+    
+    const mapping: Record<string, string> = {};
+    keys.forEach((key, index) => {
+      mapping[key] = chords[index];
+    });
+    
+    return mapping;
+  }, [selectedProgression]);
 
   const bassKeyMap = useMemo(() => ({
     // White keys (natural notes)
@@ -183,12 +193,29 @@ export default function MPCInterface({
     }
   }, [bassAudios, isAudioInitialized]);
 
-  // Stop sound (when key is released)
+  // Stop sound with fade out (when key is released)
   const stopSound = useCallback((keyId: string) => {
     const sound = activeSounds[keyId];
     if (sound) {
-      sound.pause();
-      sound.currentTime = 0;
+      // Fade out over 50ms to avoid click
+      const fadeOutDuration = 50;
+      const fadeOutSteps = 10;
+      const stepTime = fadeOutDuration / fadeOutSteps;
+      const volumeStep = sound.volume / fadeOutSteps;
+      
+      let currentStep = 0;
+      const fadeInterval = setInterval(() => {
+        currentStep++;
+        sound.volume = Math.max(0, sound.volume - volumeStep);
+        
+        if (currentStep >= fadeOutSteps) {
+          clearInterval(fadeInterval);
+          sound.pause();
+          sound.currentTime = 0;
+          sound.volume = 0.7; // Reset volume for next play
+        }
+      }, stepTime);
+      
       setActiveSounds(prev => {
         const newSounds = { ...prev };
         delete newSounds[keyId];
@@ -317,47 +344,34 @@ export default function MPCInterface({
               <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">CHORD SOUND</h3>
             </div>
             <div className="grid grid-cols-2 gap-2 max-w-md mx-auto">
-              {(['ep', 'piano'] as SoundType[]).map((soundType) => {
-                const isLocked = soundType === 'piano' && !isSubscribed;
-                return (
-                  <button
-                    key={soundType}
-                    onClick={() => {
-                      if (isLocked) {
-                        alert('Subscribe to unlock Piano sounds!');
-                      } else {
-                        setSelectedChordSound(soundType);
-                      }
-                    }}
-                    disabled={isLocked}
-                    className={`px-4 py-3 rounded-lg font-mono tracking-wider transition-all relative ${
-                      selectedChordSound === soundType
-                        ? 'bg-green-600 text-black font-bold'
-                        : isLocked
-                        ? 'bg-gray-900 text-gray-600 cursor-not-allowed opacity-50'
-                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                    }`}
-                  >
-                    {soundType === 'ep' ? 'ELECTRIC PIANO' : 'PIANO'}
-                    {isLocked && (
-                      <span className="ml-2 text-yellow-400">🔒</span>
-                    )}
-                  </button>
-                );
-              })}
+              {(['ep', 'piano'] as SoundType[]).map((soundType) => (
+                <button
+                  key={soundType}
+                  onClick={() => setSelectedChordSound(soundType)}
+                  className={`px-4 py-3 rounded-lg font-mono tracking-wider transition-all ${
+                    selectedChordSound === soundType
+                      ? 'bg-green-600 text-black font-bold'
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  }`}
+                >
+                  {soundType === 'ep' ? 'ELECTRIC PIANO' : 'PIANO'}
+                </button>
+              ))}
             </div>
-            {!isSubscribed && (
-              <p className="text-center text-xs text-yellow-400 mt-2 font-mono">
-                🔒 Subscribe to unlock Piano sounds
-              </p>
-            )}
           </div>
 
           {/* Chord Pads */}
           <div className="mb-8">
             <div className="text-center mb-4">
-              <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">C MAJOR CHORDS</h3>
+              <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">
+                {selectedProgression === 'I-ii-iii-IV-V-vi-vii°-I' ? 'C MAJOR SCALE' : 'CHORD PROGRESSION'}
+              </h3>
               <p className="text-xs text-gray-400 font-mono">Keys: A S D F J K L ;</p>
+              {selectedInstrument !== 'piano' && (
+                <p className="text-xs text-purple-400 font-mono mt-1">
+                  ⚠️ Switch to CHORD MODE to play chords
+                </p>
+              )}
             </div>
             <div className="grid grid-cols-4 gap-4">
               {Object.entries(chordKeyMap).map(([key, chord]) => (
@@ -424,6 +438,15 @@ export default function MPCInterface({
             <div className="text-center mb-4">
               <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">BASS KEYBOARD</h3>
               <p className="text-xs text-gray-400 font-mono">White Keys: Z X C V B N M , | Black Keys: S D G H J</p>
+              {selectedInstrument === 'bass' ? (
+                <p className="text-xs text-purple-400 font-mono mt-1 font-bold">
+                  ✓ BASS MODE ACTIVE - Keys above will play bass notes
+                </p>
+              ) : (
+                <p className="text-xs text-blue-400 font-mono mt-1">
+                  ℹ️ Enable BASS MODE above to play bass notes
+                </p>
+              )}
             </div>
             
             {/* Piano-style layout */}
