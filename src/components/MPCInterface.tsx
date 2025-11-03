@@ -21,7 +21,7 @@ export default function MPCInterface({
   selectedProgression,
 }: MPCInterfaceProps) {
   const [selectedInstrument, setSelectedInstrument] = useState<Instrument>('piano');
-  const [selectedChordSound, setSelectedChordSound] = useState<SoundType>('piano');
+  const [selectedChordSound, setSelectedChordSound] = useState<SoundType>('ep');
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
   const [pads, setPads] = useState<Record<string, PadState>>({});
   const [chordAudios, setChordAudios] = useState<Record<string, HTMLAudioElement>>({});
@@ -29,50 +29,20 @@ export default function MPCInterface({
   const [isSubscribed] = useState(false); // TODO: Connect to actual subscription state
   const [activeSounds, setActiveSounds] = useState<Record<string, HTMLAudioElement>>({}); // Track active playing sounds
 
-  // Sound file mappings for all chords (diatonic + chromatic)
+  // Sound file mappings for C major diatonic chords
   const getChordSoundPath = useCallback((chordName: string, soundType: SoundType): string | null => {
-    // Map chord names to file paths
-    const noteMap: Record<string, string> = {
-      'C': 'C', 'C#': 'C#', 'D': 'D', 'D#': 'D#', 'E': 'E', 'F': 'F',
-      'F#': 'F#', 'G': 'G', 'G#': 'G#', 'A': 'A', 'A#': 'A#', 'B': 'B',
-      'C2': 'C2', 'Dm': 'D', 'Em': 'E', 'Am': 'A', 'Bdim': 'B',
+    const chordMap: Record<string, { piano: string; ep: string }> = {
+      'C': { piano: '/sounds/piano/chords/Piano - C.mp3', ep: '/sounds/ep/chords/EP - C1.mp3' },
+      'Dm': { piano: '/sounds/piano/chords/Piano -  D min.mp3', ep: '/sounds/ep/chords/EP - Dm.mp3' },
+      'Em': { piano: '/sounds/piano/chords/Piano -  E min.mp3', ep: '/sounds/ep/chords/EP - Em.mp3' },
+      'F': { piano: '/sounds/piano/chords/Piano - F.mp3', ep: '/sounds/ep/chords/EP - F.mp3' },
+      'G': { piano: '/sounds/piano/chords/Piano - G.mp3', ep: '/sounds/ep/chords/EP - G.mp3' },
+      'Am': { piano: '/sounds/piano/chords/Piano -  A min.mp3', ep: '/sounds/ep/chords/EP - Am.mp3' },
+      'Bdim': { piano: '/sounds/piano/chords/Piano -  B dim.mp3', ep: '/sounds/ep/chords/EP - B Dim.mp3' },
+      'C2': { piano: '/sounds/piano/chords/Piano - C2.mp3', ep: '/sounds/ep/chords/EP - C2.mp3' },
     };
     
-    // Determine chord type and root note
-    let root = chordName;
-    let suffix = '';
-    
-    if (chordName.includes('min')) {
-      root = chordName.replace('min', '').trim();
-      suffix = ' min';
-    } else if (chordName.includes('dim')) {
-      root = chordName.replace('dim', '').trim();
-      suffix = ' dim';
-    } else if (chordName.includes('Aug')) {
-      root = chordName.replace('Aug', '').trim();
-      suffix = ' Aug';
-    }
-    
-    const fileRoot = noteMap[root] || root;
-    const pianoPath = `/sounds/piano/chords/Piano - ${fileRoot === 'C' || fileRoot === 'C2' ? '' : ' '}${fileRoot}${suffix}.mp3`;
-    
-    // EP only has diatonic chords
-    const epMap: Record<string, string> = {
-      'C': '/sounds/ep/chords/EP - C1.mp3',
-      'Dm': '/sounds/ep/chords/EP - Dm.mp3',
-      'Em': '/sounds/ep/chords/EP - Em.mp3',
-      'F': '/sounds/ep/chords/EP - F.mp3',
-      'G': '/sounds/ep/chords/EP - G.mp3',
-      'Am': '/sounds/ep/chords/EP - Am.mp3',
-      'Bdim': '/sounds/ep/chords/EP - B Dim.mp3',
-      'C2': '/sounds/ep/chords/EP - C2.mp3',
-    };
-    
-    if (soundType === 'ep') {
-      return epMap[chordName] || pianoPath; // Fall back to piano if EP doesn't have it
-    }
-    
-    return pianoPath;
+    return chordMap[chordName]?.[soundType] || null;
   }, []);
 
   // Sound file mappings for bass notes (piano-style layout)
@@ -99,26 +69,11 @@ export default function MPCInterface({
   // Initialize audio with actual sound files
   const initializeAudio = useCallback(async () => {
     try {
-      // Load chord sounds - include all chromatic chords
+      // Load chord sounds
       const chordSounds: Record<string, HTMLAudioElement> = {};
-      const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-      const types = ['', 'min', 'Aug', 'dim']; // Major (no suffix), minor, augmented, diminished
+      const chordNames = ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim', 'C2'];
       
-      // Load all chromatic chords
-      notes.forEach(note => {
-        types.forEach(type => {
-          const chordName = type ? `${note}${type}` : note;
-          const path = getChordSoundPath(chordName, selectedChordSound);
-          if (path) {
-            chordSounds[chordName] = new Audio(path);
-            chordSounds[chordName].preload = 'auto';
-          }
-        });
-      });
-      
-      // Also load diatonic names and C2
-      const diatonic = ['Dm', 'Em', 'Am', 'Bdim', 'C2'];
-      diatonic.forEach(chord => {
+      chordNames.forEach(chord => {
         const path = getChordSoundPath(chord, selectedChordSound);
         if (path) {
           chordSounds[chord] = new Audio(path);
@@ -150,24 +105,9 @@ export default function MPCInterface({
   useEffect(() => {
     if (isAudioInitialized) {
       const chordSounds: Record<string, HTMLAudioElement> = {};
-      const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-      const types = ['', 'min', 'Aug', 'dim'];
+      const chordNames = ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim', 'C2'];
       
-      // Load all chromatic chords
-      notes.forEach(note => {
-        types.forEach(type => {
-          const chordName = type ? `${note}${type}` : note;
-          const path = getChordSoundPath(chordName, selectedChordSound);
-          if (path) {
-            chordSounds[chordName] = new Audio(path);
-            chordSounds[chordName].preload = 'auto';
-          }
-        });
-      });
-      
-      // Also load diatonic names
-      const diatonic = ['Dm', 'Em', 'Am', 'Bdim', 'C2'];
-      diatonic.forEach(chord => {
+      chordNames.forEach(chord => {
         const path = getChordSoundPath(chord, selectedChordSound);
         if (path) {
           chordSounds[chord] = new Audio(path);
@@ -181,39 +121,6 @@ export default function MPCInterface({
 
   // Map selected progression to chords (memoized based on progression)
   const chordKeyMap = useMemo(() => {
-    if (selectedProgression === 'chromatic') {
-      // Chromatic mode: All 12 notes with 4 chord types across 4 keyboard rows
-      const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-      const mapping: Record<string, string> = {};
-      
-      // Number row (1-0, -, =): Augmented chords
-      const numKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '='];
-      numKeys.forEach((key, index) => {
-        if (index < notes.length) mapping[key] = `${notes[index]}Aug`;
-      });
-      
-      // Top letter row (Q-P, [, ]): Major chords
-      const topKeys = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']'];
-      topKeys.forEach((key, index) => {
-        if (index < notes.length) mapping[key] = notes[index];
-      });
-      
-      // Home row (A-;, '): Minor chords
-      const homeKeys = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'"];
-      homeKeys.forEach((key, index) => {
-        if (index < notes.length) mapping[key] = `${notes[index]}min`;
-      });
-      
-      // Bottom row (Z-/, .): Diminished chords
-      const bottomKeys = ['z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/'];
-      bottomKeys.forEach((key, index) => {
-        if (index < notes.length) mapping[key] = `${notes[index]}dim`;
-      });
-      
-      return mapping;
-    }
-    
-    // Regular progressions
     const progressionMap: Record<string, string[]> = {
       'I-ii-iii-IV-V-vi-vii°-I': ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim', 'C2'],
       'I-V-vi-IV': ['C', 'G', 'Am', 'F', 'C', 'G', 'Am', 'F'], // Repeat to fill 8 keys
@@ -290,24 +197,22 @@ export default function MPCInterface({
   const stopSound = useCallback((keyId: string) => {
     const sound = activeSounds[keyId];
     if (sound) {
-      // Longer, smoother fade out to eliminate click
-      const fadeOutDuration = 150; // Increased to 150ms
-      const fadeOutSteps = 30; // More steps for smoother fade
+      // Fade out over 50ms to avoid click
+      const fadeOutDuration = 50;
+      const fadeOutSteps = 10;
       const stepTime = fadeOutDuration / fadeOutSteps;
-      const initialVolume = sound.volume;
-      const volumeStep = initialVolume / fadeOutSteps;
+      const volumeStep = sound.volume / fadeOutSteps;
       
       let currentStep = 0;
       const fadeInterval = setInterval(() => {
         currentStep++;
-        sound.volume = Math.max(0, initialVolume - (volumeStep * currentStep));
+        sound.volume = Math.max(0, sound.volume - volumeStep);
         
-        if (currentStep >= fadeOutSteps || sound.volume <= 0) {
+        if (currentStep >= fadeOutSteps) {
           clearInterval(fadeInterval);
           sound.pause();
           sound.currentTime = 0;
-          // Reset to appropriate volume based on sound type
-          sound.volume = keyId.startsWith('bass') ? 0.8 : 0.7;
+          sound.volume = 0.7; // Reset volume for next play
         }
       }, stepTime);
       
@@ -439,38 +344,20 @@ export default function MPCInterface({
               <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">CHORD SOUND</h3>
             </div>
             <div className="grid grid-cols-2 gap-2 max-w-md mx-auto">
-              {(['piano', 'ep'] as SoundType[]).map((soundType) => {
-                const isLocked = soundType === 'ep' && !isSubscribed;
-                return (
-                  <button
-                    key={soundType}
-                    onClick={() => {
-                      if (isLocked) {
-                        alert('Subscribe to unlock Electric Piano sounds!');
-                      } else {
-                        setSelectedChordSound(soundType);
-                      }
-                    }}
-                    disabled={isLocked}
-                    className={`px-4 py-3 rounded-lg font-mono tracking-wider transition-all ${
-                      selectedChordSound === soundType
-                        ? 'bg-green-600 text-black font-bold'
-                        : isLocked
-                        ? 'bg-gray-900 text-gray-600 cursor-not-allowed opacity-50'
-                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                    }`}
-                  >
-                    {soundType === 'ep' ? 'ELECTRIC PIANO' : 'PIANO'}
-                    {isLocked && <span className="ml-2 text-yellow-400">🔒</span>}
-                  </button>
-                );
-              })}
+              {(['ep', 'piano'] as SoundType[]).map((soundType) => (
+                <button
+                  key={soundType}
+                  onClick={() => setSelectedChordSound(soundType)}
+                  className={`px-4 py-3 rounded-lg font-mono tracking-wider transition-all ${
+                    selectedChordSound === soundType
+                      ? 'bg-green-600 text-black font-bold'
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  }`}
+                >
+                  {soundType === 'ep' ? 'ELECTRIC PIANO' : 'PIANO'}
+                </button>
+              ))}
             </div>
-            {!isSubscribed && (
-              <p className="text-center text-xs text-yellow-400 mt-2 font-mono">
-                🔒 Subscribe to unlock Electric Piano sounds
-              </p>
-            )}
           </div>
 
           {/* Chord Pads */}
