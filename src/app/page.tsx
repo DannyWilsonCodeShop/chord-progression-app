@@ -226,6 +226,7 @@ function generateKeyboardMapping(key: KeySignature, progression: ChordProgressio
 
   const progressionMap: Record<ChordProgression, string[]> = {
     'I-ii-iii-IV-V-vi-vii°-I': ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°', 'I'],
+    'chromatic': ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°', 'I'], // Chromatic handled by MPCInterface
     'I-V-vi-IV': ['I', 'V', 'vi', 'IV'],
     'vi-IV-I-V': ['vi', 'IV', 'I', 'V'],
     'I-vi-IV-V': ['I', 'vi', 'IV', 'V'],
