@@ -29,9 +29,10 @@ export default function MPCInterface({
   const [isSubscribed] = useState(false); // TODO: Connect to actual subscription state
   const [activeSounds, setActiveSounds] = useState<Record<string, HTMLAudioElement>>({}); // Track active playing sounds
 
-  // Sound file mappings for C major diatonic chords
+  // Sound file mappings for chords (diatonic + chromatic)
   const getChordSoundPath = useCallback((chordName: string, soundType: SoundType): string | null => {
-    const chordMap: Record<string, { piano: string; ep: string }> = {
+    // Diatonic chords - hardcoded for reliability
+    const diatonicMap: Record<string, { piano: string; ep: string }> = {
       'C': { piano: '/sounds/piano/chords/Piano - C.mp3', ep: '/sounds/ep/chords/EP - C1.mp3' },
       'Dm': { piano: '/sounds/piano/chords/Piano -  D min.mp3', ep: '/sounds/ep/chords/EP - Dm.mp3' },
       'Em': { piano: '/sounds/piano/chords/Piano -  E min.mp3', ep: '/sounds/ep/chords/EP - Em.mp3' },
@@ -42,7 +43,32 @@ export default function MPCInterface({
       'C2': { piano: '/sounds/piano/chords/Piano - C2.mp3', ep: '/sounds/ep/chords/EP - C2.mp3' },
     };
     
-    return chordMap[chordName]?.[soundType] || null;
+    // Check diatonic first
+    if (diatonicMap[chordName]) {
+      return diatonicMap[chordName][soundType];
+    }
+    
+    // Chromatic chords - build path dynamically (Piano only)
+    if (soundType === 'piano') {
+      let root = chordName;
+      let suffix = '';
+      
+      if (chordName.includes('min')) {
+        root = chordName.replace('min', '').trim();
+        suffix = ' min';
+      } else if (chordName.includes('dim')) {
+        root = chordName.replace('dim', '').trim();
+        suffix = ' dim';
+      } else if (chordName.includes('Aug')) {
+        root = chordName.replace('Aug', '').trim();
+        suffix = ' Aug';
+      }
+      
+      // Piano files have extra space before note name
+      return `/sounds/piano/chords/Piano - ${root === 'C' || root === 'C2' ? '' : ' '}${root}${suffix}.mp3`;
+    }
+    
+    return null;
   }, []);
 
   // Sound file mappings for bass notes (piano-style layout)
@@ -101,26 +127,78 @@ export default function MPCInterface({
     }
   }, [selectedChordSound, getChordSoundPath, getBassSoundPath]);
 
-  // Reload chord sounds when sound type changes
+  // Reload chord sounds when sound type or progression changes
   useEffect(() => {
     if (isAudioInitialized) {
       const chordSounds: Record<string, HTMLAudioElement> = {};
-      const chordNames = ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim', 'C2'];
       
-      chordNames.forEach(chord => {
-        const path = getChordSoundPath(chord, selectedChordSound);
-        if (path) {
-          chordSounds[chord] = new Audio(path);
-          chordSounds[chord].preload = 'auto';
-        }
-      });
+      if (selectedProgression === 'chromatic') {
+        // Load all chromatic chords (Piano only)
+        const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const types = ['', 'min', 'Aug', 'dim'];
+        
+        notes.forEach(note => {
+          types.forEach(type => {
+            const chordName = type ? `${note}${type}` : note;
+            const path = getChordSoundPath(chordName, 'piano'); // Force piano for chromatic
+            if (path) {
+              chordSounds[chordName] = new Audio(path);
+              chordSounds[chordName].preload = 'auto';
+            }
+          });
+        });
+      } else {
+        // Load only diatonic chords
+        const chordNames = ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim', 'C2'];
+        
+        chordNames.forEach(chord => {
+          const path = getChordSoundPath(chord, selectedChordSound);
+          if (path) {
+            chordSounds[chord] = new Audio(path);
+            chordSounds[chord].preload = 'auto';
+          }
+        });
+      }
 
       setChordAudios(chordSounds);
     }
-  }, [selectedChordSound, isAudioInitialized, getChordSoundPath]);
+  }, [selectedChordSound, selectedProgression, isAudioInitialized, getChordSoundPath]);
 
   // Map selected progression to chords (memoized based on progression)
   const chordKeyMap = useMemo(() => {
+    // Special handling for chromatic progression
+    if (selectedProgression === 'chromatic') {
+      const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+      const mapping: Record<string, string> = {};
+      
+      // Number row (1-0): Augmented chords (need chromatic samples)
+      const numKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '='];
+      numKeys.forEach((key, index) => {
+        if (index < notes.length) mapping[key] = `${notes[index]}Aug`;
+      });
+      
+      // Top letter row (Q-P): Major chords
+      const topKeys = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']'];
+      topKeys.forEach((key, index) => {
+        if (index < notes.length) mapping[key] = notes[index];
+      });
+      
+      // Home row (A-;): Minor chords
+      const homeKeys = ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', "'"];
+      homeKeys.forEach((key, index) => {
+        if (index < notes.length) mapping[key] = `${notes[index]}min`;
+      });
+      
+      // Bottom row (Z-/): Diminished chords
+      const bottomKeys = ['z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/'];
+      bottomKeys.forEach((key, index) => {
+        if (index < notes.length) mapping[key] = `${notes[index]}dim`;
+      });
+      
+      return mapping;
+    }
+    
+    // Regular progressions
     const progressionMap: Record<string, string[]> = {
       'I-ii-iii-IV-V-vi-vii°-I': ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim', 'C2'],
       'I-V-vi-IV': ['C', 'G', 'Am', 'F', 'C', 'G', 'Am', 'F'], // Repeat to fill 8 keys
@@ -364,23 +442,30 @@ export default function MPCInterface({
           <div className="mb-8">
             <div className="text-center mb-4">
               <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">
-                {selectedProgression === 'I-ii-iii-IV-V-vi-vii°-I' ? 'C MAJOR SCALE' : 'CHORD PROGRESSION'}
+                {selectedProgression === 'chromatic' ? 'CHROMATIC KEYBOARD (48 CHORDS)' :
+                 selectedProgression === 'I-ii-iii-IV-V-vi-vii°-I' ? 'C MAJOR SCALE' : 'CHORD PROGRESSION'}
               </h3>
-              <p className="text-xs text-gray-400 font-mono">Keys: A S D F J K L ;</p>
+              {selectedProgression === 'chromatic' ? (
+                <div className="text-xs text-gray-400 font-mono space-y-1">
+                  <p>1-0,-,= = Aug | Q-P,[,] = Major | A-;,&apos; = Minor | Z-/,. = Dim</p>
+                </div>
+              ) : (
+                <p className="text-xs text-gray-400 font-mono">Keys: A S D F J K L ;</p>
+              )}
               {selectedInstrument !== 'piano' && (
                 <p className="text-xs text-purple-400 font-mono mt-1">
                   ⚠️ Switch to CHORD MODE to play chords
                 </p>
               )}
             </div>
-            <div className="grid grid-cols-4 gap-4">
+            <div className={selectedProgression === 'chromatic' ? 'grid grid-cols-12 gap-1' : 'grid grid-cols-4 gap-4'}>
               {Object.entries(chordKeyMap).map(([key, chord]) => (
                 <button
                   key={key}
                   onMouseDown={() => handlePadPress(chord, key)}
                   onMouseUp={() => handlePadRelease(key)}
                   onMouseLeave={() => handlePadRelease(key)}
-                  className={`mpc-pad relative aspect-square rounded-xl font-mono transition-all duration-100 ${
+                  className={`mpc-pad relative ${selectedProgression === 'chromatic' ? 'h-16' : 'aspect-square'} rounded-xl font-mono transition-all duration-100 ${
                     pads[key]?.isPressed
                       ? 'bg-green-500 scale-95 shadow-lg'
                       : 'bg-gray-800 hover:bg-gray-700'
@@ -392,10 +477,10 @@ export default function MPCInterface({
                   }}
                 >
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                    <div className="text-3xl font-bold mb-2">
+                    <div className={selectedProgression === 'chromatic' ? 'text-lg font-bold' : 'text-3xl font-bold mb-2'}>
                       {key.toUpperCase()}
                     </div>
-                    <div className="text-sm text-gray-300 font-semibold">
+                    <div className={selectedProgression === 'chromatic' ? 'text-xs text-gray-300' : 'text-sm text-gray-300 font-semibold'}>
                       {chord}
                     </div>
                   </div>
