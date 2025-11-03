@@ -220,21 +220,20 @@ export default function MPCInterface({
   }, [selectedProgression]);
 
   const bassKeyMap = useMemo(() => ({
-    // White keys (natural notes)
+    // Chromatic sequence across bottom row
     'z': 'C',
-    'x': 'D',
-    'c': 'E',
-    'v': 'F',
-    'b': 'G',
-    'n': 'A',
-    'm': 'B',
-    ',': 'C2',
-    // Black keys (sharps)
-    's': 'C#',
-    'd': 'D#',
-    'g': 'F#',
-    'h': 'G#',
-    'j': 'A#',
+    'x': 'C#',
+    'c': 'D',
+    'v': 'D#',
+    'g': 'E',
+    'b': 'F',
+    'h': 'F#',
+    'n': 'G',
+    'm': 'G#',
+    ',': 'A',
+    '.': 'A#',
+    '/': 'B',
+    ' ': 'C2', // Spacebar
   }), []);
 
   // Play chord (organ-style - sustain while held)
@@ -518,11 +517,11 @@ export default function MPCInterface({
             </div>
           </div>
 
-          {/* Bass Keyboard - Piano Layout */}
+          {/* Bass Keyboard - Chromatic Layout */}
           <div className="mb-8">
             <div className="text-center mb-4">
               <h3 className="text-lg font-bold text-green-400 font-mono tracking-wider">BASS KEYBOARD</h3>
-              <p className="text-xs text-gray-400 font-mono">White Keys: Z X C V B N M , | Black Keys: S D G H J</p>
+              <p className="text-xs text-gray-400 font-mono">Chromatic: Z X C V G B H N M , . / SPACE</p>
               {selectedInstrument === 'bass' ? (
                 <p className="text-xs text-purple-400 font-mono mt-1 font-bold">
                   ✓ BASS MODE ACTIVE - Keys above will play bass notes
@@ -534,68 +533,23 @@ export default function MPCInterface({
               )}
             </div>
             
-            {/* Piano-style layout */}
+            {/* Chromatic bass keyboard */}
             <div className="relative bg-gray-900 rounded-lg p-6 max-w-4xl mx-auto">
-              {/* Black keys row */}
-              <div className="flex justify-start items-start mb-2 pl-12 gap-2">
+              <div className="flex justify-center items-center gap-1 flex-wrap">
                 {[
-                  { key: 's', note: 'C#' },
-                  { key: 'd', note: 'D#' },
-                  { key: 'spacer1', note: '' },
-                  { key: 'g', note: 'F#' },
-                  { key: 'h', note: 'G#' },
-                  { key: 'j', note: 'A#' },
-                ].map((item) => 
-                  item.key.startsWith('spacer') ? (
-                    <div key={item.key} className="w-16"></div>
-                  ) : (
-                    <button
-                      key={item.key}
-                      onMouseDown={() => {
-                        if (!pads[`bass-${item.key}`]?.isPressed) {
-                          setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: true, velocity: 0.8 } }));
-                          playBass(item.note, `bass-${item.key}`);
-                        }
-                      }}
-                      onMouseUp={() => {
-                        setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: false, velocity: 0 } }));
-                        stopSound(`bass-${item.key}`);
-                      }}
-                      onMouseLeave={() => {
-                        if (pads[`bass-${item.key}`]?.isPressed) {
-                          setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: false, velocity: 0 } }));
-                          stopSound(`bass-${item.key}`);
-                        }
-                      }}
-                      className={`w-16 h-24 rounded-lg font-mono text-white font-bold transition-all ${
-                        pads[`bass-${item.key}`]?.isPressed
-                          ? 'bg-purple-600 scale-95'
-                          : 'bg-gray-700 hover:bg-gray-600'
-                      }`}
-                      style={{
-                        boxShadow: pads[`bass-${item.key}`]?.isPressed 
-                          ? '0 0 15px rgba(147, 51, 234, 0.5)' 
-                          : 'none',
-                      }}
-                    >
-                      <div className="text-xl">{item.key.toUpperCase()}</div>
-                      <div className="text-xs mt-1">{item.note}</div>
-                    </button>
-                  )
-                )}
-              </div>
-              
-              {/* White keys row */}
-              <div className="flex justify-start items-start gap-2">
-                {[
-                  { key: 'z', note: 'C' },
-                  { key: 'x', note: 'D' },
-                  { key: 'c', note: 'E' },
-                  { key: 'v', note: 'F' },
-                  { key: 'b', note: 'G' },
-                  { key: 'n', note: 'A' },
-                  { key: 'm', note: 'B' },
-                  { key: ',', note: 'C2' },
+                  { key: 'z', note: 'C', label: 'Z' },
+                  { key: 'x', note: 'C#', label: 'X' },
+                  { key: 'c', note: 'D', label: 'C' },
+                  { key: 'v', note: 'D#', label: 'V' },
+                  { key: 'g', note: 'E', label: 'G' },
+                  { key: 'b', note: 'F', label: 'B' },
+                  { key: 'h', note: 'F#', label: 'H' },
+                  { key: 'n', note: 'G', label: 'N' },
+                  { key: 'm', note: 'G#', label: 'M' },
+                  { key: ',', note: 'A', label: ',' },
+                  { key: '.', note: 'A#', label: '.' },
+                  { key: '/', note: 'B', label: '/' },
+                  { key: ' ', note: 'C2', label: 'SPACE' },
                 ].map((item) => (
                   <button
                     key={item.key}
@@ -615,19 +569,23 @@ export default function MPCInterface({
                         stopSound(`bass-${item.key}`);
                       }
                     }}
-                    className={`w-16 h-32 rounded-lg font-mono font-bold transition-all ${
+                    className={`${item.key === ' ' ? 'w-32' : 'w-14'} h-20 rounded-lg font-mono font-bold transition-all ${
                       pads[`bass-${item.key}`]?.isPressed
-                        ? 'bg-blue-500 text-white scale-95'
+                        ? 'bg-purple-500 text-white scale-95'
+                        : item.note.includes('#') 
+                        ? 'bg-gray-700 text-white hover:bg-gray-600'
                         : 'bg-white text-black hover:bg-gray-200'
                     }`}
                     style={{
                       boxShadow: pads[`bass-${item.key}`]?.isPressed 
-                        ? '0 0 15px rgba(59, 130, 246, 0.5)' 
+                        ? '0 0 15px rgba(168, 85, 247, 0.5)' 
+                        : item.note.includes('#')
+                        ? 'inset 0 2px 4px rgba(0,0,0,0.3)'
                         : '0 2px 4px rgba(0,0,0,0.2)',
                     }}
                   >
-                    <div className="text-xl">{item.key.toUpperCase()}</div>
-                    <div className="text-sm mt-2">{item.note}</div>
+                    <div className="text-sm font-bold">{item.label}</div>
+                    <div className="text-xs mt-1">{item.note}</div>
                   </button>
                 ))}
               </div>
