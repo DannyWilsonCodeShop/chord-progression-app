@@ -3,7 +3,7 @@
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { Amplify } from 'aws-amplify';
-import outputs from '@/amplifyconfiguration.json';
+import outputs from '../amplifyconfiguration.json';
 
 Amplify.configure(outputs);
 

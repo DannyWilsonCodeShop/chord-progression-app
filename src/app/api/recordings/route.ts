@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateClient } from 'aws-amplify/data';
 import { uploadData } from 'aws-amplify/storage';
-import type { Schema } from '@/../../amplify/data/resource';
+import type { Schema } from '../../../../amplify/data/resource';
 
 const client = generateClient<Schema>();
 

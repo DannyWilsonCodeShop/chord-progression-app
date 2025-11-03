@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import * as Tone from 'tone';
 import { Amplify } from 'aws-amplify';
-import outputs from '@/amplifyconfiguration.json';
+import outputs from '../amplifyconfiguration.json';
 import AuthProvider from '@/components/AuthProvider';
 import ChordKeyboard from '@/components/ChordKeyboard';
 import ChordSelector from '@/components/ChordSelector';
