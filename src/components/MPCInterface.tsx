@@ -108,44 +108,52 @@ export default function MPCInterface({
     return filename ? `/sounds/bass/tones/Bass/${encodeURIComponent(filename)}` : '';
   }, []);
 
-  // Initialize audio with actual sound files (mobile-optimized)
+  // Initialize audio with actual sound files (mobile-optimized for iOS Safari)
   const initializeAudio = useCallback(async () => {
     try {
-      // Create a dummy audio context and play silence to unlock audio on mobile
-      const dummyAudio = new Audio();
-      dummyAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-      const unlockPromise = dummyAudio.play();
-      if (unlockPromise) {
-        await unlockPromise.then(() => dummyAudio.pause()).catch(() => {
-          console.log('Audio unlock failed - user gesture may be required');
-        });
+      console.log('Initializing audio for mobile/desktop...');
+      
+      // iOS Safari audio unlock - play multiple silent sounds
+      const unlockSounds = [];
+      for (let i = 0; i < 5; i++) {
+        const dummyAudio = new Audio();
+        dummyAudio.volume = 0;
+        dummyAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+        unlockSounds.push(dummyAudio.play().catch(() => {}));
       }
+      await Promise.all(unlockSounds);
+      
+      console.log('Audio unlock completed');
 
-      // Load chord sounds
+      // Load chord sounds with iOS-specific settings
       const chordSounds: Record<string, HTMLAudioElement> = {};
       const chordNames = ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim', 'C2'];
       
       chordNames.forEach(chord => {
         const path = getChordSoundPath(chord, selectedChordSound);
         if (path) {
-          chordSounds[chord] = new Audio(path);
-          chordSounds[chord].preload = 'auto';
-          // Unlock each audio element for mobile
-          chordSounds[chord].load();
+          const audio = new Audio();
+          audio.preload = 'auto';
+          audio.crossOrigin = 'anonymous'; // iOS compatibility
+          audio.src = path;
+          audio.load(); // Force load for iOS
+          chordSounds[chord] = audio;
         }
       });
 
-      // Load bass sounds
+      // Load bass sounds with iOS-specific settings
       const bassSounds: Record<string, HTMLAudioElement> = {};
       const bassNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B', 'C2'];
       
       bassNotes.forEach(note => {
         const path = getBassSoundPath(note);
         if (path) {
-          bassSounds[note] = new Audio(path);
-          bassSounds[note].preload = 'auto';
-          // Unlock each audio element for mobile
-          bassSounds[note].load();
+          const audio = new Audio();
+          audio.preload = 'auto';
+          audio.crossOrigin = 'anonymous'; // iOS compatibility
+          audio.src = path;
+          audio.load(); // Force load for iOS
+          bassSounds[note] = audio;
         }
       });
 
@@ -153,9 +161,13 @@ export default function MPCInterface({
       setBassAudios(bassSounds);
       setIsAudioInitialized(true);
       
-      console.log('Audio initialized successfully for mobile and desktop');
+      console.log('Audio initialized:', {
+        chords: Object.keys(chordSounds).length,
+        bass: Object.keys(bassSounds).length,
+      });
     } catch (error) {
       console.error('Failed to initialize audio:', error);
+      alert('Audio initialization failed. Please refresh and try again.');
     }
   }, [selectedChordSound, getChordSoundPath, getBassSoundPath]);
 
@@ -179,11 +191,14 @@ export default function MPCInterface({
         notes.forEach(note => {
           types.forEach(type => {
             const chordName = type ? `${note}${type}` : note;
-            const path = getChordSoundPath(chordName, 'piano'); // Force piano for chromatic
+            const path = getChordSoundPath(chordName, 'piano');
             if (path) {
-              chordSounds[chordName] = new Audio(path);
-              chordSounds[chordName].preload = 'auto';
-              chordSounds[chordName].load(); // Mobile: unlock audio
+              const audio = new Audio();
+              audio.preload = 'auto';
+              audio.crossOrigin = 'anonymous';
+              audio.src = path;
+              audio.load();
+              chordSounds[chordName] = audio;
             }
           });
         });
@@ -194,9 +209,12 @@ export default function MPCInterface({
         chordNames.forEach(chord => {
           const path = getChordSoundPath(chord, selectedChordSound);
           if (path) {
-            chordSounds[chord] = new Audio(path);
-            chordSounds[chord].preload = 'auto';
-            chordSounds[chord].load(); // Mobile: unlock audio
+            const audio = new Audio();
+            audio.preload = 'auto';
+            audio.crossOrigin = 'anonymous';
+            audio.src = path;
+            audio.load();
+            chordSounds[chord] = audio;
           }
         });
       }
@@ -277,7 +295,7 @@ export default function MPCInterface({
     ' ': 'C2', // Spacebar
   }), []);
 
-  // Play chord (organ-style - sustain while held) with mobile support
+  // Play chord (organ-style - sustain while held) - iOS Safari optimized
   const playChord = useCallback((chordName: string, keyId: string) => {
     if (!isAudioInitialized) return;
 
@@ -286,21 +304,21 @@ export default function MPCInterface({
       // Clone and play to allow overlapping sounds
       const sound = audio.cloneNode() as HTMLAudioElement;
       sound.volume = 0.7;
-      sound.loop = true; // Loop for sustained organ-like effect
       
-      // Mobile-friendly play with promise handling
+      // iOS Safari fix: Set loop AFTER first play succeeds
       const playPromise = sound.play();
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            // Playback started successfully
-            console.log('Playing chord:', chordName);
+            // Playback started - now enable loop for sustained effect
+            sound.loop = true;
           })
           .catch(err => {
             console.error('Error playing chord:', err);
-            // Retry without loop for mobile compatibility
-            sound.loop = false;
-            sound.play().catch(e => console.error('Retry failed:', e));
+            // iOS fallback: try playing without user interaction requirement
+            setTimeout(() => {
+              sound.play().catch(e => console.error('Retry failed:', e));
+            }, 100);
           });
       }
       
@@ -309,7 +327,7 @@ export default function MPCInterface({
     }
   }, [chordAudios, isAudioInitialized]);
 
-  // Play bass note (organ-style - sustain while held) with mobile support
+  // Play bass note (organ-style - sustain while held) - iOS Safari optimized
   const playBass = useCallback((note: string, keyId: string) => {
     if (!isAudioInitialized) return;
 
@@ -318,21 +336,21 @@ export default function MPCInterface({
       // Clone and play to allow overlapping sounds
       const sound = audio.cloneNode() as HTMLAudioElement;
       sound.volume = 0.8;
-      sound.loop = true; // Loop for sustained organ-like effect
       
-      // Mobile-friendly play with promise handling
+      // iOS Safari fix: Set loop AFTER first play succeeds
       const playPromise = sound.play();
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
-            // Playback started successfully
-            console.log('Playing bass:', note);
+            // Playback started - now enable loop for sustained effect
+            sound.loop = true;
           })
           .catch(err => {
             console.error('Error playing bass:', err);
-            // Retry without loop for mobile compatibility
-            sound.loop = false;
-            sound.play().catch(e => console.error('Retry failed:', e));
+            // iOS fallback: try playing without user interaction requirement
+            setTimeout(() => {
+              sound.play().catch(e => console.error('Retry failed:', e));
+            }, 100);
           });
       }
       
@@ -376,7 +394,7 @@ export default function MPCInterface({
   const handlePadPress = useCallback((chordName: string, padKey: string) => {
     // Don't re-trigger if already pressed
     if (pads[padKey]?.isPressed) return;
-    
+
     setPads(prev => ({
       ...prev,
       [padKey]: { isPressed: true, velocity: 0.8 }
@@ -418,7 +436,7 @@ export default function MPCInterface({
       } else if (selectedInstrument !== 'bass' && key in chordKeyMap) {
         // CHORD MODE - play chords (only when NOT in bass mode)
         if (!pads[`chord-${key}`]?.isPressed) {
-          event.preventDefault();
+        event.preventDefault();
           setPads(prev => ({
             ...prev,
             [`chord-${key}`]: { isPressed: true, velocity: 0.8 }
@@ -477,10 +495,13 @@ export default function MPCInterface({
         <div className="text-center mb-8">
           <button
             onClick={initializeAudio}
-            className="bg-green-600 hover:bg-green-700 text-black font-bold py-3 px-8 rounded-lg transition-colors font-mono tracking-wider"
+            className="bg-green-600 hover:bg-green-700 text-black font-bold py-3 px-8 rounded-lg transition-colors font-mono tracking-wider shadow-lg"
           >
-            INITIALIZE AUDIO
+            🔊 TAP TO ENABLE AUDIO
           </button>
+          <p className="text-xs text-gray-400 mt-3 font-mono">
+            📱 iPhone/iPad users: Tap this button to unlock audio
+          </p>
         </div>
       )}
 
@@ -495,7 +516,7 @@ export default function MPCInterface({
               {(['piano', 'ep'] as SoundType[]).map((soundType) => {
                 const isDisabled = soundType === 'ep' && selectedProgression === 'chromatic';
                 return (
-                  <button
+                <button
                     key={soundType}
                     onClick={() => {
                       if (isDisabled) {
@@ -505,17 +526,17 @@ export default function MPCInterface({
                       }
                     }}
                     disabled={isDisabled}
-                    className={`px-4 py-3 rounded-lg font-mono tracking-wider transition-all ${
+                  className={`px-4 py-3 rounded-lg font-mono tracking-wider transition-all ${
                       selectedChordSound === soundType
-                        ? 'bg-green-600 text-black font-bold'
+                      ? 'bg-green-600 text-black font-bold'
                         : isDisabled
                         ? 'bg-gray-900 text-gray-600 cursor-not-allowed opacity-50'
-                        : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                    }`}
-                  >
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  }`}
+                >
                     {soundType === 'ep' ? 'ELECTRIC PIANO' : 'PIANO'}
                     {isDisabled && <span className="ml-2">⚠️</span>}
-                  </button>
+                </button>
                 );
               })}
             </div>
