@@ -21,12 +21,13 @@ export default function MPCInterface({
   selectedProgression,
 }: MPCInterfaceProps) {
   const [selectedInstrument, setSelectedInstrument] = useState<Instrument>('piano');
-  const [selectedChordSound, setSelectedChordSound] = useState<SoundType>('ep');
+  const [selectedChordSound, setSelectedChordSound] = useState<SoundType>('piano');
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
   const [pads, setPads] = useState<Record<string, PadState>>({});
   const [chordAudios, setChordAudios] = useState<Record<string, HTMLAudioElement>>({});
   const [bassAudios, setBassAudios] = useState<Record<string, HTMLAudioElement>>({});
-  const [isSubscribed] = useState(false); // TODO: Connect to actual subscription state
+  // Subscription state - commented out until backend is deployed
+  // const [isSubscribed] = useState(false);
   const [activeSounds, setActiveSounds] = useState<Record<string, HTMLAudioElement>>({}); // Track active playing sounds
 
   // Sound file mappings for chords (diatonic + chromatic)

@@ -51,6 +51,10 @@ export async function POST(request: NextRequest) {
       const subscriptionStatus = subscription.status === 'active' ? 'active' : 
                                  subscription.status === 'canceled' ? 'cancelled' : 'past_due';
 
+      const currentPeriodEnd = subscription.current_period_end 
+        ? new Date(subscription.current_period_end * 1000).toISOString()
+        : new Date().toISOString();
+
       if (users && users.length > 0) {
         // Update existing user
         await client.models.User.update({
@@ -59,7 +63,7 @@ export async function POST(request: NextRequest) {
           subscriptionId: subscription.id,
           subscriptionStatus,
           subscriptionPriceId: subscription.items.data[0]?.price.id,
-          subscriptionCurrentPeriodEnd: new Date(subscription.current_period_end * 1000).toISOString(),
+          subscriptionCurrentPeriodEnd: currentPeriodEnd,
         });
       } else {
         // Create new user record
@@ -69,7 +73,7 @@ export async function POST(request: NextRequest) {
           subscriptionId: subscription.id,
           subscriptionStatus,
           subscriptionPriceId: subscription.items.data[0]?.price.id,
-          subscriptionCurrentPeriodEnd: new Date(subscription.current_period_end * 1000).toISOString(),
+          subscriptionCurrentPeriodEnd: currentPeriodEnd,
         });
       }
       break;

@@ -6,7 +6,7 @@ import type { Schema } from '../../../../amplify/data/resource';
 const client = generateClient<Schema>();
 
 // GET - Fetch user's recordings
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Fetch all recordings for the authenticated user
     const { data: recordings, errors } = await client.models.Recording.list({
