@@ -1,13 +1,21 @@
+// TODO: Uncomment after Amplify backend deployment
+// This component provides authentication UI
+// Requires amplify_outputs.json to be generated first
+
 'use client';
 
-import { Authenticator } from '@aws-amplify/ui-react';
-import '@aws-amplify/ui-react/styles.css';
-import { Amplify } from 'aws-amplify';
-import outputs from '../amplifyconfiguration.json';
+// import { Authenticator } from '@aws-amplify/ui-react';
+// import '@aws-amplify/ui-react/styles.css';
+// import { Amplify } from 'aws-amplify';
+// import outputs from '../amplifyconfiguration.json';
 
-Amplify.configure(outputs);
+// Amplify.configure(outputs);
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
+  // Temporary: Return children without auth wrapper
+  return <>{children}</>;
+  
+  /* Uncomment after Amplify deployment:
   return (
     <Authenticator
       formFields={{
@@ -44,5 +52,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       {children}
     </Authenticator>
   );
+  */
 }
 
