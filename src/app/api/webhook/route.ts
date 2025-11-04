@@ -51,8 +51,10 @@ export async function POST(request: NextRequest) {
       const subscriptionStatus = subscription.status === 'active' ? 'active' : 
                                  subscription.status === 'canceled' ? 'cancelled' : 'past_due';
 
-      const currentPeriodEnd = subscription.current_period_end 
-        ? new Date(subscription.current_period_end * 1000).toISOString()
+      // Type cast to access current_period_end
+      const subscriptionData = subscription as any;
+      const currentPeriodEnd = subscriptionData.current_period_end 
+        ? new Date(subscriptionData.current_period_end * 1000).toISOString()
         : new Date().toISOString();
 
       if (users && users.length > 0) {
