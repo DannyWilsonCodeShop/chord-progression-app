@@ -110,84 +110,76 @@ export default function MPCInterface({
     return filename ? `/sounds/bass/tones/Bass/${encodeURIComponent(filename)}` : '';
   }, []);
 
-  // Initialize audio with actual sound files (mobile-optimized for iOS Safari)
+  // Initialize audio - FAST unlock only, lazy load sounds on first play
   const initializeAudio = useCallback(async () => {
     try {
       setInitializationStatus('Unlocking audio...');
       console.log('🎵 Starting audio initialization...');
       
-      // iOS Safari audio unlock - play multiple silent sounds with user gesture
-      const unlockSounds = [];
-      for (let i = 0; i < 10; i++) {
-        const dummyAudio = new Audio();
-        dummyAudio.volume = 0;
-        dummyAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-        unlockSounds.push(
-          dummyAudio.play()
-            .then(() => {
-              dummyAudio.pause();
-              dummyAudio.currentTime = 0;
-            })
-            .catch(() => {})
-        );
-      }
-      await Promise.all(unlockSounds);
+      // iOS Safari audio unlock - just play ONE silent sound
+      const dummyAudio = new Audio();
+      dummyAudio.volume = 0;
+      dummyAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+      await dummyAudio.play().then(() => dummyAudio.pause()).catch(() => {});
       
-      console.log('✅ Audio context unlocked');
-      setInitializationStatus('Loading sounds...');
-
-      // Load chord sounds with iOS-specific settings
-      const chordSounds: Record<string, HTMLAudioElement> = {};
-      const chordNames = ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim', 'C2'];
-      
-      chordNames.forEach(chord => {
-        const path = getChordSoundPath(chord, selectedChordSound);
-        if (path) {
-          const audio = new Audio();
-          audio.preload = 'metadata'; // Start with metadata for faster initial load
-          audio.src = path;
-          audio.load();
-          chordSounds[chord] = audio;
-        }
-      });
-
-      console.log(`✅ Loaded ${Object.keys(chordSounds).length} chord sounds`);
-      setInitializationStatus('Loading bass...');
-
-      // Load bass sounds with iOS-specific settings
-      const bassSounds: Record<string, HTMLAudioElement> = {};
-      const bassNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B', 'C2'];
-      
-      bassNotes.forEach(note => {
-        const path = getBassSoundPath(note);
-        if (path) {
-          const audio = new Audio();
-          audio.preload = 'metadata';
-          audio.src = path;
-          audio.load();
-          bassSounds[note] = audio;
-        }
-      });
-
-      console.log(`✅ Loaded ${Object.keys(bassSounds).length} bass sounds`);
-      
-      setChordAudios(chordSounds);
-      setBassAudios(bassSounds);
+      console.log('✅ Audio context unlocked - ready for lazy loading');
       setInitializationStatus('Ready! 🎵');
       
-      // Small delay to show status, then mark as initialized
+      // Mark as initialized immediately - we'll load sounds on demand
       setTimeout(() => {
         setIsAudioInitialized(true);
         setInitializationStatus('');
-      }, 1000);
+      }, 500);
       
-      console.log('🎉 Audio fully initialized and ready!');
+      console.log('🎉 Audio initialization complete - sounds will load on first play');
     } catch (error) {
       console.error('❌ Failed to initialize audio:', error);
       setInitializationStatus('Failed - please refresh');
       alert('Audio initialization failed. Make sure silent mode is OFF and volume is UP. Then refresh and try again.');
     }
-  }, [selectedChordSound, getChordSoundPath, getBassSoundPath]);
+  }, []);
+
+  // Lazy load audio on first play (much faster initialization)
+  const getOrCreateAudio = useCallback((chordName: string, soundType: SoundType): HTMLAudioElement | null => {
+    // Check if already loaded
+    if (chordAudios[chordName]) {
+      return chordAudios[chordName];
+    }
+
+    // Create and cache new audio element
+    const path = getChordSoundPath(chordName, soundType);
+    if (path) {
+      const audio = new Audio();
+      audio.preload = 'auto';
+      audio.src = path;
+      setChordAudios(prev => ({ ...prev, [chordName]: audio }));
+      console.log('📦 Lazy loaded:', chordName);
+      return audio;
+    }
+    
+    return null;
+  }, [chordAudios, getChordSoundPath]);
+
+  // Lazy load bass audio on first play
+  const getOrCreateBassAudio = useCallback((note: string): HTMLAudioElement | null => {
+    // Check if already loaded
+    if (bassAudios[note]) {
+      return bassAudios[note];
+    }
+
+    // Create and cache new audio element
+    const path = getBassSoundPath(note);
+    if (path) {
+      const audio = new Audio();
+      audio.preload = 'auto';
+      audio.src = path;
+      setBassAudios(prev => ({ ...prev, [note]: audio }));
+      console.log('📦 Lazy loaded bass:', note);
+      return audio;
+    }
+    
+    return null;
+  }, [bassAudios, getBassSoundPath]);
 
   // Auto-switch to Piano when chromatic is selected
   useEffect(() => {
@@ -196,50 +188,14 @@ export default function MPCInterface({
     }
   }, [selectedProgression, selectedChordSound]);
 
-  // Reload chord sounds when sound type or progression changes
+  // Clear cached sounds when progression or sound type changes (for lazy loading)
   useEffect(() => {
     if (isAudioInitialized) {
-      const chordSounds: Record<string, HTMLAudioElement> = {};
-      
-      if (selectedProgression === 'chromatic') {
-        // Load all chromatic chords (Piano only)
-        const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-        const types = ['', 'min', 'Aug', 'dim'];
-        
-        notes.forEach(note => {
-          types.forEach(type => {
-            const chordName = type ? `${note}${type}` : note;
-            const path = getChordSoundPath(chordName, 'piano');
-            if (path) {
-              const audio = new Audio();
-              audio.preload = 'auto';
-              audio.crossOrigin = 'anonymous';
-              audio.src = path;
-              audio.load();
-              chordSounds[chordName] = audio;
-            }
-          });
-        });
-      } else {
-        // Load only diatonic chords
-        const chordNames = ['C', 'Dm', 'Em', 'F', 'G', 'Am', 'Bdim', 'C2'];
-        
-        chordNames.forEach(chord => {
-          const path = getChordSoundPath(chord, selectedChordSound);
-          if (path) {
-            const audio = new Audio();
-            audio.preload = 'auto';
-            audio.crossOrigin = 'anonymous';
-            audio.src = path;
-            audio.load();
-            chordSounds[chord] = audio;
-          }
-        });
-      }
-
-      setChordAudios(chordSounds);
+      console.log('🔄 Clearing audio cache for new progression/sound');
+      setChordAudios({});
+      setBassAudios({});
     }
-  }, [selectedChordSound, selectedProgression, isAudioInitialized, getChordSoundPath]);
+  }, [selectedChordSound, selectedProgression, isAudioInitialized]);
 
   // Map selected progression to chords (memoized based on progression)
   const chordKeyMap = useMemo(() => {
@@ -313,14 +269,15 @@ export default function MPCInterface({
     ' ': 'C2', // Spacebar
   }), []);
 
-  // Play chord (organ-style - sustain while held) - iOS Safari optimized
+  // Play chord (organ-style - sustain while held) - iOS Safari optimized with lazy loading
   const playChord = useCallback((chordName: string, keyId: string) => {
     if (!isAudioInitialized) {
       console.log('⚠️ Audio not initialized yet');
       return;
     }
 
-    const audio = chordAudios[chordName];
+    // Lazy load audio on demand
+    const audio = getOrCreateAudio(chordName, selectedChordSound);
     if (!audio) {
       console.error('❌ Audio not found for chord:', chordName);
       return;
@@ -329,7 +286,7 @@ export default function MPCInterface({
     // Clone and play to allow overlapping sounds
     const sound = audio.cloneNode() as HTMLAudioElement;
     sound.volume = 0.7;
-    sound.loop = true; // Set loop immediately
+    sound.loop = true; // Loop for sustained organ effect
     
     // Play with comprehensive error handling for iOS
     const playPromise = sound.play();
@@ -352,16 +309,17 @@ export default function MPCInterface({
     
     // Store active sound for later stopping
     setActiveSounds(prev => ({ ...prev, [keyId]: sound }));
-  }, [chordAudios, isAudioInitialized]);
+  }, [isAudioInitialized, getOrCreateAudio, selectedChordSound]);
 
-  // Play bass note (organ-style - sustain while held) - iOS Safari optimized
+  // Play bass note (organ-style - sustain while held) - iOS Safari optimized with lazy loading
   const playBass = useCallback((note: string, keyId: string) => {
     if (!isAudioInitialized) {
       console.log('⚠️ Audio not initialized yet');
       return;
     }
 
-    const audio = bassAudios[note];
+    // Lazy load audio on demand
+    const audio = getOrCreateBassAudio(note);
     if (!audio) {
       console.error('❌ Audio not found for bass note:', note);
       return;
@@ -370,7 +328,7 @@ export default function MPCInterface({
     // Clone and play to allow overlapping sounds
     const sound = audio.cloneNode() as HTMLAudioElement;
     sound.volume = 0.8;
-    sound.loop = true; // Set loop immediately
+    sound.loop = true; // Loop for sustained organ effect
     
     // Play with comprehensive error handling for iOS
     const playPromise = sound.play();
@@ -393,7 +351,7 @@ export default function MPCInterface({
     
     // Store active sound for later stopping
     setActiveSounds(prev => ({ ...prev, [keyId]: sound }));
-  }, [bassAudios, isAudioInitialized]);
+  }, [isAudioInitialized, getOrCreateBassAudio]);
 
   // Stop sound with fade out (when key is released)
   const stopSound = useCallback((keyId: string) => {
@@ -616,6 +574,18 @@ export default function MPCInterface({
                   onMouseDown={() => handlePadPress(chord, key)}
                   onMouseUp={() => handlePadRelease(key)}
                   onMouseLeave={() => handlePadRelease(key)}
+                  onTouchStart={(e) => {
+                    e.preventDefault(); // Prevent mouse events on touch devices
+                    handlePadPress(chord, key);
+                  }}
+                  onTouchEnd={(e) => {
+                    e.preventDefault();
+                    handlePadRelease(key);
+                  }}
+                  onTouchCancel={(e) => {
+                    e.preventDefault();
+                    handlePadRelease(key);
+                  }}
                   className={`mpc-pad relative ${selectedProgression === 'chromatic' ? 'h-16' : 'aspect-square'} rounded-xl font-mono transition-all duration-100 ${
                     pads[key]?.isPressed
                       ? 'bg-green-500 scale-95 shadow-lg'
@@ -720,6 +690,23 @@ export default function MPCInterface({
                         setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: false, velocity: 0 } }));
                         stopSound(`bass-${item.key}`);
                       }
+                    }}
+                    onTouchStart={(e) => {
+                      e.preventDefault();
+                      if (!pads[`bass-${item.key}`]?.isPressed) {
+                        setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: true, velocity: 0.8 } }));
+                        playBass(item.note, `bass-${item.key}`);
+                      }
+                    }}
+                    onTouchEnd={(e) => {
+                      e.preventDefault();
+                      setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: false, velocity: 0 } }));
+                      stopSound(`bass-${item.key}`);
+                    }}
+                    onTouchCancel={(e) => {
+                      e.preventDefault();
+                      setPads(prev => ({ ...prev, [`bass-${item.key}`]: { isPressed: false, velocity: 0 } }));
+                      stopSound(`bass-${item.key}`);
                     }}
                     className={`${item.key === ' ' ? 'w-32' : 'w-14'} h-20 rounded-lg font-mono font-bold transition-all ${
                       pads[`bass-${item.key}`]?.isPressed
