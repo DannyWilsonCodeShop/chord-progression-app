@@ -23,6 +23,7 @@ export default function MPCInterface({
   const [selectedInstrument, setSelectedInstrument] = useState<Instrument>('piano');
   const [selectedChordSound, setSelectedChordSound] = useState<SoundType>('piano');
   const [isAudioInitialized, setIsAudioInitialized] = useState(false);
+  const [initializationStatus, setInitializationStatus] = useState<string>('');
   const [pads, setPads] = useState<Record<string, PadState>>({});
   const [chordAudios, setChordAudios] = useState<Record<string, HTMLAudioElement>>({});
   const [bassAudios, setBassAudios] = useState<Record<string, HTMLAudioElement>>({});
@@ -112,19 +113,28 @@ export default function MPCInterface({
   // Initialize audio with actual sound files (mobile-optimized for iOS Safari)
   const initializeAudio = useCallback(async () => {
     try {
-      console.log('Initializing audio for mobile/desktop...');
+      setInitializationStatus('Unlocking audio...');
+      console.log('🎵 Starting audio initialization...');
       
-      // iOS Safari audio unlock - play multiple silent sounds
+      // iOS Safari audio unlock - play multiple silent sounds with user gesture
       const unlockSounds = [];
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 10; i++) {
         const dummyAudio = new Audio();
         dummyAudio.volume = 0;
         dummyAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
-        unlockSounds.push(dummyAudio.play().catch(() => {}));
+        unlockSounds.push(
+          dummyAudio.play()
+            .then(() => {
+              dummyAudio.pause();
+              dummyAudio.currentTime = 0;
+            })
+            .catch(() => {})
+        );
       }
       await Promise.all(unlockSounds);
       
-      console.log('Audio unlock completed');
+      console.log('✅ Audio context unlocked');
+      setInitializationStatus('Loading sounds...');
 
       // Load chord sounds with iOS-specific settings
       const chordSounds: Record<string, HTMLAudioElement> = {};
@@ -134,13 +144,15 @@ export default function MPCInterface({
         const path = getChordSoundPath(chord, selectedChordSound);
         if (path) {
           const audio = new Audio();
-          audio.preload = 'auto';
-          audio.crossOrigin = 'anonymous'; // iOS compatibility
+          audio.preload = 'metadata'; // Start with metadata for faster initial load
           audio.src = path;
-          audio.load(); // Force load for iOS
+          audio.load();
           chordSounds[chord] = audio;
         }
       });
+
+      console.log(`✅ Loaded ${Object.keys(chordSounds).length} chord sounds`);
+      setInitializationStatus('Loading bass...');
 
       // Load bass sounds with iOS-specific settings
       const bassSounds: Record<string, HTMLAudioElement> = {};
@@ -150,25 +162,30 @@ export default function MPCInterface({
         const path = getBassSoundPath(note);
         if (path) {
           const audio = new Audio();
-          audio.preload = 'auto';
-          audio.crossOrigin = 'anonymous'; // iOS compatibility
+          audio.preload = 'metadata';
           audio.src = path;
-          audio.load(); // Force load for iOS
+          audio.load();
           bassSounds[note] = audio;
         }
       });
 
+      console.log(`✅ Loaded ${Object.keys(bassSounds).length} bass sounds`);
+      
       setChordAudios(chordSounds);
       setBassAudios(bassSounds);
-      setIsAudioInitialized(true);
+      setInitializationStatus('Ready! 🎵');
       
-      console.log('Audio initialized:', {
-        chords: Object.keys(chordSounds).length,
-        bass: Object.keys(bassSounds).length,
-      });
+      // Small delay to show status, then mark as initialized
+      setTimeout(() => {
+        setIsAudioInitialized(true);
+        setInitializationStatus('');
+      }, 1000);
+      
+      console.log('🎉 Audio fully initialized and ready!');
     } catch (error) {
-      console.error('Failed to initialize audio:', error);
-      alert('Audio initialization failed. Please refresh and try again.');
+      console.error('❌ Failed to initialize audio:', error);
+      setInitializationStatus('Failed - please refresh');
+      alert('Audio initialization failed. Make sure silent mode is OFF and volume is UP. Then refresh and try again.');
     }
   }, [selectedChordSound, getChordSoundPath, getBassSoundPath]);
 
@@ -298,66 +315,84 @@ export default function MPCInterface({
 
   // Play chord (organ-style - sustain while held) - iOS Safari optimized
   const playChord = useCallback((chordName: string, keyId: string) => {
-    if (!isAudioInitialized) return;
+    if (!isAudioInitialized) {
+      console.log('⚠️ Audio not initialized yet');
+      return;
+    }
 
     const audio = chordAudios[chordName];
-    if (audio) {
-      // Clone and play to allow overlapping sounds
-      const sound = audio.cloneNode() as HTMLAudioElement;
-      sound.volume = 0.7;
-      
-      // iOS Safari fix: Set loop AFTER first play succeeds
-      const playPromise = sound.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            // Playback started - now enable loop for sustained effect
-            sound.loop = true;
-          })
-          .catch(err => {
-            console.error('Error playing chord:', err);
-            // iOS fallback: try playing without user interaction requirement
-            setTimeout(() => {
-              sound.play().catch(e => console.error('Retry failed:', e));
-            }, 100);
-          });
-      }
-      
-      // Store active sound for later stopping
-      setActiveSounds(prev => ({ ...prev, [keyId]: sound }));
+    if (!audio) {
+      console.error('❌ Audio not found for chord:', chordName);
+      return;
     }
+
+    // Clone and play to allow overlapping sounds
+    const sound = audio.cloneNode() as HTMLAudioElement;
+    sound.volume = 0.7;
+    sound.loop = true; // Set loop immediately
+    
+    // Play with comprehensive error handling for iOS
+    const playPromise = sound.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          console.log('✅ Playing chord:', chordName);
+        })
+        .catch(err => {
+          console.error('❌ Error playing chord:', chordName, err);
+          // iOS fallback: disable loop and retry
+          sound.loop = false;
+          setTimeout(() => {
+            sound.play()
+              .then(() => console.log('✅ Retry succeeded for:', chordName))
+              .catch(e => console.error('❌ Retry also failed:', e));
+          }, 50);
+        });
+    }
+    
+    // Store active sound for later stopping
+    setActiveSounds(prev => ({ ...prev, [keyId]: sound }));
   }, [chordAudios, isAudioInitialized]);
 
   // Play bass note (organ-style - sustain while held) - iOS Safari optimized
   const playBass = useCallback((note: string, keyId: string) => {
-    if (!isAudioInitialized) return;
+    if (!isAudioInitialized) {
+      console.log('⚠️ Audio not initialized yet');
+      return;
+    }
 
     const audio = bassAudios[note];
-    if (audio) {
-      // Clone and play to allow overlapping sounds
-      const sound = audio.cloneNode() as HTMLAudioElement;
-      sound.volume = 0.8;
-      
-      // iOS Safari fix: Set loop AFTER first play succeeds
-      const playPromise = sound.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            // Playback started - now enable loop for sustained effect
-            sound.loop = true;
-          })
-          .catch(err => {
-            console.error('Error playing bass:', err);
-            // iOS fallback: try playing without user interaction requirement
-            setTimeout(() => {
-              sound.play().catch(e => console.error('Retry failed:', e));
-            }, 100);
-          });
-      }
-      
-      // Store active sound for later stopping
-      setActiveSounds(prev => ({ ...prev, [keyId]: sound }));
+    if (!audio) {
+      console.error('❌ Audio not found for bass note:', note);
+      return;
     }
+
+    // Clone and play to allow overlapping sounds
+    const sound = audio.cloneNode() as HTMLAudioElement;
+    sound.volume = 0.8;
+    sound.loop = true; // Set loop immediately
+    
+    // Play with comprehensive error handling for iOS
+    const playPromise = sound.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          console.log('✅ Playing bass:', note);
+        })
+        .catch(err => {
+          console.error('❌ Error playing bass:', note, err);
+          // iOS fallback: disable loop and retry
+          sound.loop = false;
+          setTimeout(() => {
+            sound.play()
+              .then(() => console.log('✅ Retry succeeded for bass:', note))
+              .catch(e => console.error('❌ Retry also failed:', e));
+          }, 50);
+        });
+    }
+    
+    // Store active sound for later stopping
+    setActiveSounds(prev => ({ ...prev, [keyId]: sound }));
   }, [bassAudios, isAudioInitialized]);
 
   // Stop sound with fade out (when key is released)
@@ -496,13 +531,19 @@ export default function MPCInterface({
         <div className="text-center mb-8">
           <button
             onClick={initializeAudio}
-            className="bg-green-600 hover:bg-green-700 text-black font-bold py-3 px-8 rounded-lg transition-colors font-mono tracking-wider shadow-lg"
+            disabled={initializationStatus !== ''}
+            className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-black font-bold py-4 px-10 rounded-lg transition-colors font-mono tracking-wider shadow-lg text-lg"
           >
-            🔊 TAP TO ENABLE AUDIO
+            {initializationStatus || '🔊 TAP TO ENABLE AUDIO'}
           </button>
           <p className="text-xs text-gray-400 mt-3 font-mono">
-            📱 iPhone/iPad users: Tap this button to unlock audio
+            📱 iPhone/iPad: Make sure silent mode is OFF and volume is UP
           </p>
+          {initializationStatus && (
+            <p className="text-sm text-green-400 mt-2 font-mono animate-pulse">
+              {initializationStatus}
+            </p>
+          )}
         </div>
       )}
 
