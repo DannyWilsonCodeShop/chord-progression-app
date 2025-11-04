@@ -51,7 +51,8 @@ export async function POST(request: NextRequest) {
       const subscriptionStatus = subscription.status === 'active' ? 'active' : 
                                  subscription.status === 'canceled' ? 'cancelled' : 'past_due';
 
-      // Type cast to access current_period_end
+      // Type cast to access current_period_end (Stripe type doesn't expose this)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const subscriptionData = subscription as any;
       const currentPeriodEnd = subscriptionData.current_period_end 
         ? new Date(subscriptionData.current_period_end * 1000).toISOString()
