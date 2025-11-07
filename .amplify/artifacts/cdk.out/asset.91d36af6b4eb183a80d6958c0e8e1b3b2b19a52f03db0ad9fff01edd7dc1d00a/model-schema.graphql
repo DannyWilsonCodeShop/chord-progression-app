@@ -1,0 +1,29 @@
+type User @model @auth(rules: [{allow: owner, ownerField: "owner"},
+  {allow: private, operations: [read]}])
+{
+  email: String!
+  stripeCustomerId: String
+  subscriptionStatus: UserSubscriptionStatus
+  subscriptionId: String
+  subscriptionPriceId: String
+  subscriptionCurrentPeriodEnd: AWSDateTime
+}
+
+type Recording @model @auth(rules: [{allow: owner, ownerField: "owner"},
+  {allow: owner, ownerField: "userId"}])
+{
+  userId: String!
+  fileName: String!
+  s3Key: String!
+  duration: Int
+  fileSize: Int
+  progression: String
+  key: String
+}
+
+enum UserSubscriptionStatus {
+  active
+  cancelled
+  past_due
+  none
+}

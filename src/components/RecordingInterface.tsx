@@ -2,13 +2,13 @@
 
 import { useState, useRef } from 'react';
 import * as Tone from 'tone';
-// TODO: Uncomment after Amplify deployment
-// import { uploadData } from 'aws-amplify/storage';
-// import { generateClient } from 'aws-amplify/data';
-// import { getCurrentUser } from 'aws-amplify/auth';
-// import type { Schema } from '../../../amplify/data/resource';
+import { uploadData } from 'aws-amplify/storage';
+import { generateClient } from 'aws-amplify/data';
+import { getCurrentUser } from 'aws-amplify/auth';
+import type { Schema } from '../../amplify/data/resource';
+import { useAudioRecording } from '@/contexts/AudioRecordingContext';
 
-// const client = generateClient<Schema>();
+const client = generateClient<Schema>();
 
 interface RecordingInterfaceProps {
   isSubscribed: boolean;
@@ -16,28 +16,26 @@ interface RecordingInterfaceProps {
 }
 
 export default function RecordingInterface({ isSubscribed, onUpgrade }: RecordingInterfaceProps) {
+  const { destination, initializeRecording: initAudioContext } = useAudioRecording();
+  
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
   const [audioUrl, setAudioUrl] = useState<string>('');
   const [recordings, setRecordings] = useState<Array<{name: string, url: string, date: Date}>>([]);
   const [recordingInitialized, setRecordingInitialized] = useState(false);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const destinationRef = useRef<MediaStreamAudioDestinationNode | null>(null);
 
   // Initialize audio recording for browser audio capture
   const initializeRecording = async () => {
     try {
-      // Create Web Audio API context for recording
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      audioContextRef.current = audioContext;
+      // Initialize the shared audio context
+      await initAudioContext();
 
-      // Create destination for recording stream
-      const destination = audioContext.createMediaStreamDestination();
-      destinationRef.current = destination;
+      if (!destination) {
+        throw new Error('Audio destination not available');
+      }
 
       // Create MediaRecorder
       const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
@@ -122,14 +120,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
     }
   };
 
-  // TODO: Uncomment after Amplify deployment
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const saveToCloud = async (blob: Blob, name: string) => {
-    // TODO: Implement after Amplify backend is deployed
-    console.log('Cloud save not yet configured - Amplify backend required');
-    return false;
-    
-    /* Uncomment after Amplify deployment:
     try {
       const user = await getCurrentUser();
       const userId = user.userId;
@@ -138,7 +129,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
 
       // Upload to S3
       const uploadResult = await uploadData({
-        key: s3Key,
+        path: s3Key,
         data: blob,
         options: {
           contentType: 'audio/webm',
@@ -160,7 +151,6 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
       console.error('Error saving to cloud:', error);
       return false;
     }
-    */
   };
 
   const downloadRecording = (recording: {name: string, url: string}) => {
@@ -187,15 +177,6 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
       <h3 className="text-xl font-semibold mb-6 text-green-400 font-mono tracking-wider">
         RECORDING STUDIO
       </h3>
-
-      <div className="text-center py-6 mb-4 bg-blue-900/30 rounded-lg border border-blue-700">
-        <div className="text-blue-400 font-mono text-sm mb-2">
-          ℹ️ COMING SOON
-        </div>
-        <p className="text-gray-300 text-xs px-4">
-          Full recording with cloud save will be available after backend deployment. For now, use your device&apos;s screen recording feature.
-        </p>
-      </div>
 
       {!isSubscribed ? (
         <div className="text-center py-8">

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Instrument, KeySignature, ChordProgression } from '@/types/chords';
+import { useAudioRecording } from '@/contexts/AudioRecordingContext';
 
 interface MPCInterfaceProps {
   selectedKey: KeySignature;
@@ -30,6 +31,9 @@ export default function MPCInterface({
   // Subscription state - commented out until backend is deployed
   // const [isSubscribed] = useState(false);
   const [activeSounds, setActiveSounds] = useState<Record<string, HTMLAudioElement>>({}); // Track active playing sounds
+
+  // Recording context for capturing audio
+  const { connectAudioElement } = useAudioRecording();
 
   // Sound file mappings for chords (diatonic + chromatic)
   const getChordSoundPath = useCallback((chordName: string, soundType: SoundType): string | null => {
@@ -152,13 +156,22 @@ export default function MPCInterface({
       const audio = new Audio();
       audio.preload = 'auto';
       audio.src = path;
+      
+      // Connect to recording context if available
+      try {
+        connectAudioElement(audio);
+      } catch (error) {
+        // Recording not initialized yet, which is fine
+        console.log('Recording context not ready yet');
+      }
+      
       setChordAudios(prev => ({ ...prev, [chordName]: audio }));
       console.log('📦 Lazy loaded:', chordName);
       return audio;
     }
     
     return null;
-  }, [chordAudios, getChordSoundPath]);
+  }, [chordAudios, getChordSoundPath, connectAudioElement]);
 
   // Lazy load bass audio on first play
   const getOrCreateBassAudio = useCallback((note: string): HTMLAudioElement | null => {
@@ -173,13 +186,22 @@ export default function MPCInterface({
       const audio = new Audio();
       audio.preload = 'auto';
       audio.src = path;
+      
+      // Connect to recording context if available
+      try {
+        connectAudioElement(audio);
+      } catch (error) {
+        // Recording not initialized yet, which is fine
+        console.log('Recording context not ready yet');
+      }
+      
       setBassAudios(prev => ({ ...prev, [note]: audio }));
       console.log('📦 Lazy loaded bass:', note);
       return audio;
     }
     
     return null;
-  }, [bassAudios, getBassSoundPath]);
+  }, [bassAudios, getBassSoundPath, connectAudioElement]);
 
   // Auto-switch to Piano when chromatic is selected
   useEffect(() => {

@@ -22,7 +22,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/0f9717ae7b6eadc7216e1a0560b239a54f178172fee22b748e97502c8a297bd2.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/bbb1ad4418a35571b74e3f6086379d862457c9b9103a3b6f60e8507890cdab7e.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -63,6 +63,1764 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "region"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth/amplifyAuth/UserPool/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyAuthUserPool4BA7F805"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth/amplifyAuth/UserPoolAppClient/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyAuthUserPoolAppClient2626C6F8"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth/amplifyAuth/IdentityPool": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyAuthIdentityPool3FDE84CC"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth/amplifyAuth/authenticatedUserRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyAuthauthenticatedUserRoleD8DA3689"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth/amplifyAuth/unauthenticatedUserRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyAuthunauthenticatedUserRole2B524D9E"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth/amplifyAuth/IdentityPoolRoleAttachment": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyAuthIdentityPoolRoleAttachment045F17C8"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth/amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthUserPoolE107FEE2Ref": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthUserPoolE107FEE2Ref"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth/amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthUserPoolAppClient1AAC3484Ref": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthUserPoolAppClient1AAC3484Ref"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth/amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthIdentityPool2533F717Ref": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthIdentityPool2533F717Ref"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth/amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth/amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth.NestedStack/auth.NestedStackResource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "auth179371D7"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/userPoolId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "userPoolId"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/webClientId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "webClientId"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/identityPoolId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "identityPoolId"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/authRegion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "authRegion"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/allowUnauthenticatedIdentities": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "allowUnauthenticatedIdentities"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/signupAttributes": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "signupAttributes"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/usernameAttributes": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "usernameAttributes"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/verificationMechanisms": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "verificationMechanisms"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/passwordPolicyMinLength": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "passwordPolicyMinLength"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/passwordPolicyRequirements": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "passwordPolicyRequirements"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/mfaConfiguration": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "mfaConfiguration"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/mfaTypes": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "mfaTypes"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/socialProviders": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "socialProviders"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/oauthCognitoDomain": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "oauthCognitoDomain"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/oauthScope": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "oauthScope"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/oauthRedirectSignIn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "oauthRedirectSignIn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/oauthRedirectSignOut": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "oauthRedirectSignOut"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/oauthResponseType": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "oauthResponseType"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/oauthClientId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "oauthClientId"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/groups": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "groups"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/GraphQLAPI/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyDataGraphQLAPI42A6FA33"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/GraphQLAPI/TransformerSchema": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyDataGraphQLAPITransformerSchemaFF50A789"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/GraphQLAPI/NONE_DS": [
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "NONE_DS"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/GraphQLAPI/NONE_DS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyDataGraphQLAPINONEDS684BF699"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "NONE_DS"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyTableManager/AmplifyManagedTableIsCompleteRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AmplifyManagedTableIsCompleteRoleF825222C"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyTableManager/AmplifyManagedTableOnEventRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AmplifyManagedTableOnEventRoleB4E71DEA"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyTableManager/AmplifyManagedTableOnEventRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AmplifyManagedTableOnEventRoleDefaultPolicyF6DABCB6"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyTableManager/TableManagerCustomProvider/framework-onEvent/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TableManagerCustomProviderframeworkonEvent1DFC2ECC"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyTableManager/TableManagerCustomProvider/framework-isComplete/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TableManagerCustomProviderframeworkisComplete2E51021B"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyTableManager/AmplifyTableWaiterStateMachine/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AmplifyTableWaiterStateMachineRole470BE899"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyTableManager/AmplifyTableWaiterStateMachine/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AmplifyTableWaiterStateMachineRoleDefaultPolicy89F3836A"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyTableManager/AmplifyTableWaiterStateMachine/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AmplifyTableWaiterStateMachine060600BC"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyTableManager/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyTableManager/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyTableManager/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPI0B1635DDApiId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPI0B1635DDApiId"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyTableManager/amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataAmplifyTableManagerTableManagerCustomProviderframeworkonEvent0E4EB7C7Arn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataAmplifyTableManagerTableManagerCustomProviderframeworkonEvent0E4EB7C7Arn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyTableManager.NestedStack/AmplifyTableManager.NestedStackResource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyDataAmplifyTableManagerNestedStackAmplifyTableManagerNestedStackResource86290833"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/DynamoDBModelTableReadIOPS": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBModelTableReadIOPS"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/DynamoDBModelTableWriteIOPS": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBModelTableWriteIOPS"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/DynamoDBBillingMode": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBBillingMode"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/DynamoDBEnablePointInTimeRecovery": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBEnablePointInTimeRecovery"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/DynamoDBEnableServerSideEncryption": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBEnableServerSideEncryption"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/HasEnvironmentParameter": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HasEnvironmentParameter"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/ShouldUsePayPerRequestBilling": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ShouldUsePayPerRequestBilling"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/ShouldUsePointInTimeRecovery": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ShouldUsePointInTimeRecovery"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/UserTable": [
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "User"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/UserTable/Default/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserTable"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "User"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/CustomTableUserTable": [
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "User"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/GetAttUserTableStreamArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GetAttUserTableStreamArn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/GetAttUserTableName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GetAttUserTableName"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/UserIAMRole": [
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "UserIAMRole"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/UserIAMRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserIAMRole93CEE926"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "UserIAMRole"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/UserDataSource": [
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "UserTable"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/UserDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserDataSource"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "UserTable"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/QuerygetUserauth0Function/QuerygetUserauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QuerygetUserauth0FunctionQuerygetUserauth0FunctionAppSyncFunction9E6250B0"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "QuerygetUserauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/QuerygetUserpostAuth0Function/QuerygetUserpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QuerygetUserpostAuth0FunctionQuerygetUserpostAuth0FunctionAppSyncFunction2792AC60"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "QuerygetUserpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/QueryGetUserDataResolverFn/QueryGetUserDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QueryGetUserDataResolverFnQueryGetUserDataResolverFnAppSyncFunction36A3E4CF"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "QueryGetUserDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/queryGetUserResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GetUserResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Query.getUser"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/QuerylistUsersauth0Function/QuerylistUsersauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QuerylistUsersauth0FunctionQuerylistUsersauth0FunctionAppSyncFunctionA1FF61AB"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "QuerylistUsersauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/QuerylistUserspostAuth0Function/QuerylistUserspostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QuerylistUserspostAuth0FunctionQuerylistUserspostAuth0FunctionAppSyncFunction37C5583D"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "QuerylistUserspostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/QueryListUsersDataResolverFn/QueryListUsersDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QueryListUsersDataResolverFnQueryListUsersDataResolverFnAppSyncFunction83574EBA"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "QueryListUsersDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/queryListUsersResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListUserResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Query.listUsers"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/MutationcreateUserinit0Function/MutationcreateUserinit0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationcreateUserinit0FunctionMutationcreateUserinit0FunctionAppSyncFunctionEDF87EC6"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationcreateUserinit0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/MutationcreateUserauth0Function/MutationcreateUserauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationcreateUserauth0FunctionMutationcreateUserauth0FunctionAppSyncFunction30556A6C"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationcreateUserauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/MutationcreateUserpostAuth0Function/MutationcreateUserpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationcreateUserpostAuth0FunctionMutationcreateUserpostAuth0FunctionAppSyncFunction176E20CB"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationcreateUserpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/MutationCreateUserDataResolverFn/MutationCreateUserDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationCreateUserDataResolverFnMutationCreateUserDataResolverFnAppSyncFunction22E7974E"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationCreateUserDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/mutationCreateUserResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CreateUserResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Mutation.createUser"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/MutationupdateUserinit0Function/MutationupdateUserinit0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationupdateUserinit0FunctionMutationupdateUserinit0FunctionAppSyncFunctionC2E8A924"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationupdateUserinit0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/MutationupdateUserauth0Function/MutationupdateUserauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationupdateUserauth0FunctionMutationupdateUserauth0FunctionAppSyncFunctionDF95DA65"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationupdateUserauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/MutationupdateUserpostAuth0Function/MutationupdateUserpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationupdateUserpostAuth0FunctionMutationupdateUserpostAuth0FunctionAppSyncFunctionD4B80000"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationupdateUserpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/MutationUpdateUserDataResolverFn/MutationUpdateUserDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationUpdateUserDataResolverFnMutationUpdateUserDataResolverFnAppSyncFunction6ADF3910"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationUpdateUserDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/mutationUpdateUserResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UpdateUserResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Mutation.updateUser"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/MutationdeleteUserauth0Function/MutationdeleteUserauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationdeleteUserauth0FunctionMutationdeleteUserauth0FunctionAppSyncFunction9B900ACD"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationdeleteUserauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/MutationdeleteUserpostAuth0Function/MutationdeleteUserpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationdeleteUserpostAuth0FunctionMutationdeleteUserpostAuth0FunctionAppSyncFunction9B804910"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationdeleteUserpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/MutationDeleteUserDataResolverFn/MutationDeleteUserDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationDeleteUserDataResolverFnMutationDeleteUserDataResolverFnAppSyncFunction0B4F366A"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationDeleteUserDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/mutationDeleteUserResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeleteUserResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Mutation.deleteUser"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/SubscriptiononCreateUserauth0Function/SubscriptiononCreateUserauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononCreateUserauth0FunctionSubscriptiononCreateUserauth0FunctionAppSyncFunctionE9B4721A"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptiononCreateUserauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/SubscriptiononCreateUserpostAuth0Function/SubscriptiononCreateUserpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononCreateUserpostAuth0FunctionSubscriptiononCreateUserpostAuth0FunctionAppSyncFunction62AE12DA"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptiononCreateUserpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/SubscriptionOnCreateUserDataResolverFn/SubscriptionOnCreateUserDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptionOnCreateUserDataResolverFnSubscriptionOnCreateUserDataResolverFnAppSyncFunction23B2F1B9"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptionOnCreateUserDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/subscriptionOnCreateUserResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononCreateUserResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Subscription.onCreateUser"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/SubscriptiononUpdateUserauth0Function/SubscriptiononUpdateUserauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononUpdateUserauth0FunctionSubscriptiononUpdateUserauth0FunctionAppSyncFunction78530C9F"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptiononUpdateUserauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/SubscriptiononUpdateUserpostAuth0Function/SubscriptiononUpdateUserpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononUpdateUserpostAuth0FunctionSubscriptiononUpdateUserpostAuth0FunctionAppSyncFunctionF3EF85D1"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptiononUpdateUserpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/SubscriptionOnUpdateUserDataResolverFn/SubscriptionOnUpdateUserDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptionOnUpdateUserDataResolverFnSubscriptionOnUpdateUserDataResolverFnAppSyncFunction93FA5DF6"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptionOnUpdateUserDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/subscriptionOnUpdateUserResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononUpdateUserResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Subscription.onUpdateUser"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/SubscriptiononDeleteUserauth0Function/SubscriptiononDeleteUserauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononDeleteUserauth0FunctionSubscriptiononDeleteUserauth0FunctionAppSyncFunction0C5B7186"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptiononDeleteUserauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/SubscriptiononDeleteUserpostAuth0Function/SubscriptiononDeleteUserpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononDeleteUserpostAuth0FunctionSubscriptiononDeleteUserpostAuth0FunctionAppSyncFunction24A5E815"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptiononDeleteUserpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/SubscriptionOnDeleteUserDataResolverFn/SubscriptionOnDeleteUserDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptionOnDeleteUserDataResolverFnSubscriptionOnDeleteUserDataResolverFnAppSyncFunction2BEB0972"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptionOnDeleteUserDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/subscriptionOnDeleteUserResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononDeleteUserResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Subscription.onDeleteUser"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/UserOwnerDataResolverFn/UserOwnerDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserOwnerDataResolverFnUserOwnerDataResolverFnAppSyncFunction78EE3B72"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "UserOwnerDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/userOwnerResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UserownerResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "User.owner"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataAmplifyTableManagerNestedStackAmplifyTableManagerNestedStackResource20B43440Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataAmplifyTableManagerTableManagerCustomProviderframeworkonEvent0E4EB7C7Arn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataAmplifyTableManagerNestedStackAmplifyTableManagerNestedStackResource20B43440Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataAmplifyTABF2FEA8"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPI0B1635DDApiId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPI0B1635DDApiId"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPINONEDS1D70533BName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPINONEDS1D70533BName"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthIdentityPool2533F717Ref": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthIdentityPool2533F717Ref"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/User.NestedStack/User.NestedStackResource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyDataUserNestedStackUserNestedStackResource9488907F"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/DynamoDBModelTableReadIOPS": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBModelTableReadIOPS"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/DynamoDBModelTableWriteIOPS": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBModelTableWriteIOPS"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/DynamoDBBillingMode": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBBillingMode"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/DynamoDBEnablePointInTimeRecovery": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBEnablePointInTimeRecovery"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/DynamoDBEnableServerSideEncryption": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBEnableServerSideEncryption"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/HasEnvironmentParameter": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "HasEnvironmentParameter"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/ShouldUsePayPerRequestBilling": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ShouldUsePayPerRequestBilling"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/ShouldUsePointInTimeRecovery": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ShouldUsePointInTimeRecovery"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/RecordingTable": [
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Recording"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/RecordingTable/Default/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RecordingTable"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Recording"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/CustomTableRecordingTable": [
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Recording"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/GetAttRecordingTableStreamArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GetAttRecordingTableStreamArn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/GetAttRecordingTableName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GetAttRecordingTableName"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/RecordingIAMRole": [
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "RecordingIAMRole"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/RecordingIAMRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RecordingIAMRole7456464B"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "RecordingIAMRole"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/RecordingDataSource": [
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "RecordingTable"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/RecordingDataSource/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RecordingDataSource"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "RecordingTable"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/QuerygetRecordingauth0Function/QuerygetRecordingauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QuerygetRecordingauth0FunctionQuerygetRecordingauth0FunctionAppSyncFunction4F51F70F"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "QuerygetRecordingauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/QuerygetRecordingpostAuth0Function/QuerygetRecordingpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QuerygetRecordingpostAuth0FunctionQuerygetRecordingpostAuth0FunctionAppSyncFunctionF31161B8"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "QuerygetRecordingpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/QueryGetRecordingDataResolverFn/QueryGetRecordingDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QueryGetRecordingDataResolverFnQueryGetRecordingDataResolverFnAppSyncFunctionD908EFC0"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "QueryGetRecordingDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/queryGetRecordingResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "GetRecordingResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Query.getRecording"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/QuerylistRecordingsauth0Function/QuerylistRecordingsauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QuerylistRecordingsauth0FunctionQuerylistRecordingsauth0FunctionAppSyncFunctionBFD44B92"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "QuerylistRecordingsauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/QuerylistRecordingspostAuth0Function/QuerylistRecordingspostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QuerylistRecordingspostAuth0FunctionQuerylistRecordingspostAuth0FunctionAppSyncFunction514507F0"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "QuerylistRecordingspostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/QueryListRecordingsDataResolverFn/QueryListRecordingsDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QueryListRecordingsDataResolverFnQueryListRecordingsDataResolverFnAppSyncFunctionAFF06281"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "QueryListRecordingsDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/queryListRecordingsResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ListRecordingResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Query.listRecordings"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/MutationcreateRecordinginit0Function/MutationcreateRecordinginit0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationcreateRecordinginit0FunctionMutationcreateRecordinginit0FunctionAppSyncFunction72193154"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationcreateRecordinginit0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/MutationcreateRecordingauth0Function/MutationcreateRecordingauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationcreateRecordingauth0FunctionMutationcreateRecordingauth0FunctionAppSyncFunction8275D587"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationcreateRecordingauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/MutationcreateRecordingpostAuth0Function/MutationcreateRecordingpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationcreateRecordingpostAuth0FunctionMutationcreateRecordingpostAuth0FunctionAppSyncFunction07FAA12E"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationcreateRecordingpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/MutationCreateRecordingDataResolverFn/MutationCreateRecordingDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationCreateRecordingDataResolverFnMutationCreateRecordingDataResolverFnAppSyncFunction21CBC23E"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationCreateRecordingDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/mutationCreateRecordingResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CreateRecordingResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Mutation.createRecording"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/MutationupdateRecordinginit0Function/MutationupdateRecordinginit0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationupdateRecordinginit0FunctionMutationupdateRecordinginit0FunctionAppSyncFunctionC1FB1740"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationupdateRecordinginit0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/MutationupdateRecordingauth0Function/MutationupdateRecordingauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationupdateRecordingauth0FunctionMutationupdateRecordingauth0FunctionAppSyncFunction4227468A"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationupdateRecordingauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/MutationupdateRecordingpostAuth0Function/MutationupdateRecordingpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationupdateRecordingpostAuth0FunctionMutationupdateRecordingpostAuth0FunctionAppSyncFunctionAB37B145"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationupdateRecordingpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/MutationUpdateRecordingDataResolverFn/MutationUpdateRecordingDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationUpdateRecordingDataResolverFnMutationUpdateRecordingDataResolverFnAppSyncFunctionFBFB9009"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationUpdateRecordingDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/mutationUpdateRecordingResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "UpdateRecordingResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Mutation.updateRecording"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/MutationdeleteRecordingauth0Function/MutationdeleteRecordingauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationdeleteRecordingauth0FunctionMutationdeleteRecordingauth0FunctionAppSyncFunction6FA22FFF"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationdeleteRecordingauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/MutationdeleteRecordingpostAuth0Function/MutationdeleteRecordingpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationdeleteRecordingpostAuth0FunctionMutationdeleteRecordingpostAuth0FunctionAppSyncFunction68847E54"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationdeleteRecordingpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/MutationDeleteRecordingDataResolverFn/MutationDeleteRecordingDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MutationDeleteRecordingDataResolverFnMutationDeleteRecordingDataResolverFnAppSyncFunction5F015872"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "MutationDeleteRecordingDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/mutationDeleteRecordingResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DeleteRecordingResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Mutation.deleteRecording"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/SubscriptiononCreateRecordingauth0Function/SubscriptiononCreateRecordingauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononCreateRecordingauth0FunctionSubscriptiononCreateRecordingauth0FunctionAppSyncFunctionB2DABE33"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptiononCreateRecordingauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/SubscriptiononCreateRecordingpostAuth0Function/SubscriptiononCreateRecordingpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononCreateRecordingpostAuth0FunctionSubscriptiononCreateRecordingpostAuth0FunctionAppSyncFunction724DBB0D"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptiononCreateRecordingpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/SubscriptionOnCreateRecordingDataResolverFn/SubscriptionOnCreateRecordingDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptionOnCreateRecordingDataResolverFnSubscriptionOnCreateRecordingDataResolverFnAppSyncFunction44D12EB9"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptionOnCreateRecordingDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/subscriptionOnCreateRecordingResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononCreateRecordingResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Subscription.onCreateRecording"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/SubscriptiononUpdateRecordingauth0Function/SubscriptiononUpdateRecordingauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononUpdateRecordingauth0FunctionSubscriptiononUpdateRecordingauth0FunctionAppSyncFunction69387217"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptiononUpdateRecordingauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/SubscriptiononUpdateRecordingpostAuth0Function/SubscriptiononUpdateRecordingpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononUpdateRecordingpostAuth0FunctionSubscriptiononUpdateRecordingpostAuth0FunctionAppSyncFunction3F1B0A17"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptiononUpdateRecordingpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/SubscriptionOnUpdateRecordingDataResolverFn/SubscriptionOnUpdateRecordingDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptionOnUpdateRecordingDataResolverFnSubscriptionOnUpdateRecordingDataResolverFnAppSyncFunction1C383F89"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptionOnUpdateRecordingDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/subscriptionOnUpdateRecordingResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononUpdateRecordingResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Subscription.onUpdateRecording"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/SubscriptiononDeleteRecordingauth0Function/SubscriptiononDeleteRecordingauth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononDeleteRecordingauth0FunctionSubscriptiononDeleteRecordingauth0FunctionAppSyncFunction33B66EC0"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptiononDeleteRecordingauth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/SubscriptiononDeleteRecordingpostAuth0Function/SubscriptiononDeleteRecordingpostAuth0Function.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononDeleteRecordingpostAuth0FunctionSubscriptiononDeleteRecordingpostAuth0FunctionAppSyncFunctionAD0EA684"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptiononDeleteRecordingpostAuth0Function"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/SubscriptionOnDeleteRecordingDataResolverFn/SubscriptionOnDeleteRecordingDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptionOnDeleteRecordingDataResolverFnSubscriptionOnDeleteRecordingDataResolverFnAppSyncFunction53E0C862"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "SubscriptionOnDeleteRecordingDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/subscriptionOnDeleteRecordingResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SubscriptiononDeleteRecordingResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Subscription.onDeleteRecording"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/RecordingOwnerDataResolverFn/RecordingOwnerDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RecordingOwnerDataResolverFnRecordingOwnerDataResolverFnAppSyncFunction239AA87B"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "RecordingOwnerDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/recordingOwnerResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RecordingownerResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Recording.owner"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/RecordingUserIdDataResolverFn/RecordingUserIdDataResolverFn.AppSyncFunction": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RecordingUserIdDataResolverFnRecordingUserIdDataResolverFnAppSyncFunction16B5926B"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "RecordingUserIdDataResolverFn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/recordingUserIdResolver": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "RecordinguserIdResolver"
+          },
+          {
+            "type": "graphqltransformer:resourceName",
+            "data": "Recording.userId"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataAmplifyTableManagerNestedStackAmplifyTableManagerNestedStackResource20B43440Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataAmplifyTableManagerTableManagerCustomProviderframeworkonEvent0E4EB7C7Arn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataAmplifyTableManagerNestedStackAmplifyTableManagerNestedStackResource20B43440Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataAmplifyTABF2FEA8"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPI0B1635DDApiId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPI0B1635DDApiId"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPINONEDS1D70533BName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPINONEDS1D70533BName"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthIdentityPool2533F717Ref": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthIdentityPool2533F717Ref"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/Recording.NestedStack/Recording.NestedStackResource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyDataRecordingNestedStackRecordingNestedStackResource85A12093"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyCodegenAssets/AmplifyCodegenAssetsBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyDataAmplifyCodegenAssetsAmplifyCodegenAssetsBucket9CCB4ACA"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyCodegenAssets/AmplifyCodegenAssetsBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyDataAmplifyCodegenAssetsAmplifyCodegenAssetsBucketPolicyF1C1C548"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyCodegenAssets/AmplifyCodegenAssetsBucket/AutoDeleteObjectsCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyDataAmplifyCodegenAssetsAmplifyCodegenAssetsBucketAutoDeleteObjectsCustomResource437F26F5"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyCodegenAssets/AmplifyCodegenAssetsDeployment/AwsCliLayer/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyDataAmplifyCodegenAssetsAmplifyCodegenAssetsDeploymentAwsCliLayerE322F905"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifyData/AmplifyCodegenAssets/AmplifyCodegenAssetsDeployment/CustomResource-1536MiB/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyDataAmplifyCodegenAssetsAmplifyCodegenAssetsDeploymentCustomResource1536MiB21775929"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/DynamoDBModelTableReadIOPS": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBModelTableReadIOPS"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/DynamoDBModelTableWriteIOPS": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBModelTableWriteIOPS"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/DynamoDBBillingMode": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBBillingMode"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/DynamoDBEnablePointInTimeRecovery": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBEnablePointInTimeRecovery"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/DynamoDBEnableServerSideEncryption": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DynamoDBEnableServerSideEncryption"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/LatestNodeRuntimeMap": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LatestNodeRuntimeMap"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/Custom::S3AutoDeleteObjectsCustomResourceProvider": [
+          {
+            "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+            "data": true
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1536MiB": [
+          {
+            "type": "aws:cdk:is-custom-resource-handler-singleton",
+            "data": true
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+            "data": 2
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-singleton",
+            "data": true
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+            "data": 2
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1536MiB/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1536MiBServiceRoleA41FC8C2"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1536MiB/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1536MiBServiceRoleDefaultPolicyFF1C635B"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1536MiB/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1536MiBC5D8AB21"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/modelIntrospectionSchemaBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "modelIntrospectionSchemaBucketF566B665"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/modelIntrospectionSchemaBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "modelIntrospectionSchemaBucketPolicy4DAB0D15"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/modelIntrospectionSchemaBucket/AutoDeleteObjectsCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "modelIntrospectionSchemaBucketAutoDeleteObjectsCustomResourceFE57309F"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/modelIntrospectionSchemaBucketDeployment/AwsCliLayer/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "modelIntrospectionSchemaBucketDeploymentAwsCliLayer13C432F7"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/modelIntrospectionSchemaBucketDeployment/CustomResource-1536MiB/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "modelIntrospectionSchemaBucketDeploymentCustomResource1536MiB104B97EC"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/AMPLIFY_DATA_GRAPHQL_ENDPOINTParameter/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AMPLIFYDATAGRAPHQLENDPOINTParameter1C2CBB16"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/AMPLIFY_DATA_MODEL_INTROSPECTION_SCHEMA_BUCKET_NAMEParameter/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AMPLIFYDATAMODELINTROSPECTIONSCHEMABUCKETNAMEParameter47BF4F44"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/AMPLIFY_DATA_MODEL_INTROSPECTION_SCHEMA_KEYParameter/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AMPLIFYDATAMODELINTROSPECTIONSCHEMAKEYParameterB6AEAE8A"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/AMPLIFY_DATA_DEFAULT_NAMEParameter/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AMPLIFYDATADEFAULTNAMEParameterE7C23CC4"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthUserPoolE107FEE2Ref": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthUserPoolE107FEE2Ref"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthIdentityPool2533F717Ref": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthIdentityPool2533F717Ref"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPI0B1635DDApiId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPI0B1635DDApiId"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPI0B1635DDGraphQLUrl": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPI0B1635DDGraphQLUrl"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data/amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataAmplifyCodegenAssetsAmplifyCodegenAssetsDeploymentCustomResource1536MiBD38F0A0CDestinationBucketArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataAmplifyCodegenAssetsAmplifyCodegenAssetsDeploymentCustomResource1536MiBD38F0A0CDestinationBucketArn"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data.NestedStack/data.NestedStackResource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "data7552DF31"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/awsAppsyncApiId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "awsAppsyncApiId"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/awsAppsyncApiEndpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "awsAppsyncApiEndpoint"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/awsAppsyncAuthenticationType": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "awsAppsyncAuthenticationType"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/awsAppsyncRegion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "awsAppsyncRegion"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/amplifyApiModelSchemaS3Uri": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifyApiModelSchemaS3Uri"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/awsAppsyncAdditionalAuthenticationTypes": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "awsAppsyncAdditionalAuthenticationTypes"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/mpcStudioRecordings/Bucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "mpcStudioRecordingsBucketEF65B0BD"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/mpcStudioRecordings/Bucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "mpcStudioRecordingsBucketPolicyF69BFED1"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/mpcStudioRecordings/Bucket/AutoDeleteObjectsCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "mpcStudioRecordingsBucketAutoDeleteObjectsCustomResourceABC29327"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/LatestNodeRuntimeMap": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "LatestNodeRuntimeMap"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/Custom::S3AutoDeleteObjectsCustomResourceProvider": [
+          {
+            "type": "aws:cdk:is-custom-resource-handler-customResourceProvider",
+            "data": true
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/MPC_STUDIO_RECORDINGS_BUCKET_NAMEParameter/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MPCSTUDIORECORDINGSBUCKETNAMEParameter10163845"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4--storageAccess4/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4storageAccess4A5769826"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/amplifychordprogressionappdannywilsonsandboxa4becdf3f4storagempcStudioRecordingsBucketB0734286Ref": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4storagempcStudioRecordingsBucketB0734286Ref"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage.NestedStack/storage.NestedStackResource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "storage0EC3F24A"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storageRegion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "storageRegion"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/bucketName": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "bucketName"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/buckets": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "buckets"
           }
         ],
         "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/CDKMetadata/Default": [

@@ -7,6 +7,50 @@
     "deploymentType",
     "region"
    ]
+  },
+  "AWS::Amplify::Auth": {
+   "version": "1",
+   "stackOutputs": [
+    "userPoolId",
+    "webClientId",
+    "identityPoolId",
+    "authRegion",
+    "allowUnauthenticatedIdentities",
+    "signupAttributes",
+    "usernameAttributes",
+    "verificationMechanisms",
+    "passwordPolicyMinLength",
+    "passwordPolicyRequirements",
+    "mfaConfiguration",
+    "mfaTypes",
+    "socialProviders",
+    "oauthCognitoDomain",
+    "oauthScope",
+    "oauthRedirectSignIn",
+    "oauthRedirectSignOut",
+    "oauthResponseType",
+    "oauthClientId",
+    "groups"
+   ]
+  },
+  "AWS::Amplify::GraphQL": {
+   "version": "1",
+   "stackOutputs": [
+    "awsAppsyncApiId",
+    "awsAppsyncApiEndpoint",
+    "awsAppsyncAuthenticationType",
+    "awsAppsyncRegion",
+    "amplifyApiModelSchemaS3Uri",
+    "awsAppsyncAdditionalAuthenticationTypes"
+   ]
+  },
+  "AWS::Amplify::Storage": {
+   "version": "1",
+   "stackOutputs": [
+    "buckets",
+    "storageRegion",
+    "bucketName"
+   ]
   }
  },
  "Outputs": {
@@ -17,13 +61,353 @@
    "Value": {
     "Ref": "AWS::Region"
    }
+  },
+  "userPoolId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "auth179371D7",
+     "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthUserPoolE107FEE2Ref"
+    ]
+   }
+  },
+  "webClientId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "auth179371D7",
+     "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthUserPoolAppClient1AAC3484Ref"
+    ]
+   }
+  },
+  "identityPoolId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "auth179371D7",
+     "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthIdentityPool2533F717Ref"
+    ]
+   }
+  },
+  "authRegion": {
+   "Value": {
+    "Ref": "AWS::Region"
+   }
+  },
+  "allowUnauthenticatedIdentities": {
+   "Value": "true"
+  },
+  "signupAttributes": {
+   "Value": "[\"email\"]"
+  },
+  "usernameAttributes": {
+   "Value": "[\"email\"]"
+  },
+  "verificationMechanisms": {
+   "Value": "[\"email\"]"
+  },
+  "passwordPolicyMinLength": {
+   "Value": "8"
+  },
+  "passwordPolicyRequirements": {
+   "Value": "[\"REQUIRES_NUMBERS\",\"REQUIRES_LOWERCASE\",\"REQUIRES_UPPERCASE\",\"REQUIRES_SYMBOLS\"]"
+  },
+  "mfaConfiguration": {
+   "Value": "OFF"
+  },
+  "mfaTypes": {
+   "Value": "[]"
+  },
+  "socialProviders": {
+   "Value": ""
+  },
+  "oauthCognitoDomain": {
+   "Value": ""
+  },
+  "oauthScope": {
+   "Value": "[\"profile\",\"phone\",\"email\",\"openid\",\"aws.cognito.signin.user.admin\"]"
+  },
+  "oauthRedirectSignIn": {
+   "Value": "https://example.com"
+  },
+  "oauthRedirectSignOut": {
+   "Value": ""
+  },
+  "oauthResponseType": {
+   "Value": "code"
+  },
+  "oauthClientId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "auth179371D7",
+     "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthUserPoolAppClient1AAC3484Ref"
+    ]
+   }
+  },
+  "groups": {
+   "Value": "[]"
+  },
+  "awsAppsyncApiId": {
+   "Value": {
+    "Fn::GetAtt": [
+     "data7552DF31",
+     "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPI0B1635DDApiId"
+    ]
+   }
+  },
+  "awsAppsyncApiEndpoint": {
+   "Value": {
+    "Fn::GetAtt": [
+     "data7552DF31",
+     "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataGraphQLAPI0B1635DDGraphQLUrl"
+    ]
+   }
+  },
+  "awsAppsyncAuthenticationType": {
+   "Value": "AMAZON_COGNITO_USER_POOLS"
+  },
+  "awsAppsyncRegion": {
+   "Value": {
+    "Ref": "AWS::Region"
+   }
+  },
+  "amplifyApiModelSchemaS3Uri": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "s3://",
+      {
+       "Fn::Select": [
+        0,
+        {
+         "Fn::Split": [
+          "/",
+          {
+           "Fn::Select": [
+            5,
+            {
+             "Fn::Split": [
+              ":",
+              {
+               "Fn::GetAtt": [
+                "data7552DF31",
+                "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4dataamplifyDataAmplifyCodegenAssetsAmplifyCodegenAssetsDeploymentCustomResource1536MiBD38F0A0CDestinationBucketArn"
+               ]
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      "/model-schema.graphql"
+     ]
+    ]
+   }
+  },
+  "awsAppsyncAdditionalAuthenticationTypes": {
+   "Value": "AWS_IAM"
+  },
+  "storageRegion": {
+   "Value": {
+    "Ref": "AWS::Region"
+   }
+  },
+  "bucketName": {
+   "Value": {
+    "Fn::GetAtt": [
+     "storage0EC3F24A",
+     "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4storagempcStudioRecordingsBucketB0734286Ref"
+    ]
+   }
+  },
+  "buckets": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "[\"{\\\"name\\\":\\\"mpcStudioRecordings\\\",\\\"bucketName\\\":\\\"",
+      {
+       "Fn::GetAtt": [
+        "storage0EC3F24A",
+        "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4storagempcStudioRecordingsBucketB0734286Ref"
+       ]
+      },
+      "\\\",\\\"storageRegion\\\":\\\"",
+      {
+       "Ref": "AWS::Region"
+      },
+      "\\\",\\\"paths\\\":{\\\"recordings/${cognito-identity.amazonaws.com:sub}/*\\\":{\\\"entityidentity\\\":[\\\"get\\\",\\\"list\\\",\\\"write\\\",\\\"delete\\\"]}}}\"]"
+     ]
+    ]
+   }
   }
  },
  "Resources": {
+  "auth179371D7": {
+   "Type": "AWS::CloudFormation::Stack",
+   "Properties": {
+    "Tags": [
+     {
+      "Key": "amplify:deployment-type",
+      "Value": "sandbox"
+     },
+     {
+      "Key": "created-by",
+      "Value": "amplify"
+     }
+    ],
+    "TemplateURL": {
+     "Fn::Join": [
+      "",
+      [
+       "https://s3.",
+       {
+        "Ref": "AWS::Region"
+       },
+       ".",
+       {
+        "Ref": "AWS::URLSuffix"
+       },
+       "/",
+       {
+        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+       },
+       "/47b6d28340216f46fa1fb37b12d28a2f5758d917f5472a8faa244d174d8ec9d6.json"
+      ]
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/auth.NestedStack/auth.NestedStackResource",
+    "aws:asset:path": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4authD6F83388.nested.template.json",
+    "aws:asset:property": "TemplateURL"
+   }
+  },
+  "data7552DF31": {
+   "Type": "AWS::CloudFormation::Stack",
+   "Properties": {
+    "Parameters": {
+     "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthUserPoolE107FEE2Ref": {
+      "Fn::GetAtt": [
+       "auth179371D7",
+       "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthUserPoolE107FEE2Ref"
+      ]
+     },
+     "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef": {
+      "Fn::GetAtt": [
+       "auth179371D7",
+       "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef"
+      ]
+     },
+     "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef": {
+      "Fn::GetAtt": [
+       "auth179371D7",
+       "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef"
+      ]
+     },
+     "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthIdentityPool2533F717Ref": {
+      "Fn::GetAtt": [
+       "auth179371D7",
+       "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthIdentityPool2533F717Ref"
+      ]
+     }
+    },
+    "Tags": [
+     {
+      "Key": "amplify:deployment-type",
+      "Value": "sandbox"
+     },
+     {
+      "Key": "created-by",
+      "Value": "amplify"
+     }
+    ],
+    "TemplateURL": {
+     "Fn::Join": [
+      "",
+      [
+       "https://s3.",
+       {
+        "Ref": "AWS::Region"
+       },
+       ".",
+       {
+        "Ref": "AWS::URLSuffix"
+       },
+       "/",
+       {
+        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+       },
+       "/1a25224a3260205cd83fbea0256124c5c92c9ecdac802c9e3b9914c98f103a8a.json"
+      ]
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/data.NestedStack/data.NestedStackResource",
+    "aws:asset:path": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4data7CDA02E1.nested.template.json",
+    "aws:asset:property": "TemplateURL"
+   }
+  },
+  "storage0EC3F24A": {
+   "Type": "AWS::CloudFormation::Stack",
+   "Properties": {
+    "Parameters": {
+     "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef": {
+      "Fn::GetAtt": [
+       "auth179371D7",
+       "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef"
+      ]
+     }
+    },
+    "Tags": [
+     {
+      "Key": "amplify:deployment-type",
+      "Value": "sandbox"
+     },
+     {
+      "Key": "created-by",
+      "Value": "amplify"
+     }
+    ],
+    "TemplateURL": {
+     "Fn::Join": [
+      "",
+      [
+       "https://s3.",
+       {
+        "Ref": "AWS::Region"
+       },
+       ".",
+       {
+        "Ref": "AWS::URLSuffix"
+       },
+       "/",
+       {
+        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+       },
+       "/0244e4f1654694cceca7b6b44e5476228667bfadf9c0987aa0dd88cb4630d1d2.json"
+      ]
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage.NestedStack/storage.NestedStackResource",
+    "aws:asset:path": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4storageF87DC32A.nested.template.json",
+    "aws:asset:property": "TemplateURL"
+   }
+  },
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzK01DNQTCwv1k1OydbNyUzSqw4uSUzO1nFOy/MvLSkoLanVyctPSdXLKtYvMzLSMzTXM1TMKs7M1C0qzSvJzE3VC4LQADtmDC1LAAAA"
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zPSMzK01DNQTCwv1k1OydbNyUzSqw4uSUzO1nFOy/MvLSkoLQGxwEK1Onn5Kal6WcX6ZUZGeobmeoaKWcWZmbpFpXklmbmpekEQGgDRKCjJVAAAAA=="
    },
    "Metadata": {
     "aws:cdk:path": "amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/CDKMetadata/Default"

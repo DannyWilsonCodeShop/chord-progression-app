@@ -1,0 +1,373 @@
+type User @aws_iam @aws_cognito_user_pools {
+  email: String!
+  stripeCustomerId: String
+  subscriptionStatus: UserSubscriptionStatus
+  subscriptionId: String
+  subscriptionPriceId: String
+  subscriptionCurrentPeriodEnd: AWSDateTime
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  owner: String
+}
+
+type Recording @aws_iam @aws_cognito_user_pools {
+  userId: String!
+  fileName: String!
+  s3Key: String!
+  duration: Int
+  fileSize: Int
+  progression: String
+  key: String
+  id: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  owner: String
+}
+
+enum UserSubscriptionStatus {
+  active
+  cancelled
+  past_due
+  none
+}
+
+input AmplifyAIConversationTurnErrorInput {
+  errorType: String!
+  message: String!
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelSubscriptionStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  in: [String]
+  notIn: [String]
+}
+
+input ModelSubscriptionIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  in: [Int]
+  notIn: [Int]
+}
+
+input ModelSubscriptionFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  in: [Float]
+  notIn: [Float]
+}
+
+input ModelSubscriptionBooleanInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelSubscriptionIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  in: [ID]
+  notIn: [ID]
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelUserConnection @aws_iam @aws_cognito_user_pools {
+  items: [User]!
+  nextToken: String
+}
+
+input ModelUserSubscriptionStatusInput {
+  eq: UserSubscriptionStatus
+  ne: UserSubscriptionStatus
+}
+
+input ModelUserFilterInput {
+  email: ModelStringInput
+  stripeCustomerId: ModelStringInput
+  subscriptionStatus: ModelUserSubscriptionStatusInput
+  subscriptionId: ModelStringInput
+  subscriptionPriceId: ModelStringInput
+  subscriptionCurrentPeriodEnd: ModelStringInput
+  id: ModelIDInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelUserFilterInput]
+  or: [ModelUserFilterInput]
+  not: ModelUserFilterInput
+  owner: ModelStringInput
+}
+
+type Query {
+  getUser(id: ID!): User @aws_iam @aws_cognito_user_pools
+  listUsers(filter: ModelUserFilterInput, limit: Int, nextToken: String): ModelUserConnection @aws_iam @aws_cognito_user_pools
+  getRecording(id: ID!): Recording @aws_iam @aws_cognito_user_pools
+  listRecordings(filter: ModelRecordingFilterInput, limit: Int, nextToken: String): ModelRecordingConnection @aws_iam @aws_cognito_user_pools
+}
+
+input ModelUserConditionInput {
+  email: ModelStringInput
+  stripeCustomerId: ModelStringInput
+  subscriptionStatus: ModelUserSubscriptionStatusInput
+  subscriptionId: ModelStringInput
+  subscriptionPriceId: ModelStringInput
+  subscriptionCurrentPeriodEnd: ModelStringInput
+  and: [ModelUserConditionInput]
+  or: [ModelUserConditionInput]
+  not: ModelUserConditionInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  owner: ModelStringInput
+}
+
+input CreateUserInput {
+  email: String!
+  stripeCustomerId: String
+  subscriptionStatus: UserSubscriptionStatus
+  subscriptionId: String
+  subscriptionPriceId: String
+  subscriptionCurrentPeriodEnd: AWSDateTime
+  id: ID
+}
+
+input UpdateUserInput {
+  email: String
+  stripeCustomerId: String
+  subscriptionStatus: UserSubscriptionStatus
+  subscriptionId: String
+  subscriptionPriceId: String
+  subscriptionCurrentPeriodEnd: AWSDateTime
+  id: ID!
+}
+
+input DeleteUserInput {
+  id: ID!
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!, condition: ModelUserConditionInput): User @aws_iam @aws_cognito_user_pools
+  updateUser(input: UpdateUserInput!, condition: ModelUserConditionInput): User @aws_iam @aws_cognito_user_pools
+  deleteUser(input: DeleteUserInput!, condition: ModelUserConditionInput): User @aws_iam @aws_cognito_user_pools
+  createRecording(input: CreateRecordingInput!, condition: ModelRecordingConditionInput): Recording @aws_iam @aws_cognito_user_pools
+  updateRecording(input: UpdateRecordingInput!, condition: ModelRecordingConditionInput): Recording @aws_iam @aws_cognito_user_pools
+  deleteRecording(input: DeleteRecordingInput!, condition: ModelRecordingConditionInput): Recording @aws_iam @aws_cognito_user_pools
+}
+
+input ModelSubscriptionUserFilterInput {
+  email: ModelSubscriptionStringInput
+  stripeCustomerId: ModelSubscriptionStringInput
+  subscriptionStatus: ModelSubscriptionStringInput
+  subscriptionId: ModelSubscriptionStringInput
+  subscriptionPriceId: ModelSubscriptionStringInput
+  subscriptionCurrentPeriodEnd: ModelSubscriptionStringInput
+  id: ModelSubscriptionIDInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionUserFilterInput]
+  or: [ModelSubscriptionUserFilterInput]
+  owner: ModelStringInput
+}
+
+type Subscription {
+  onCreateUser(filter: ModelSubscriptionUserFilterInput, owner: String): User @aws_subscribe(mutations: ["createUser"]) @aws_iam @aws_cognito_user_pools
+  onUpdateUser(filter: ModelSubscriptionUserFilterInput, owner: String): User @aws_subscribe(mutations: ["updateUser"]) @aws_iam @aws_cognito_user_pools
+  onDeleteUser(filter: ModelSubscriptionUserFilterInput, owner: String): User @aws_subscribe(mutations: ["deleteUser"]) @aws_iam @aws_cognito_user_pools
+  onCreateRecording(filter: ModelSubscriptionRecordingFilterInput, owner: String, userId: String): Recording @aws_subscribe(mutations: ["createRecording"]) @aws_iam @aws_cognito_user_pools
+  onUpdateRecording(filter: ModelSubscriptionRecordingFilterInput, owner: String, userId: String): Recording @aws_subscribe(mutations: ["updateRecording"]) @aws_iam @aws_cognito_user_pools
+  onDeleteRecording(filter: ModelSubscriptionRecordingFilterInput, owner: String, userId: String): Recording @aws_subscribe(mutations: ["deleteRecording"]) @aws_iam @aws_cognito_user_pools
+}
+
+type ModelRecordingConnection @aws_iam @aws_cognito_user_pools {
+  items: [Recording]!
+  nextToken: String
+}
+
+input ModelRecordingFilterInput {
+  userId: ModelStringInput
+  fileName: ModelStringInput
+  s3Key: ModelStringInput
+  duration: ModelIntInput
+  fileSize: ModelIntInput
+  progression: ModelStringInput
+  key: ModelStringInput
+  id: ModelIDInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelRecordingFilterInput]
+  or: [ModelRecordingFilterInput]
+  not: ModelRecordingFilterInput
+  owner: ModelStringInput
+}
+
+input ModelRecordingConditionInput {
+  userId: ModelStringInput
+  fileName: ModelStringInput
+  s3Key: ModelStringInput
+  duration: ModelIntInput
+  fileSize: ModelIntInput
+  progression: ModelStringInput
+  key: ModelStringInput
+  and: [ModelRecordingConditionInput]
+  or: [ModelRecordingConditionInput]
+  not: ModelRecordingConditionInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  owner: ModelStringInput
+}
+
+input CreateRecordingInput {
+  userId: String!
+  fileName: String!
+  s3Key: String!
+  duration: Int
+  fileSize: Int
+  progression: String
+  key: String
+  id: ID
+}
+
+input UpdateRecordingInput {
+  userId: String
+  fileName: String
+  s3Key: String
+  duration: Int
+  fileSize: Int
+  progression: String
+  key: String
+  id: ID!
+}
+
+input DeleteRecordingInput {
+  id: ID!
+}
+
+input ModelSubscriptionRecordingFilterInput {
+  fileName: ModelSubscriptionStringInput
+  s3Key: ModelSubscriptionStringInput
+  duration: ModelSubscriptionIntInput
+  fileSize: ModelSubscriptionIntInput
+  progression: ModelSubscriptionStringInput
+  key: ModelSubscriptionStringInput
+  id: ModelSubscriptionIDInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionRecordingFilterInput]
+  or: [ModelSubscriptionRecordingFilterInput]
+  owner: ModelStringInput
+  userId: ModelStringInput
+}

@@ -1,21 +1,13 @@
-// TODO: Uncomment after Amplify backend deployment
-// This component provides authentication UI
-// Requires amplify_outputs.json to be generated first
-
 'use client';
 
-// import { Authenticator } from '@aws-amplify/ui-react';
-// import '@aws-amplify/ui-react/styles.css';
-// import { Amplify } from 'aws-amplify';
-// import outputs from '../amplifyconfiguration.json';
+import { Authenticator } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
+import { Amplify } from 'aws-amplify';
+import outputs from '../../amplify_outputs.json';
 
-// Amplify.configure(outputs);
+Amplify.configure(outputs);
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-  // Temporary: Return children without auth wrapper
-  return <>{children}</>;
-  
-  /* Uncomment after Amplify deployment:
   return (
     <Authenticator
       formFields={{
@@ -49,9 +41,26 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         },
       }}
     >
-      {children}
+      {({ signOut, user }) => (
+        <div>
+          {user && (
+            <div className="bg-gray-800 p-4 border-b border-gray-700">
+              <div className="max-w-7xl mx-auto flex justify-between items-center">
+                <span className="text-green-400 font-mono text-sm">
+                  ✅ Signed in as: {user.signInDetails?.loginId}
+                </span>
+                <button
+                  onClick={signOut}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-mono text-sm transition-colors"
+                >
+                  SIGN OUT
+                </button>
+              </div>
+            </div>
+          )}
+          {children}
+        </div>
+      )}
     </Authenticator>
   );
-  */
 }
-
