@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateClient } from 'aws-amplify/data';
-import { getCurrentUser } from 'aws-amplify/auth';
+import { cookieBasedClient } from 'aws-amplify/adapter-nextjs/data';
+import { getCurrentUser } from 'aws-amplify/adapter-nextjs/auth';
 import type { Schema } from '../../../../amplify/data/resource';
-
-const client = generateClient<Schema>();
+import outputs from '../../../../amplify_outputs.json';
 
 // Valid promo codes (you can add more or move to environment variables)
 const VALID_PROMO_CODES: Record<string, { description: string; duration: string }> = {
@@ -37,13 +36,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid promo code' }, { status: 400 });
     }
 
-    // Get current user
-    const user = await getCurrentUser();
-    const userEmail = user.signInDetails?.loginId;
+    // Get current user from cookies
+    const user = await getCurrentUser({ request });
+    const userEmail = user?.signInDetails?.loginId;
 
     if (!userEmail) {
       return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
     }
+
+    // Create cookie-based client for this request
+    const client = cookieBasedClient<Schema>({ config: outputs, request });
 
     // Check if user exists in database
     const { data: users } = await client.models.User.list({

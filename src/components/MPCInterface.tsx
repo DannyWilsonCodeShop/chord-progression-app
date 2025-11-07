@@ -433,6 +433,12 @@ export default function MPCInterface({
   // Handle keyboard events for both chords and bass
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Ignore keyboard shortcuts when typing in input fields or textareas
+      const target = event.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+        return;
+      }
+
       const key = event.key.toLowerCase();
       
       // Priority logic: Bass mode gets overlapping keys (s, d, g, h, j)
@@ -463,6 +469,12 @@ export default function MPCInterface({
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
+      // Ignore keyboard shortcuts when typing in input fields or textareas
+      const target = event.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+        return;
+      }
+
       const key = event.key.toLowerCase();
       
       // Stop bass sounds
