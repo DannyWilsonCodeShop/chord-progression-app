@@ -8,8 +8,6 @@ interface AudioRecordingContextType {
   isRecordingActive: boolean;
   initializeRecording: () => Promise<void>;
   connectAudioElement: (audio: HTMLAudioElement) => void;
-  clearAudioCacheCallback: (() => void) | null;
-  registerClearCallback: (callback: () => void) => void;
 }
 
 const AudioRecordingContext = createContext<AudioRecordingContextType | null>(null);
