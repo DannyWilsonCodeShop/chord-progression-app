@@ -192,38 +192,32 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
 
       {isSubscribed ? (
         <div>
-          <div className="bg-green-900 border border-green-700 text-green-300 px-4 py-3 rounded mb-4">
-            ✅ You&apos;re subscribed to MPC Studio Pro!
-          </div>
-          
-          <div className="space-y-4">
-            <div className="text-gray-300">
-              <div className="font-mono text-sm mb-2">PRO FEATURES UNLOCKED:</div>
-              <ul className="list-disc list-inside space-y-1 text-sm">
-                <li>🎵 High-quality audio recording</li>
-                <li>💾 Save and download your recordings</li>
-                <li>☁️ Cloud storage for your tracks</li>
-                <li>🎛️ Advanced effects and filters</li>
-                <li>📱 Access from any device</li>
-              </ul>
-            </div>
-
-            <div className="flex gap-2">
-              <button
-                onClick={handleManageSubscription}
-                disabled={loading}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold py-3 px-4 rounded-lg transition-colors font-mono text-sm"
-              >
-                {loading ? 'LOADING...' : 'MANAGE'}
-              </button>
+          <div className="bg-green-900/20 border border-green-700/30 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-green-400 text-lg">✅</span>
+                <span className="text-green-400 font-mono text-sm font-bold">PRO MEMBER</span>
+              </div>
               <button
                 onClick={onSubscriptionUpdate}
-                className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-lg transition-colors font-mono text-sm"
+                className="bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 px-3 py-1 rounded text-xs font-mono transition-colors"
                 title="Refresh subscription status"
               >
                 🔄
               </button>
             </div>
+            
+            <div className="text-gray-400 text-xs mb-3">
+              All features unlocked. Enjoy recording!
+            </div>
+
+            <button
+              onClick={handleManageSubscription}
+              disabled={loading}
+              className="w-full bg-gray-700/50 hover:bg-gray-600/50 disabled:bg-gray-600 text-gray-300 font-mono py-2 px-3 rounded text-xs transition-colors"
+            >
+              {loading ? 'Loading...' : 'Manage Subscription'}
+            </button>
           </div>
         </div>
       ) : (

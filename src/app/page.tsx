@@ -115,10 +115,12 @@ function HomeContent() {
 
           {/* Subscription & Recording Panel */}
           <div className="lg:col-span-1 space-y-6">
-            <SubscriptionManager
-              isSubscribed={isSubscribed}
-              onSubscriptionUpdate={() => refetchSubscription()}
-            />
+            {!isSubscribed && (
+              <SubscriptionManager
+                isSubscribed={isSubscribed}
+                onSubscriptionUpdate={() => refetchSubscription()}
+              />
+            )}
             
             <RecordingInterface
               isSubscribed={isSubscribed}
