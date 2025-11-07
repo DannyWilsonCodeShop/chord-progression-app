@@ -158,18 +158,15 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
         });
       }
 
-      setPromoSuccess(`${validCode.description} applied successfully! 🎉 Refreshing...`);
+      console.log('✅ Promo code applied to database successfully');
+      setPromoSuccess(`${validCode.description} applied! Refreshing page in 2 seconds...`);
       setPromoCode('');
       
-      // Refresh subscription status - wait for database to update
-      setTimeout(async () => {
-        console.log('🔄 Refreshing subscription status after promo code...');
-        await onSubscriptionUpdate();
-        // Give state time to update
-        setTimeout(() => {
-          console.log('✅ Subscription status should be updated now');
-        }, 500);
-      }, 1000);
+      // Refresh the page to update subscription status
+      setTimeout(() => {
+        console.log('🔄 Reloading page to update subscription status...');
+        window.location.reload();
+      }, 2000);
     } catch (err) {
       setError('Failed to apply promo code. Please try again.');
       console.error('Promo code error:', err);
@@ -274,22 +271,22 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
                 </div>
               )}
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-stretch">
                 <input
                   type="text"
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                   onKeyPress={(e) => e.key === 'Enter' && handleApplyPromoCode()}
-                  placeholder="STUDENT2024"
+                  placeholder="CODE"
                   disabled={promoLoading}
-                  className="flex-1 bg-gray-800 border border-gray-600 text-white px-3 py-2 rounded-lg focus:outline-none focus:border-green-400 disabled:bg-gray-700 font-mono text-sm"
+                  className="flex-1 bg-gray-800 border border-gray-600 text-white px-3 py-2 rounded-lg focus:outline-none focus:border-green-400 disabled:bg-gray-700 font-mono text-xs"
                 />
                 <button
                   onClick={handleApplyPromoCode}
                   disabled={promoLoading || !promoCode.trim()}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold px-4 py-2 rounded-lg transition-colors font-mono text-sm whitespace-nowrap"
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold px-3 py-2 rounded-lg transition-colors text-xs flex-shrink-0"
                 >
-                  {promoLoading ? '⏳' : 'APPLY'}
+                  {promoLoading ? '⏳' : '✓'}
                 </button>
               </div>
               
