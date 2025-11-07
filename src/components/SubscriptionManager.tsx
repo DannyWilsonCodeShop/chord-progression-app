@@ -171,15 +171,15 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
       }
 
       console.log('✅ Promo code applied to database successfully');
-      alert(`DEBUG: Promo code saved with email: ${email}. Check browser console (F12) for details before page reloads.`);
-      setPromoSuccess(`${validCode.description} applied! Refreshing page in 5 seconds...`);
+      alert(`DEBUG: Promo code saved with email: ${email}. Page will reload in 3 seconds. Check console (F12) for logs.`);
+      setPromoSuccess(`${validCode.description} applied! Refreshing in 3 seconds...`);
       setPromoCode('');
       
-      // Refresh the page to update subscription status
+      // Wait for database to commit, then reload
       setTimeout(() => {
         console.log('🔄 Reloading page to update subscription status...');
         window.location.reload();
-      }, 5000);
+      }, 3000);
     } catch (err) {
       setError('Failed to apply promo code. Please try again.');
       console.error('Promo code error:', err);
