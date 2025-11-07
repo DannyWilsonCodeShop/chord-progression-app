@@ -23,7 +23,10 @@ export function useSubscription() {
       const user = await getCurrentUser();
       const userEmail = user.signInDetails?.loginId;
 
+      console.log('🔍 Subscription check - User email:', userEmail);
+
       if (!userEmail) {
+        console.log('❌ No user email found');
         setIsSubscribed(false);
         setLoading(false);
         return;
@@ -35,8 +38,15 @@ export function useSubscription() {
         limit: 1,
       });
 
+      console.log('🔍 Subscription query result:', {
+        foundUsers: users?.length || 0,
+        errors: errors || 'none',
+        queryEmail: userEmail,
+      });
+
       if (errors || !users || users.length === 0) {
         // User not found in database, create with default status
+        console.log('📝 Creating new user with default status (none)');
         await client.models.User.create({
           email: userEmail,
           subscriptionStatus: 'none',
@@ -51,6 +61,7 @@ export function useSubscription() {
           status: userData.subscriptionStatus,
           isActive,
           subscriptionId: userData.subscriptionId,
+          userId: userData.id,
         });
         setIsSubscribed(isActive);
         setSubscriptionStatus(userData.subscriptionStatus || 'none');

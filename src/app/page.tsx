@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import * as Tone from 'tone';
 import { Amplify } from 'aws-amplify';
+import { getCurrentUser } from 'aws-amplify/auth';
 import outputs from '../../amplify_outputs.json';
 import AuthProvider from '@/components/AuthProvider';
 import { AudioRecordingProvider } from '@/contexts/AudioRecordingContext';
@@ -24,9 +25,19 @@ function HomeContent() {
   const [keyboardMapping, setKeyboardMapping] = useState<Record<string, string>>({});
   const [synth, setSynth] = useState<Tone.PolySynth | null>(null);
   const [, setShowSubscriptionModal] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>('');
   
   // Use real subscription state from Amplify backend
   const { isSubscribed, loading: subscriptionLoading, subscriptionStatus, refetch: refetchSubscription } = useSubscription();
+
+  // Get user email for debug panel
+  useEffect(() => {
+    getCurrentUser().then(user => {
+      setUserEmail(user.signInDetails?.loginId || 'Not found');
+    }).catch(() => {
+      setUserEmail('Error getting user');
+    });
+  }, []);
 
   // Initialize audio context and synthesizer (legacy)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -75,11 +86,15 @@ function HomeContent() {
         <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-3 mb-4 font-mono text-xs">
           <div className="text-yellow-400 font-bold mb-2">🐛 DEBUG INFO (will be removed)</div>
           <div className="space-y-1 text-yellow-200">
+            <div>User Email: {userEmail || 'Loading...'}</div>
             <div>Loading: {subscriptionLoading ? 'Yes' : 'No'}</div>
             <div>Status: {subscriptionStatus || 'unknown'}</div>
             <div>isSubscribed: {isSubscribed ? 'TRUE ✅' : 'FALSE ❌'}</div>
             <div>Panel Visible: {!isSubscribed ? 'YES' : 'NO'}</div>
             <div>Recording Visible: {isSubscribed ? 'YES' : 'NO (locked)'}</div>
+          </div>
+          <div className="mt-2 pt-2 border-t border-yellow-700/50 text-yellow-300 text-xs">
+            💡 Open browser console (F12) to see detailed logs
           </div>
         </div>
 

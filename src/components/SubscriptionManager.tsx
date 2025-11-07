@@ -123,6 +123,8 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
       const user = await getCurrentUser();
       const email = user.signInDetails?.loginId;
       
+      console.log('🔍 Promo code - User email:', email);
+      
       if (!email) {
         setError('Could not get user email. Please sign in again.');
         setPromoLoading(false);
@@ -130,9 +132,15 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
       }
 
       // Check if user exists in database
-      const { data: users } = await client.models.User.list({
+      const { data: users, errors } = await client.models.User.list({
         filter: { email: { eq: email } },
         limit: 1,
+      });
+
+      console.log('🔍 Database query result:', { 
+        foundUsers: users?.length || 0, 
+        errors,
+        email 
       });
 
       const currentPeriodEnd = new Date();
@@ -140,33 +148,38 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
 
       if (users && users.length > 0) {
         // Update existing user
-        await client.models.User.update({
+        console.log('📝 Updating existing user:', users[0].id);
+        const result = await client.models.User.update({
           id: users[0].id,
           subscriptionStatus: 'active',
           subscriptionId: `promo_${codeUpper}`,
           subscriptionPriceId: 'promo_code_free',
           subscriptionCurrentPeriodEnd: currentPeriodEnd.toISOString(),
         });
+        console.log('✅ Update result:', result);
       } else {
         // Create new user with promo code
-        await client.models.User.create({
+        console.log('📝 Creating new user with email:', email);
+        const result = await client.models.User.create({
           email: email,
           subscriptionStatus: 'active',
           subscriptionId: `promo_${codeUpper}`,
           subscriptionPriceId: 'promo_code_free',
           subscriptionCurrentPeriodEnd: currentPeriodEnd.toISOString(),
         });
+        console.log('✅ Create result:', result);
       }
 
       console.log('✅ Promo code applied to database successfully');
-      setPromoSuccess(`${validCode.description} applied! Refreshing page in 2 seconds...`);
+      alert(`DEBUG: Promo code saved with email: ${email}. Check browser console (F12) for details before page reloads.`);
+      setPromoSuccess(`${validCode.description} applied! Refreshing page in 5 seconds...`);
       setPromoCode('');
       
       // Refresh the page to update subscription status
       setTimeout(() => {
         console.log('🔄 Reloading page to update subscription status...');
         window.location.reload();
-      }, 2000);
+      }, 5000);
     } catch (err) {
       setError('Failed to apply promo code. Please try again.');
       console.error('Promo code error:', err);
