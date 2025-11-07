@@ -203,7 +203,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
               <div className="flex items-start gap-2">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>
-                  <strong className="text-white">Click 🔧 INIT once</strong> - Sets up recording (like "TAP TO ENABLE AUDIO", only needed once)
+                  <strong className="text-white">Click 🔧 INIT once</strong> - Sets up recording (like &quot;TAP TO ENABLE AUDIO&quot;, only needed once)
                 </span>
               </div>
               <div className="flex items-start gap-2">
