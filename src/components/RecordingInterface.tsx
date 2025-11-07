@@ -194,17 +194,44 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
         </div>
       ) : (
         <>
-          {/* Important Instructions */}
-          {!recordingInitialized && (
-            <div className="bg-yellow-900/30 border border-yellow-700/50 rounded-lg p-3 mb-4">
-              <div className="text-yellow-400 font-mono text-xs font-bold mb-1">
-                ⚠️ IMPORTANT: Click INIT before playing
+          {/* Step-by-Step Instructions */}
+          <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-4 mb-6">
+            <div className="text-blue-400 font-mono text-sm font-bold mb-3">
+              📋 HOW TO RECORD
+            </div>
+            <div className="space-y-2 text-sm text-gray-300">
+              <div className="flex items-start gap-2">
+                <span className="text-blue-400 font-bold">1.</span>
+                <span>
+                  <strong className="text-white">Click 🔧 INIT once</strong> - Sets up recording (like "TAP TO ENABLE AUDIO", only needed once)
+                </span>
               </div>
-              <div className="text-yellow-300/80 text-xs">
-                Recording captures live audio. Click 🔧 INIT first, then play chords/bass, then hit REC.
+              <div className="flex items-start gap-2">
+                <span className="text-blue-400 font-bold">2.</span>
+                <span>
+                  <strong className="text-white">Click ⏺️ REC</strong> - Starts recording
+                </span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-blue-400 font-bold">3.</span>
+                <span>
+                  <strong className="text-white">Play your chords/bass</strong> - Everything you hear will be recorded
+                </span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-blue-400 font-bold">4.</span>
+                <span>
+                  <strong className="text-white">Click ⏹️ STOP</strong> - Saves your recording
+                </span>
+              </div>
+              <div className="flex items-start gap-2">
+                <span className="text-blue-400 font-bold">5.</span>
+                <span>
+                  <strong className="text-white">Click ▶️ to playback</strong> or use the audio player below
+                </span>
               </div>
             </div>
-          )}
+          </div>
 
           {/* Recording Controls */}
           <div className="grid grid-cols-3 gap-3 mb-6">
@@ -257,12 +284,22 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
           {/* Recording Status */}
           <div className="mb-6">
             <div className="text-center">
-              <div className={`inline-block px-4 py-2 rounded-lg font-mono ${
-                isRecording 
-                  ? 'bg-red-900 text-red-300' 
+              <div className={`inline-block px-4 py-2 rounded-lg font-mono text-sm ${
+                !recordingInitialized
+                  ? 'bg-yellow-900 text-yellow-300 border border-yellow-700'
+                  : isRecording 
+                  ? 'bg-red-900 text-red-300 border border-red-700 animate-pulse' 
+                  : audioUrl
+                  ? 'bg-green-900 text-green-300 border border-green-700'
                   : 'bg-gray-800 text-gray-400'
               }`}>
-                {isRecording ? '🔴 RECORDING...' : '⭕ READY'}
+                {!recordingInitialized
+                  ? '⚠️ Step 1: Click INIT to begin'
+                  : isRecording 
+                  ? '🔴 RECORDING... (Step 3: Play music now!)'
+                  : audioUrl
+                  ? '✅ Recording saved! (Step 5: Click ▶️ to play)'
+                  : '⭕ READY - Step 2: Click REC when ready'}
               </div>
             </div>
           </div>
