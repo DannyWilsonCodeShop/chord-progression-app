@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookieBasedClient } from 'aws-amplify/adapter-nextjs/data';
-import { getCurrentUser } from 'aws-amplify/adapter-nextjs/auth';
+import { Amplify } from 'aws-amplify';
+import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../../amplify/data/resource';
 import outputs from '../../../../amplify_outputs.json';
+
+Amplify.configure(outputs, { ssr: true });
 
 // Valid promo codes (you can add more or move to environment variables)
 const VALID_PROMO_CODES: Record<string, { description: string; duration: string }> = {
@@ -22,10 +24,14 @@ const VALID_PROMO_CODES: Record<string, { description: string; duration: string 
 
 export async function POST(request: NextRequest) {
   try {
-    const { promoCode } = await request.json();
+    const { promoCode, email } = await request.json();
 
     if (!promoCode) {
       return NextResponse.json({ error: 'Promo code is required' }, { status: 400 });
+    }
+
+    if (!email) {
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
     // Validate promo code
@@ -36,20 +42,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid promo code' }, { status: 400 });
     }
 
-    // Get current user from cookies
-    const user = await getCurrentUser({ request });
-    const userEmail = user?.signInDetails?.loginId;
-
-    if (!userEmail) {
-      return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
-    }
-
-    // Create cookie-based client for this request
-    const client = cookieBasedClient<Schema>({ config: outputs, request });
+    // Create Amplify client
+    const client = generateClient<Schema>();
 
     // Check if user exists in database
     const { data: users } = await client.models.User.list({
-      filter: { email: { eq: userEmail } },
+      filter: { email: { eq: email } },
       limit: 1,
     });
 

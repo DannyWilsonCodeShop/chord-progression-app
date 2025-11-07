@@ -98,12 +98,25 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
     setPromoSuccess('');
 
     try {
+      // Get email from authenticated user
+      const user = await getCurrentUser();
+      const email = user.signInDetails?.loginId;
+      
+      if (!email) {
+        setError('Could not get user email. Please sign in again.');
+        setPromoLoading(false);
+        return;
+      }
+
       const response = await fetch('/api/apply-promo-code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ promoCode: promoCode.trim() }),
+        body: JSON.stringify({ 
+          promoCode: promoCode.trim(),
+          email: email,
+        }),
       });
 
       const data = await response.json();
