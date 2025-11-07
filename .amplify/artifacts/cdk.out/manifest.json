@@ -22,7 +22,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/bbb1ad4418a35571b74e3f6086379d862457c9b9103a3b6f60e8507890cdab7e.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/e4903de075eeb10b9cff2a7d5b4e918ef4d4ff11215819cb3875db6fdc2fb78c.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -1775,6 +1775,12 @@
             "data": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4storageAccess4A5769826"
           }
         ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4--storageAccess5/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4storageAccess54909C374"
+          }
+        ],
         "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/CDKMetadata/Default": [
           {
             "type": "aws:cdk:logicalId",
@@ -1791,6 +1797,12 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef"
+          }
+        ],
+        "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/reference-to-amplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef"
           }
         ],
         "/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/amplifychordprogressionappdannywilsonsandboxa4becdf3f4storagempcStudioRecordingsBucketB0734286Ref": [

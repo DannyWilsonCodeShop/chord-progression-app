@@ -237,7 +237,7 @@
       {
        "Ref": "AWS::Region"
       },
-      "\\\",\\\"paths\\\":{\\\"recordings/${cognito-identity.amazonaws.com:sub}/*\\\":{\\\"entityidentity\\\":[\\\"get\\\",\\\"list\\\",\\\"write\\\",\\\"delete\\\"]}}}\"]"
+      "\\\",\\\"paths\\\":{\\\"public/recordings/*\\\":{\\\"authenticated\\\":[\\\"get\\\",\\\"list\\\",\\\"write\\\",\\\"delete\\\"],\\\"guest\\\":[\\\"get\\\",\\\"list\\\"]}}}\"]"
      ]
     ]
    }
@@ -363,6 +363,12 @@
        "auth179371D7",
        "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef"
       ]
+     },
+     "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef": {
+      "Fn::GetAtt": [
+       "auth179371D7",
+       "Outputs.amplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef"
+      ]
      }
     },
     "Tags": [
@@ -391,7 +397,7 @@
        {
         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
        },
-       "/0244e4f1654694cceca7b6b44e5476228667bfadf9c0987aa0dd88cb4630d1d2.json"
+       "/3fc79ad15e89f9da899b2fbc3d129d1dd1c5627bac04d13d2e96b395cf502c80.json"
       ]
      ]
     }

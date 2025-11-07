@@ -290,12 +290,16 @@
         "bucket_name": "amplify-chordprogressiona-mpcstudiorecordingsbucke-loka8zvzzqqp",
         "aws_region": "us-east-1",
         "paths": {
-          "recordings/${cognito-identity.amazonaws.com:sub}/*": {
-            "entityidentity": [
+          "public/recordings/*": {
+            "authenticated": [
               "get",
               "list",
               "write",
               "delete"
+            ],
+            "guest": [
+              "get",
+              "list"
             ]
           }
         }

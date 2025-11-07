@@ -156,7 +156,10 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
       const user = await getCurrentUser();
       const userId = user.userId;
       const timestamp = Date.now();
-      const s3Key = `recordings/${userId}/${timestamp}-${name}.webm`;
+      // Use public path instead of identity-based path for now
+      const s3Key = `public/recordings/${timestamp}-${name}.webm`;
+
+      console.log('☁️ Uploading to S3:', { userId, s3Key, blobSize: blob.size });
 
       // Upload to S3
       const uploadResult = await uploadData({
@@ -166,6 +169,8 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
           contentType: 'audio/webm',
         },
       }).result;
+
+      console.log('✅ Upload successful:', uploadResult);
 
       // Save metadata to database
       await client.models.Recording.create({

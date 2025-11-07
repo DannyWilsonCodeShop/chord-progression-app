@@ -147,6 +147,12 @@ export default function MPCInterface({
   const getOrCreateAudio = useCallback((chordName: string, soundType: SoundType): HTMLAudioElement | null => {
     // Check if already loaded
     if (chordAudios[chordName]) {
+      // Try to connect to recording if not already connected
+      try {
+        connectAudioElement(chordAudios[chordName]);
+      } catch {
+        // Already connected or recording not ready
+      }
       return chordAudios[chordName];
     }
 
@@ -157,12 +163,12 @@ export default function MPCInterface({
       audio.preload = 'auto';
       audio.src = path;
       
-      // Connect to recording context if available
+      // Always try to connect to recording context
       try {
         connectAudioElement(audio);
       } catch {
         // Recording not initialized yet, which is fine
-        console.log('Recording context not ready yet');
+        console.log('Recording context not ready yet - will connect later if INIT is clicked');
       }
       
       setChordAudios(prev => ({ ...prev, [chordName]: audio }));
@@ -177,6 +183,12 @@ export default function MPCInterface({
   const getOrCreateBassAudio = useCallback((note: string): HTMLAudioElement | null => {
     // Check if already loaded
     if (bassAudios[note]) {
+      // Try to connect to recording if not already connected
+      try {
+        connectAudioElement(bassAudios[note]);
+      } catch {
+        // Already connected or recording not ready
+      }
       return bassAudios[note];
     }
 
@@ -187,12 +199,12 @@ export default function MPCInterface({
       audio.preload = 'auto';
       audio.src = path;
       
-      // Connect to recording context if available
+      // Always try to connect to recording context
       try {
         connectAudioElement(audio);
       } catch {
         // Recording not initialized yet, which is fine
-        console.log('Recording context not ready yet');
+        console.log('Recording context not ready yet - will connect later if INIT is clicked');
       }
       
       setBassAudios(prev => ({ ...prev, [note]: audio }));

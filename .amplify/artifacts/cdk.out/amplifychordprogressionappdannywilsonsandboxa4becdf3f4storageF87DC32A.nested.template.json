@@ -283,7 +283,7 @@
             "Arn"
            ]
           },
-          "/recordings/${cognito-identity.amazonaws.com:sub}/*"
+          "/public/recordings/*"
          ]
         ]
        }
@@ -293,8 +293,8 @@
        "Condition": {
         "StringLike": {
          "s3:prefix": [
-          "recordings/${cognito-identity.amazonaws.com:sub}/*",
-          "recordings/${cognito-identity.amazonaws.com:sub}/"
+          "public/recordings/*",
+          "public/recordings/"
          ]
         }
        },
@@ -319,7 +319,7 @@
             "Arn"
            ]
           },
-          "/recordings/${cognito-identity.amazonaws.com:sub}/*"
+          "/public/recordings/*"
          ]
         ]
        }
@@ -337,7 +337,7 @@
             "Arn"
            ]
           },
-          "/recordings/${cognito-identity.amazonaws.com:sub}/*"
+          "/public/recordings/*"
          ]
         ]
        }
@@ -356,6 +356,63 @@
    "DeletionPolicy": "Delete",
    "Metadata": {
     "aws:cdk:path": "amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4--storageAccess4/Resource"
+   }
+  },
+  "amplifychordprogressionappdannywilsonsandboxa4becdf3f4storageAccess54909C374": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:GetObject",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "mpcStudioRecordingsBucketEF65B0BD",
+            "Arn"
+           ]
+          },
+          "/public/recordings/*"
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "s3:ListBucket",
+       "Condition": {
+        "StringLike": {
+         "s3:prefix": [
+          "public/recordings/*",
+          "public/recordings/"
+         ]
+        }
+       },
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "mpcStudioRecordingsBucketEF65B0BD",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "amplifychordprogressionappdannywilsonsandboxa4becdf3f4storageAccess54909C374",
+    "Roles": [
+     {
+      "Ref": "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4/storage/amplify-chordprogressionapp-dannywilson-sandbox-a4becdf3f4--storageAccess5/Resource"
    }
   },
   "CDKMetadata": {
@@ -779,6 +836,9 @@
  },
  "Parameters": {
   "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthauthenticatedUserRole14F5CB0CRef": {
+   "Type": "String"
+  },
+  "referencetoamplifychordprogressionappdannywilsonsandboxa4becdf3f4authNestedStackauthNestedStackResourceB702A9B3Outputsamplifychordprogressionappdannywilsonsandboxa4becdf3f4authamplifyAuthunauthenticatedUserRole691AC07BRef": {
    "Type": "String"
   }
  },
