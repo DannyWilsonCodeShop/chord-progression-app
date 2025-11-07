@@ -36,6 +36,7 @@ export function AudioRecordingProvider({ children }: AudioRecordingProviderProps
     }
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
       const audioContext = new AudioContext();
       audioContextRef.current = audioContext;
@@ -69,7 +70,7 @@ export function AudioRecordingProvider({ children }: AudioRecordingProviderProps
       
       connectedElementsRef.current.add(audio);
       console.log('🎤 Audio element connected to recording');
-    } catch (error) {
+    } catch {
       // Element might already be connected, which is fine
       console.log('Note: Audio element connection skipped (may already be connected)');
     }

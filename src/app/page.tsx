@@ -26,7 +26,7 @@ function HomeContent() {
   const [, setShowSubscriptionModal] = useState(false);
   
   // Use real subscription state from Amplify backend
-  const { isSubscribed, loading: subscriptionLoading, refetch: refetchSubscription } = useSubscription();
+  const { isSubscribed, refetch: refetchSubscription } = useSubscription();
 
   // Initialize audio context and synthesizer (legacy)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

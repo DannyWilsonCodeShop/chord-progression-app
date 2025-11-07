@@ -160,7 +160,7 @@ export default function MPCInterface({
       // Connect to recording context if available
       try {
         connectAudioElement(audio);
-      } catch (error) {
+      } catch {
         // Recording not initialized yet, which is fine
         console.log('Recording context not ready yet');
       }
@@ -190,7 +190,7 @@ export default function MPCInterface({
       // Connect to recording context if available
       try {
         connectAudioElement(audio);
-      } catch (error) {
+      } catch {
         // Recording not initialized yet, which is fine
         console.log('Recording context not ready yet');
       }
