@@ -26,7 +26,7 @@ function HomeContent() {
   const [, setShowSubscriptionModal] = useState(false);
   
   // Use real subscription state from Amplify backend
-  const { isSubscribed, refetch: refetchSubscription } = useSubscription();
+  const { isSubscribed, loading: subscriptionLoading, subscriptionStatus, refetch: refetchSubscription } = useSubscription();
 
   // Initialize audio context and synthesizer (legacy)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -71,6 +71,18 @@ function HomeContent() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 p-4">
       <div className="max-w-7xl mx-auto">
+        {/* Debug Panel - Remove after fixing */}
+        <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-3 mb-4 font-mono text-xs">
+          <div className="text-yellow-400 font-bold mb-2">🐛 DEBUG INFO (will be removed)</div>
+          <div className="space-y-1 text-yellow-200">
+            <div>Loading: {subscriptionLoading ? 'Yes' : 'No'}</div>
+            <div>Status: {subscriptionStatus || 'unknown'}</div>
+            <div>isSubscribed: {isSubscribed ? 'TRUE ✅' : 'FALSE ❌'}</div>
+            <div>Panel Visible: {!isSubscribed ? 'YES' : 'NO'}</div>
+            <div>Recording Visible: {isSubscribed ? 'YES' : 'NO (locked)'}</div>
+          </div>
+        </div>
+
         {/* Navigation */}
         <nav className="flex justify-end mb-4">
           <Link 
