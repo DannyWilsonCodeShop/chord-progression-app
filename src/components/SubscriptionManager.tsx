@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 interface SubscriptionManagerProps {
   isSubscribed: boolean;
-  onSubscriptionUpdate: (subscribed: boolean) => void;
+  onSubscriptionUpdate: () => void;
 }
 
 export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate }: SubscriptionManagerProps) {
