@@ -21,47 +21,42 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
   const [audioUrl, setAudioUrl] = useState<string>('');
   const [recordings, setRecordings] = useState<Array<{name: string, url: string, date: Date}>>([]);
+  const [recordingInitialized, setRecordingInitialized] = useState(false);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
+  const destinationRef = useRef<MediaStreamAudioDestinationNode | null>(null);
 
-  // Initialize audio recording
+  // Initialize audio recording for browser audio capture
   const initializeRecording = async () => {
-    if (!isSubscribed) {
-      onUpgrade();
-      return;
-    }
-
     try {
-      // Create audio context from Tone.js master output
-      const destination = Tone.getDestination();
-      const audioContext = destination.context as unknown as AudioContext;
+      // Create Web Audio API context for recording
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       audioContextRef.current = audioContext;
 
-      // Create media stream from audio context
-      const source = audioContext.createMediaStreamDestination();
-      const gainNode = audioContext.createGain();
-      
-      // Connect Tone.js output to our recording destination
-      destination.connect(gainNode);
-      gainNode.connect(source);
+      // Create destination for recording stream
+      const destination = audioContext.createMediaStreamDestination();
+      destinationRef.current = destination;
 
       // Create MediaRecorder
-      const mediaRecorder = new MediaRecorder(source.stream, {
-        mimeType: 'audio/webm;codecs=opus'
-      });
-
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
+        ? 'audio/webm;codecs=opus' 
+        : 'audio/webm';
+      
+      const mediaRecorder = new MediaRecorder(destination.stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
 
+      const chunks: Blob[] = [];
+      
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
-          setRecordedChunks(prev => [...prev, event.data]);
+          chunks.push(event.data);
         }
       };
 
       mediaRecorder.onstop = async () => {
-        const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+        const blob = new Blob(chunks, { type: mimeType });
         const url = URL.createObjectURL(blob);
         setAudioUrl(url);
         
@@ -82,8 +77,11 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
           date: new Date()
         };
         setRecordings(prev => [...prev, newRecording]);
+        chunks.length = 0; // Clear chunks
       };
 
+      setRecordingInitialized(true);
+      console.log('✅ Recording initialized');
     } catch (error) {
       console.error('Failed to initialize recording:', error);
       alert('Recording initialization failed. Please check your browser permissions.');
@@ -91,15 +89,15 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
   };
 
   const startRecording = () => {
-    if (!isSubscribed) {
-      onUpgrade();
+    if (!recordingInitialized) {
+      alert('Please click INIT button first to initialize recording');
       return;
     }
 
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'inactive') {
-      setRecordedChunks([]);
-      mediaRecorderRef.current.start();
+      mediaRecorderRef.current.start(100); // Collect data every 100ms
       setIsRecording(true);
+      console.log('🔴 Recording started');
     }
   };
 
@@ -107,6 +105,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
+      console.log('⏹️ Recording stopped');
     }
   };
 
@@ -189,13 +188,22 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
         RECORDING STUDIO
       </h3>
 
+      <div className="text-center py-6 mb-4 bg-blue-900/30 rounded-lg border border-blue-700">
+        <div className="text-blue-400 font-mono text-sm mb-2">
+          ℹ️ COMING SOON
+        </div>
+        <p className="text-gray-300 text-xs px-4">
+          Full recording with cloud save will be available after backend deployment. For now, use your device&apos;s screen recording feature.
+        </p>
+      </div>
+
       {!isSubscribed ? (
         <div className="text-center py-8">
           <div className="text-yellow-400 font-mono text-lg mb-4">
             🔒 PREMIUM FEATURE
           </div>
           <p className="text-gray-300 mb-6">
-            Recording is available for MPC Studio Pro subscribers
+            Cloud recording will be available for MPC Studio Pro subscribers
           </p>
           <button
             onClick={onUpgrade}
