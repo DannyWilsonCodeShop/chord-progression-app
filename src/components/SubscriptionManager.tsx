@@ -158,14 +158,18 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
         });
       }
 
-      setPromoSuccess(`${validCode.description} applied successfully! 🎉`);
+      setPromoSuccess(`${validCode.description} applied successfully! 🎉 Refreshing...`);
       setPromoCode('');
       
-      // Refresh subscription status
-      setTimeout(() => {
-        onSubscriptionUpdate();
-        window.location.reload(); // Reload to update UI
-      }, 1500);
+      // Refresh subscription status - wait for database to update
+      setTimeout(async () => {
+        console.log('🔄 Refreshing subscription status after promo code...');
+        await onSubscriptionUpdate();
+        // Give state time to update
+        setTimeout(() => {
+          console.log('✅ Subscription status should be updated now');
+        }, 500);
+      }, 1000);
     } catch (err) {
       setError('Failed to apply promo code. Please try again.');
       console.error('Promo code error:', err);
@@ -204,13 +208,22 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
               </ul>
             </div>
 
-            <button
-              onClick={handleManageSubscription}
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold py-3 px-4 rounded-lg transition-colors font-mono"
-            >
-              {loading ? 'LOADING...' : 'MANAGE SUBSCRIPTION'}
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleManageSubscription}
+                disabled={loading}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold py-3 px-4 rounded-lg transition-colors font-mono text-sm"
+              >
+                {loading ? 'LOADING...' : 'MANAGE'}
+              </button>
+              <button
+                onClick={onSubscriptionUpdate}
+                className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-lg transition-colors font-mono text-sm"
+                title="Refresh subscription status"
+              >
+                🔄
+              </button>
+            </div>
           </div>
         </div>
       ) : (
@@ -260,7 +273,10 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
               
               {promoSuccess && (
                 <div className="bg-green-900 border border-green-700 text-green-300 px-4 py-3 rounded mb-3 text-sm">
-                  ✅ {promoSuccess}
+                  <div className="font-bold mb-1">✅ {promoSuccess}</div>
+                  <div className="text-xs text-green-400">
+                    If Recording Studio doesn&apos;t appear, refresh the page (F5)
+                  </div>
                 </div>
               )}
 

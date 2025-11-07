@@ -46,6 +46,12 @@ export function useSubscription() {
       } else {
         const userData = users[0];
         const isActive = userData.subscriptionStatus === 'active';
+        console.log('📊 Subscription check:', {
+          email: userEmail,
+          status: userData.subscriptionStatus,
+          isActive,
+          subscriptionId: userData.subscriptionId,
+        });
         setIsSubscribed(isActive);
         setSubscriptionStatus(userData.subscriptionStatus || 'none');
         setCurrentPeriodEnd(userData.subscriptionCurrentPeriodEnd || null);
