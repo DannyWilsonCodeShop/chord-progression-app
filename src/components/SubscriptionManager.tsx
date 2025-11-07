@@ -1,16 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-// import { getCurrentUser } from 'aws-amplify/auth'; // TODO: Uncomment after Amplify deployment
 
 interface SubscriptionManagerProps {
   isSubscribed: boolean;
   onSubscriptionUpdate: (subscribed: boolean) => void;
 }
 
-export default function SubscriptionManager({ isSubscribed }: SubscriptionManagerProps) {
+export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate }: SubscriptionManagerProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
+  const [promoCode, setPromoCode] = useState<string>('');
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoSuccess, setPromoSuccess] = useState<string>('');
 
   const handleSubscribe = async () => {
     setLoading(true);
@@ -81,6 +83,48 @@ export default function SubscriptionManager({ isSubscribed }: SubscriptionManage
       console.error('Portal error:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleApplyPromoCode = async () => {
+    if (!promoCode.trim()) {
+      setError('Please enter a promo code');
+      return;
+    }
+
+    setPromoLoading(true);
+    setError('');
+    setPromoSuccess('');
+
+    try {
+      const response = await fetch('/api/apply-promo-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ promoCode: promoCode.trim() }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Invalid promo code');
+        return;
+      }
+
+      setPromoSuccess(data.message || 'Promo code applied successfully!');
+      setPromoCode('');
+      
+      // Refresh subscription status
+      setTimeout(() => {
+        onSubscriptionUpdate();
+        window.location.reload(); // Reload to update UI
+      }, 1500);
+    } catch (err) {
+      setError('Failed to apply promo code. Please try again.');
+      console.error('Promo code error:', err);
+    } finally {
+      setPromoLoading(false);
     }
   };
 
@@ -160,6 +204,42 @@ export default function SubscriptionManager({ isSubscribed }: SubscriptionManage
 
             <div className="text-center text-xs text-gray-500">
               Cancel anytime. Secure payment powered by Stripe.
+            </div>
+
+            {/* Promo Code Section */}
+            <div className="border-t border-gray-700 pt-4 mt-4">
+              <div className="text-center text-sm text-gray-400 mb-3 font-mono">
+                📚 HAVE A STUDENT OR PROMO CODE?
+              </div>
+              
+              {promoSuccess && (
+                <div className="bg-green-900 border border-green-700 text-green-300 px-4 py-3 rounded mb-3 text-sm">
+                  ✅ {promoSuccess}
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                  onKeyPress={(e) => e.key === 'Enter' && handleApplyPromoCode()}
+                  placeholder="Enter code (e.g., STUDENT2024)"
+                  disabled={promoLoading}
+                  className="flex-1 bg-gray-800 border border-gray-600 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-green-400 disabled:bg-gray-700 font-mono text-sm"
+                />
+                <button
+                  onClick={handleApplyPromoCode}
+                  disabled={promoLoading || !promoCode.trim()}
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold px-6 py-2 rounded-lg transition-colors font-mono text-sm"
+                >
+                  {promoLoading ? '...' : 'APPLY'}
+                </button>
+              </div>
+              
+              <div className="text-center text-xs text-gray-500 mt-2">
+                Students & educators get free access with a valid code.
+              </div>
             </div>
           </div>
         </div>
