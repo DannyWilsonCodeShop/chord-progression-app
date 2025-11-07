@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     } else {
       // Create new user with promo code
       await client.models.User.create({
-        email: userEmail,
+        email: email,
         subscriptionStatus: 'active',
         subscriptionId: `promo_${codeUpper}`,
         subscriptionPriceId: 'promo_code_free',
