@@ -29,17 +29,26 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
   // Initialize audio recording for browser audio capture
   const initializeRecording = async () => {
     try {
+      console.log('🔧 Initializing recording system...');
+      
       // Initialize the shared audio context
       await initAudioContext();
 
+      console.log('🔍 Checking audio destination...', { destinationExists: !!destination });
+
       if (!destination) {
-        throw new Error('Audio destination not available');
+        console.error('❌ Audio destination not available after initialization!');
+        throw new Error('Audio destination not available - try clicking INIT again');
       }
+
+      console.log('✅ Audio destination ready, creating MediaRecorder...');
 
       // Create MediaRecorder
       const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
         ? 'audio/webm;codecs=opus' 
         : 'audio/webm';
+      
+      console.log('🎙️ Using MIME type:', mimeType);
       
       const mediaRecorder = new MediaRecorder(destination.stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
@@ -49,11 +58,19 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           chunks.push(event.data);
+          console.log('📦 Audio chunk received:', event.data.size, 'bytes. Total chunks:', chunks.length);
         }
       };
 
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunks, { type: mimeType });
+        console.log('🎙️ Recording stopped - Blob size:', blob.size, 'bytes');
+        
+        if (blob.size < 1000) {
+          console.warn('⚠️ Recording is very small - might be empty!');
+          alert('Warning: Recording appears to be empty. Make sure you played sounds WHILE recording was active.');
+        }
+        
         const url = URL.createObjectURL(blob);
         setAudioUrl(url);
         
@@ -94,7 +111,8 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'inactive') {
       mediaRecorderRef.current.start(100); // Collect data every 100ms
       setIsRecording(true);
-      console.log('🔴 Recording started');
+      console.log('🔴 Recording started - Play sounds now and they will be captured!');
+      console.log('🎤 Note: Only sounds played AFTER clicking INIT will be recorded');
     }
   };
 
@@ -108,14 +126,28 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
 
   const playRecording = () => {
     if (audioUrl) {
+      console.log('▶️ Playing recording:', audioUrl);
       if (audioRef.current) {
-        audioRef.current.play();
-        setIsPlaying(true);
+        console.log('🔊 Audio element exists, attempting playback...');
+        audioRef.current.play()
+          .then(() => {
+            console.log('✅ Playback started successfully');
+            setIsPlaying(true);
+          })
+          .catch(err => {
+            console.error('❌ Playback failed:', err);
+            alert('Playback failed. The recording might be empty or corrupted.');
+          });
         
         audioRef.current.onended = () => {
+          console.log('⏹️ Playback ended');
           setIsPlaying(false);
         };
+      } else {
+        console.error('❌ Audio element not found!');
       }
+    } else {
+      console.warn('⚠️ No audio URL available to play');
     }
   };
 
@@ -314,32 +346,34 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
                 {recordings.map((recording, index) => (
                   <div
                     key={index}
-                    className="bg-gray-800 rounded-lg p-4 flex items-center justify-between"
+                    className="bg-gray-800 rounded-lg p-3"
                   >
-                    <div>
-                      <div className="text-white font-mono">{recording.name}</div>
-                      <div className="text-gray-400 text-sm">
-                        {recording.date.toLocaleString()}
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="text-white font-mono text-sm truncate">{recording.name}</div>
+                        <div className="text-gray-400 text-xs">
+                          {recording.date.toLocaleTimeString()}
+                        </div>
                       </div>
                     </div>
                     <div className="flex gap-2">
                       <button
                         onClick={() => setAudioUrl(recording.url)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded font-mono text-sm"
+                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1 rounded font-mono text-xs"
                       >
-                        PLAY
+                        ▶️
                       </button>
                       <button
                         onClick={() => downloadRecording(recording)}
-                        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded font-mono text-sm"
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white py-1 rounded font-mono text-xs"
                       >
-                        DOWNLOAD
+                        💾
                       </button>
                       <button
                         onClick={() => deleteRecording(index)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded font-mono text-sm"
+                        className="flex-1 bg-red-600 hover:bg-red-700 text-white py-1 rounded font-mono text-xs"
                       >
-                        DELETE
+                        🗑️
                       </button>
                     </div>
                   </div>

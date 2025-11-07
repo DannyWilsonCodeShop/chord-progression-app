@@ -32,10 +32,13 @@ export function AudioRecordingProvider({ children }: AudioRecordingProviderProps
 
   const initializeRecording = async () => {
     if (audioContextRef.current) {
+      console.log('✓ Recording context already initialized');
       return; // Already initialized
     }
 
     try {
+      console.log('🎬 Creating Web Audio recording context...');
+      
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
       const audioContext = new AudioContext();
@@ -45,20 +48,27 @@ export function AudioRecordingProvider({ children }: AudioRecordingProviderProps
       destinationRef.current = destination;
 
       setIsRecordingActive(true);
-      console.log('✅ Audio recording context initialized');
+      console.log('✅ Audio recording context initialized successfully!');
+      console.log('📊 Context state:', { 
+        sampleRate: audioContext.sampleRate,
+        state: audioContext.state,
+        hasDestination: !!destination,
+      });
     } catch (error) {
-      console.error('Failed to initialize recording context:', error);
+      console.error('❌ Failed to initialize recording context:', error);
       throw error;
     }
   };
 
   const connectAudioElement = (audio: HTMLAudioElement) => {
     if (!audioContextRef.current || !destinationRef.current) {
+      console.log('⏭️ Recording not initialized yet - audio element will play normally (not recorded)');
       return; // Not initialized yet
     }
 
     // Don't connect same element twice
     if (connectedElementsRef.current.has(audio)) {
+      console.log('✓ Audio element already connected to recording');
       return;
     }
 
@@ -69,10 +79,10 @@ export function AudioRecordingProvider({ children }: AudioRecordingProviderProps
       source.connect(audioContextRef.current.destination);
       
       connectedElementsRef.current.add(audio);
-      console.log('🎤 Audio element connected to recording');
+      console.log('🎤 ✅ Audio element connected to recording & speakers - will be captured!');
     } catch {
       // Element might already be connected, which is fine
-      console.log('Note: Audio element connection skipped (may already be connected)');
+      console.log('⚠️ Audio element connection skipped (may already be connected via another source)');
     }
   };
 
