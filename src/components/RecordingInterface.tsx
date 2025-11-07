@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { uploadData } from 'aws-amplify/storage';
 import { generateClient } from 'aws-amplify/data';
 import { getCurrentUser } from 'aws-amplify/auth';
@@ -26,29 +26,31 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Initialize audio recording for browser audio capture
-  const initializeRecording = async () => {
-    try {
-      console.log('🔧 Initializing recording system...');
+  // Check if we just refreshed after clicking INIT
+  useEffect(() => {
+    const initPending = sessionStorage.getItem('recordingInitPending');
+    if (initPending === 'true' && isSubscribed && destination) {
+      sessionStorage.removeItem('recordingInitPending');
+      console.log('🔄 Completing recording initialization after page refresh...');
       
-      // Initialize the shared audio context
-      await initAudioContext();
+      // Now complete the setup with fresh audio cache
+      completeInitialization();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSubscribed, destination]);
 
-      console.log('🔍 Checking audio destination...', { destinationExists: !!destination });
-
+  const completeInitialization = async () => {
+    try {
+      console.log('🎬 Completing recording setup...');
+      
       if (!destination) {
-        console.error('❌ Audio destination not available after initialization!');
-        throw new Error('Audio destination not available - try clicking INIT again');
+        console.error('❌ Destination not available');
+        return;
       }
 
-      console.log('✅ Audio destination ready, creating MediaRecorder...');
-
-      // Create MediaRecorder
       const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
         ? 'audio/webm;codecs=opus' 
         : 'audio/webm';
-      
-      console.log('🎙️ Using MIME type:', mimeType);
       
       const mediaRecorder = new MediaRecorder(destination.stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
@@ -95,7 +97,29 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
       };
 
       setRecordingInitialized(true);
-      console.log('✅ Recording initialized');
+      console.log('✅ Recording fully initialized and ready to use!');
+    } catch (error) {
+      console.error('Failed to complete initialization:', error);
+    }
+  };
+
+  // Initialize audio recording for browser audio capture
+  const initializeRecording = async () => {
+    try {
+      console.log('🔧 Initializing recording system...');
+      
+      // Initialize the shared audio context
+      await initAudioContext();
+
+      console.log('✅ Recording context initialized!');
+      console.log('🔄 Page will refresh in 2 seconds to clear audio cache...');
+      
+      // Store that recording should be initialized
+      sessionStorage.setItem('recordingInitPending', 'true');
+      
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error) {
       console.error('Failed to initialize recording:', error);
       alert('Recording initialization failed. Please check your browser permissions.');
@@ -240,33 +264,36 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
               <div className="flex items-start gap-2">
                 <span className="text-blue-400 font-bold">1.</span>
                 <span>
-                  <strong className="text-white">Click 🔧 INIT once</strong> - Sets up recording (like &quot;TAP TO ENABLE AUDIO&quot;, only needed once)
+                  <strong className="text-white">Click 🔧 INIT</strong> - Page will auto-refresh (wait 2 sec)
                 </span>
               </div>
               <div className="flex items-start gap-2">
                 <span className="text-blue-400 font-bold">2.</span>
                 <span>
-                  <strong className="text-white">Click ⏺️ REC</strong> - Starts recording
+                  <strong className="text-white">After refresh, click ⏺️ REC</strong> - Starts recording
                 </span>
               </div>
               <div className="flex items-start gap-2">
                 <span className="text-blue-400 font-bold">3.</span>
                 <span>
-                  <strong className="text-white">Play your chords/bass</strong> - Everything you hear will be recorded
+                  <strong className="text-white">Play your chords/bass</strong> - Everything captured
                 </span>
               </div>
               <div className="flex items-start gap-2">
                 <span className="text-blue-400 font-bold">4.</span>
                 <span>
-                  <strong className="text-white">Click ⏹️ STOP</strong> - Saves your recording
+                  <strong className="text-white">Click ⏹️ STOP</strong> - Saves recording
                 </span>
               </div>
               <div className="flex items-start gap-2">
                 <span className="text-blue-400 font-bold">5.</span>
                 <span>
-                  <strong className="text-white">Click ▶️ to playback</strong> or use the audio player below
+                  <strong className="text-white">Click ▶️ to playback</strong> or download
                 </span>
               </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-blue-700/50 text-yellow-300 text-xs">
+              ⚠️ INIT auto-refreshes to clear audio cache. This ensures clean recording.
             </div>
           </div>
 
