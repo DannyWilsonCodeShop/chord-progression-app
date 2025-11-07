@@ -194,36 +194,53 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
         </div>
       ) : (
         <>
+          {/* Important Instructions */}
+          {!recordingInitialized && (
+            <div className="bg-yellow-900/30 border border-yellow-700/50 rounded-lg p-3 mb-4">
+              <div className="text-yellow-400 font-mono text-xs font-bold mb-1">
+                ⚠️ IMPORTANT: Click INIT before playing
+              </div>
+              <div className="text-yellow-300/80 text-xs">
+                Recording captures live audio. Click 🔧 INIT first, then play chords/bass, then hit REC.
+              </div>
+            </div>
+          )}
+
           {/* Recording Controls */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-3 gap-3 mb-6">
             <button
               onClick={isRecording ? stopRecording : startRecording}
-              className={`py-3 px-4 rounded-lg font-mono font-bold transition-colors ${
+              className={`py-2 px-3 rounded-lg font-mono text-sm font-bold transition-colors ${
                 isRecording
                   ? 'bg-red-600 hover:bg-red-700 text-white'
                   : 'bg-green-600 hover:bg-green-700 text-black'
               }`}
             >
-              {isRecording ? '⏹️ STOP' : '⏺️ RECORD'}
+              {isRecording ? '⏹️ STOP' : '⏺️ REC'}
             </button>
 
             <button
               onClick={playRecording}
               disabled={!audioUrl}
-              className={`py-3 px-4 rounded-lg font-mono font-bold transition-colors ${
+              className={`py-2 px-3 rounded-lg font-mono text-sm font-bold transition-colors ${
                 audioUrl
                   ? 'bg-blue-600 hover:bg-blue-700 text-white'
                   : 'bg-gray-600 text-gray-400 cursor-not-allowed'
               }`}
             >
-              {isPlaying ? '⏸️ PAUSE' : '▶️ PLAY'}
+              {isPlaying ? '⏸️' : '▶️'}
             </button>
 
             <button
               onClick={initializeRecording}
-              className="py-3 px-4 rounded-lg font-mono font-bold bg-gray-700 hover:bg-gray-600 text-white transition-colors"
+              disabled={recordingInitialized}
+              className={`py-2 px-3 rounded-lg font-mono text-sm font-bold transition-colors ${
+                recordingInitialized
+                  ? 'bg-green-700 text-green-300 cursor-default'
+                  : 'bg-gray-700 hover:bg-gray-600 text-white'
+              }`}
             >
-              🔧 INIT
+              {recordingInitialized ? '✓ READY' : '🔧 INIT'}
             </button>
           </div>
 

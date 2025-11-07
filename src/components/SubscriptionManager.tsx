@@ -270,16 +270,16 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                   onKeyPress={(e) => e.key === 'Enter' && handleApplyPromoCode()}
-                  placeholder="Enter code (e.g., STUDENT2024)"
+                  placeholder="STUDENT2024"
                   disabled={promoLoading}
-                  className="flex-1 bg-gray-800 border border-gray-600 text-white px-4 py-2 rounded-lg focus:outline-none focus:border-green-400 disabled:bg-gray-700 font-mono text-sm"
+                  className="flex-1 bg-gray-800 border border-gray-600 text-white px-3 py-2 rounded-lg focus:outline-none focus:border-green-400 disabled:bg-gray-700 font-mono text-sm"
                 />
                 <button
                   onClick={handleApplyPromoCode}
                   disabled={promoLoading || !promoCode.trim()}
-                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold px-6 py-2 rounded-lg transition-colors font-mono text-sm"
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold px-4 py-2 rounded-lg transition-colors font-mono text-sm whitespace-nowrap"
                 >
-                  {promoLoading ? '...' : 'APPLY'}
+                  {promoLoading ? '⏳' : 'APPLY'}
                 </button>
               </div>
               
