@@ -2,6 +2,17 @@
 
 import { useState } from 'react';
 import { getCurrentUser } from 'aws-amplify/auth';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../amplify/data/resource';
+
+const client = generateClient<Schema>();
+
+// Valid promo codes
+const VALID_PROMO_CODES: Record<string, { description: string }> = {
+  'STUDENT2024': { description: 'Student Free Access' },
+  'EDUCATION': { description: 'Education Free Access' },
+  'TEACHER': { description: 'Teacher Free Access' },
+};
 
 interface SubscriptionManagerProps {
   isSubscribed: boolean;
@@ -98,6 +109,16 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
     setPromoSuccess('');
 
     try {
+      // Validate promo code
+      const codeUpper = promoCode.trim().toUpperCase();
+      const validCode = VALID_PROMO_CODES[codeUpper];
+
+      if (!validCode) {
+        setError('Invalid promo code');
+        setPromoLoading(false);
+        return;
+      }
+
       // Get email from authenticated user
       const user = await getCurrentUser();
       const email = user.signInDetails?.loginId;
@@ -108,25 +129,36 @@ export default function SubscriptionManager({ isSubscribed, onSubscriptionUpdate
         return;
       }
 
-      const response = await fetch('/api/apply-promo-code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          promoCode: promoCode.trim(),
-          email: email,
-        }),
+      // Check if user exists in database
+      const { data: users } = await client.models.User.list({
+        filter: { email: { eq: email } },
+        limit: 1,
       });
 
-      const data = await response.json();
+      const currentPeriodEnd = new Date();
+      currentPeriodEnd.setFullYear(currentPeriodEnd.getFullYear() + 100); // Effectively forever
 
-      if (!response.ok) {
-        setError(data.error || 'Invalid promo code');
-        return;
+      if (users && users.length > 0) {
+        // Update existing user
+        await client.models.User.update({
+          id: users[0].id,
+          subscriptionStatus: 'active',
+          subscriptionId: `promo_${codeUpper}`,
+          subscriptionPriceId: 'promo_code_free',
+          subscriptionCurrentPeriodEnd: currentPeriodEnd.toISOString(),
+        });
+      } else {
+        // Create new user with promo code
+        await client.models.User.create({
+          email: email,
+          subscriptionStatus: 'active',
+          subscriptionId: `promo_${codeUpper}`,
+          subscriptionPriceId: 'promo_code_free',
+          subscriptionCurrentPeriodEnd: currentPeriodEnd.toISOString(),
+        });
       }
 
-      setPromoSuccess(data.message || 'Promo code applied successfully!');
+      setPromoSuccess(`${validCode.description} applied successfully! 🎉`);
       setPromoCode('');
       
       // Refresh subscription status
