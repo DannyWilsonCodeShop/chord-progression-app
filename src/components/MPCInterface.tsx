@@ -124,7 +124,7 @@ export default function MPCInterface({
 
     if (soundPath) {
       const player = new Tone.Player(soundPath).toDestination();
-      player.loop = false;
+      player.loop = true; // Loop for organ-style sustain
       setTonePlayers(prev => ({ ...prev, [soundId]: player }));
       return player;
     }
@@ -302,9 +302,11 @@ export default function MPCInterface({
       const path = getChordSoundPath(chordName, selectedChordSound);
       if (!path) return;
 
-      const player = getOrCreateTonePlayer(path, `chord-${chordName}`);
+      const player = getOrCreateTonePlayer(path, keyId);
       if (player && player.loaded) {
         player.start();
+        // Store player reference for stopping
+        setActiveSounds(prev => ({ ...prev, [keyId]: player as any }));
       }
       return;
     }
@@ -345,9 +347,11 @@ export default function MPCInterface({
       const path = getBassSoundPath(note);
       if (!path) return;
 
-      const player = getOrCreateTonePlayer(path, `bass-${note}`);
+      const player = getOrCreateTonePlayer(path, keyId);
       if (player && player.loaded) {
         player.start();
+        // Store player reference for stopping
+        setActiveSounds(prev => ({ ...prev, [keyId]: player as any }));
       }
       return;
     }
@@ -380,24 +384,30 @@ export default function MPCInterface({
   const stopSound = useCallback((keyId: string) => {
     const sound = activeSounds[keyId];
     if (sound) {
-      // Fade out over 50ms to avoid click
-      const fadeOutDuration = 50;
-      const fadeOutSteps = 10;
-      const stepTime = fadeOutDuration / fadeOutSteps;
-      const volumeStep = sound.volume / fadeOutSteps;
-      
-      let currentStep = 0;
-      const fadeInterval = setInterval(() => {
-        currentStep++;
-        sound.volume = Math.max(0, sound.volume - volumeStep);
+      // Check if it's a Tone.js Player or HTML5 Audio
+      if (sound instanceof Tone.Player) {
+        // Tone.js Player - just stop it
+        sound.stop();
+      } else {
+        // HTML5 Audio - fade out to avoid click
+        const fadeOutDuration = 150;
+        const fadeOutSteps = 30;
+        const stepTime = fadeOutDuration / fadeOutSteps;
+        const volumeStep = sound.volume / fadeOutSteps;
         
-        if (currentStep >= fadeOutSteps) {
-          clearInterval(fadeInterval);
-          sound.pause();
-          sound.currentTime = 0;
-          sound.volume = 0.7; // Reset volume for next play
-        }
-      }, stepTime);
+        let currentStep = 0;
+        const fadeInterval = setInterval(() => {
+          currentStep++;
+          sound.volume = Math.max(0, sound.volume - volumeStep);
+          
+          if (currentStep >= fadeOutSteps) {
+            clearInterval(fadeInterval);
+            sound.pause();
+            sound.currentTime = 0;
+            sound.volume = 0.7; // Reset volume for next play
+          }
+        }, stepTime);
+      }
       
       setActiveSounds(prev => {
         const newSounds = { ...prev };
