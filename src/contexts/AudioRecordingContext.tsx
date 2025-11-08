@@ -28,6 +28,8 @@ export function AudioRecordingProvider({ children }: AudioRecordingProviderProps
   const audioContextRef = useRef<AudioContext | null>(null);
   const destinationRef = useRef<MediaStreamAudioDestinationNode | null>(null);
   const [isRecordingActive, setIsRecordingActive] = useState(false);
+  const [destination, setDestination] = useState<MediaStreamAudioDestinationNode | null>(null);
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const connectedElementsRef = useRef<Set<HTMLAudioElement>>(new Set());
 
   const initializeRecording = async () => {
@@ -41,18 +43,20 @@ export function AudioRecordingProvider({ children }: AudioRecordingProviderProps
       
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-      const audioContext = new AudioContext();
-      audioContextRef.current = audioContext;
+      const newAudioContext = new AudioContext();
+      audioContextRef.current = newAudioContext;
+      setAudioContext(newAudioContext);
 
-      const destination = audioContext.createMediaStreamDestination();
-      destinationRef.current = destination;
+      const newDestination = newAudioContext.createMediaStreamDestination();
+      destinationRef.current = newDestination;
+      setDestination(newDestination);
 
       setIsRecordingActive(true);
       console.log('✅ Audio recording context initialized successfully!');
       console.log('📊 Context state:', { 
-        sampleRate: audioContext.sampleRate,
-        state: audioContext.state,
-        hasDestination: !!destination,
+        sampleRate: newAudioContext.sampleRate,
+        state: newAudioContext.state,
+        hasDestination: !!newDestination,
       });
     } catch (error) {
       console.error('❌ Failed to initialize recording context:', error);
@@ -87,8 +91,8 @@ export function AudioRecordingProvider({ children }: AudioRecordingProviderProps
   };
 
   const value: AudioRecordingContextType = {
-    audioContext: audioContextRef.current,
-    destination: destinationRef.current,
+    audioContext,
+    destination,
     isRecordingActive,
     initializeRecording,
     connectAudioElement,

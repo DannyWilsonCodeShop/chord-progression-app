@@ -29,12 +29,37 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
   // Check if we just refreshed after clicking INIT
   useEffect(() => {
     const initPending = sessionStorage.getItem('recordingInitPending');
-    if (initPending === 'true' && isSubscribed && destination) {
-      sessionStorage.removeItem('recordingInitPending');
-      console.log('🔄 Completing recording initialization after page refresh...');
+    if (initPending === 'true' && isSubscribed) {
+      console.log('🔄 Auto-completing recording initialization after page refresh...');
       
-      // Now complete the setup with fresh audio cache
-      completeInitialization();
+      // Initialize the audio context first, then complete setup
+      const autoComplete = async () => {
+        await initAudioContext();
+        console.log('✅ Audio context initialized, waiting for destination...');
+        
+        // Poll for destination to be ready (max 10 attempts)
+        let attempts = 0;
+        const checkDestination = () => {
+          attempts++;
+          console.log(`🔍 Attempt ${attempts}/10 to get destination...`);
+          
+          if (destination) {
+            console.log('✅ Destination ready! Completing setup...');
+            sessionStorage.removeItem('recordingInitPending');
+            completeInitialization();
+          } else if (attempts < 10) {
+            setTimeout(checkDestination, 500);
+          } else {
+            console.error('❌ Destination never became available');
+            sessionStorage.removeItem('recordingInitPending');
+            alert('Recording setup failed. Please try clicking INIT again.');
+          }
+        };
+        
+        checkDestination();
+      };
+      
+      autoComplete();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSubscribed, destination]);
@@ -42,9 +67,12 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
   const completeInitialization = async () => {
     try {
       console.log('🎬 Completing recording setup...');
+      console.log('🔍 Checking destination:', { hasDestination: !!destination });
       
       if (!destination) {
-        console.error('❌ Destination not available');
+        console.error('❌ Destination still not available - retrying in 1 second...');
+        // Try again after another delay
+        setTimeout(() => completeInitialization(), 1000);
         return;
       }
 
