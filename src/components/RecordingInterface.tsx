@@ -25,44 +25,32 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const initializingRef = useRef(false); // Prevent double initialization
 
-  // Check if we just refreshed after clicking INIT
+  // Check if we just refreshed after clicking INIT (run once on mount)
   useEffect(() => {
     const initPending = sessionStorage.getItem('recordingInitPending');
-    if (initPending === 'true' && isSubscribed) {
+    if (initPending === 'true' && isSubscribed && !initializingRef.current) {
+      initializingRef.current = true; // Mark as initializing
+      sessionStorage.removeItem('recordingInitPending'); // Clear immediately
       console.log('🔄 Auto-completing recording initialization after page refresh...');
       
       // Initialize the audio context first, then complete setup
       const autoComplete = async () => {
         await initAudioContext();
-        console.log('✅ Audio context initialized, waiting for destination...');
+        console.log('✅ Audio context initialized, waiting 1 second for destination...');
         
-        // Poll for destination to be ready (max 10 attempts)
-        let attempts = 0;
-        const checkDestination = () => {
-          attempts++;
-          console.log(`🔍 Attempt ${attempts}/10 to get destination...`);
-          
-          if (destination) {
-            console.log('✅ Destination ready! Completing setup...');
-            sessionStorage.removeItem('recordingInitPending');
-            completeInitialization();
-          } else if (attempts < 10) {
-            setTimeout(checkDestination, 500);
-          } else {
-            console.error('❌ Destination never became available');
-            sessionStorage.removeItem('recordingInitPending');
-            alert('Recording setup failed. Please try clicking INIT again.');
-          }
-        };
-        
-        checkDestination();
+        // Wait for destination to be ready (context state updates)
+        setTimeout(() => {
+          console.log('🎬 Attempting to complete recording setup...');
+          completeInitialization();
+        }, 1000);
       };
       
       autoComplete();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSubscribed, destination]);
+  }, []); // Run only once on mount
 
   const completeInitialization = async () => {
     try {
@@ -70,18 +58,22 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
       console.log('🔍 Checking destination:', { hasDestination: !!destination });
       
       if (!destination) {
-        console.error('❌ Destination still not available - retrying in 1 second...');
-        // Try again after another delay
-        setTimeout(() => completeInitialization(), 1000);
+        console.error('❌ Destination not available - initialization failed');
+        alert('Recording setup incomplete. Please refresh the page and click INIT again.');
         return;
       }
+
+      console.log('✅ Destination confirmed, creating MediaRecorder...');
 
       const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
         ? 'audio/webm;codecs=opus' 
         : 'audio/webm';
       
+      console.log('🎙️ MIME type:', mimeType);
+      
       const mediaRecorder = new MediaRecorder(destination.stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
+      console.log('✅ MediaRecorder created successfully');
 
       const chunks: Blob[] = [];
       
