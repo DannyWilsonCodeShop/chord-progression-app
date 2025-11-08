@@ -15,20 +15,20 @@ interface RecordingInterfaceProps {
 }
 
 export default function RecordingInterface({ isSubscribed, onUpgrade }: RecordingInterfaceProps) {
-  const audioRecordingContext = useAudioRecording();
-  const { initializeRecording: initAudioContext } = audioRecordingContext;
+  const { destination, initializeRecording: initAudioContext } = useAudioRecording();
   
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string>('');
   const [recordings, setRecordings] = useState<Array<{name: string, url: string, date: Date}>>([]);
   const [recordingInitialized, setRecordingInitialized] = useState(false);
+  const [waitingForDestination, setWaitingForDestination] = useState(false);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const initializingRef = useRef(false); // Prevent double initialization
 
-  // Check if we just refreshed after clicking INIT - watch for isSubscribed to become true
+  // Check if we just refreshed after clicking INIT
   useEffect(() => {
     const initPending = sessionStorage.getItem('recordingInitPending');
     
@@ -39,32 +39,33 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
       sessionStorage.removeItem('recordingInitPending'); // Clear immediately
       console.log('🔄 Auto-completing recording initialization after page refresh...');
       
-      // Initialize the audio context first, then complete setup
+      // Initialize the audio context first
       const autoComplete = async () => {
         await initAudioContext();
-        console.log('✅ Audio context initialized, waiting 1 second for destination...');
-        
-        // Wait for destination to be ready (context state updates)
-        setTimeout(() => {
-          console.log('🎬 Attempting to complete recording setup...');
-          completeInitialization();
-        }, 1000);
+        console.log('✅ Audio context initialized, now waiting for destination state...');
+        setWaitingForDestination(true); // Trigger the destination watcher
       };
       
       autoComplete();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSubscribed]); // Re-run when isSubscribed changes from false → true
+  }, [isSubscribed]);
+
+  // Watch for destination to become available after init
+  useEffect(() => {
+    if (waitingForDestination && destination && !recordingInitialized) {
+      console.log('✅ Destination detected! Completing setup now...');
+      setWaitingForDestination(false);
+      completeInitialization();
+    }
+  }, [waitingForDestination, destination, recordingInitialized]);
 
   const completeInitialization = async () => {
     try {
       console.log('🎬 Completing recording setup...');
+      console.log('🔍 Destination from hook:', { hasDestination: !!destination });
       
-      // Get fresh destination from context (not closure value)
-      const currentDestination = audioRecordingContext.destination;
-      console.log('🔍 Checking destination from context:', { hasDestination: !!currentDestination });
-      
-      if (!currentDestination) {
+      if (!destination) {
         console.error('❌ Destination not available - initialization failed');
         alert('Recording setup incomplete. Please refresh the page and click INIT again.');
         return;
@@ -78,7 +79,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
       
       console.log('🎙️ MIME type:', mimeType);
       
-      const mediaRecorder = new MediaRecorder(currentDestination.stream, { mimeType });
+      const mediaRecorder = new MediaRecorder(destination.stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
       console.log('✅ MediaRecorder created successfully');
 
