@@ -15,7 +15,8 @@ interface RecordingInterfaceProps {
 }
 
 export default function RecordingInterface({ isSubscribed, onUpgrade }: RecordingInterfaceProps) {
-  const { destination, initializeRecording: initAudioContext } = useAudioRecording();
+  const audioRecordingContext = useAudioRecording();
+  const { initializeRecording: initAudioContext } = audioRecordingContext;
   
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -58,9 +59,12 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
   const completeInitialization = async () => {
     try {
       console.log('🎬 Completing recording setup...');
-      console.log('🔍 Checking destination:', { hasDestination: !!destination });
       
-      if (!destination) {
+      // Get fresh destination from context (not closure value)
+      const currentDestination = audioRecordingContext.destination;
+      console.log('🔍 Checking destination from context:', { hasDestination: !!currentDestination });
+      
+      if (!currentDestination) {
         console.error('❌ Destination not available - initialization failed');
         alert('Recording setup incomplete. Please refresh the page and click INIT again.');
         return;
@@ -74,7 +78,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
       
       console.log('🎙️ MIME type:', mimeType);
       
-      const mediaRecorder = new MediaRecorder(destination.stream, { mimeType });
+      const mediaRecorder = new MediaRecorder(currentDestination.stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
       console.log('✅ MediaRecorder created successfully');
 
