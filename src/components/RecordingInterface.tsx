@@ -27,9 +27,12 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const initializingRef = useRef(false); // Prevent double initialization
 
-  // Check if we just refreshed after clicking INIT (run once on mount)
+  // Check if we just refreshed after clicking INIT - watch for isSubscribed to become true
   useEffect(() => {
     const initPending = sessionStorage.getItem('recordingInitPending');
+    
+    console.log('🔍 Checking for pending init:', { initPending, isSubscribed, alreadyInitializing: initializingRef.current });
+    
     if (initPending === 'true' && isSubscribed && !initializingRef.current) {
       initializingRef.current = true; // Mark as initializing
       sessionStorage.removeItem('recordingInitPending'); // Clear immediately
@@ -50,7 +53,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
       autoComplete();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Run only once on mount
+  }, [isSubscribed]); // Re-run when isSubscribed changes from false → true
 
   const completeInitialization = async () => {
     try {
