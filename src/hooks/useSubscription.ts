@@ -23,10 +23,7 @@ export function useSubscription() {
       const user = await getCurrentUser();
       const userEmail = user.signInDetails?.loginId;
 
-      console.log('🔍 Subscription check - User email:', userEmail);
-
       if (!userEmail) {
-        console.log('❌ No user email found');
         setIsSubscribed(false);
         setLoading(false);
         return;
@@ -38,16 +35,8 @@ export function useSubscription() {
         limit: 100, // Get all users with this email (in case of duplicates)
       });
 
-      console.log('🔍 Subscription query result:', {
-        foundUsers: users?.length || 0,
-        errors: errors || 'none',
-        queryEmail: userEmail,
-        allUsers: users,
-      });
-
       if (errors || !users || users.length === 0) {
         // User not found in database - don't create, just mark as not subscribed
-        console.log('ℹ️ No user record found in database (not subscribed yet)');
         setIsSubscribed(false);
         setSubscriptionStatus('none');
       } else {
@@ -55,19 +44,7 @@ export function useSubscription() {
         const activeUser = users.find(u => u.subscriptionStatus === 'active');
         const userData = activeUser || users[0];
         
-        if (users.length > 1) {
-          console.log('⚠️ WARNING: Multiple users found with same email!', users.length);
-        }
-        
         const isActive = userData.subscriptionStatus === 'active';
-        console.log('📊 Subscription check:', {
-          email: userEmail,
-          status: userData.subscriptionStatus,
-          isActive,
-          subscriptionId: userData.subscriptionId,
-          userId: userData.id,
-          totalDuplicates: users.length,
-        });
         setIsSubscribed(isActive);
         setSubscriptionStatus(userData.subscriptionStatus || 'none');
         setCurrentPeriodEnd(userData.subscriptionCurrentPeriodEnd || null);

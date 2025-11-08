@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Instrument, KeySignature, ChordProgression } from '@/types/chords';
-import { useAudioRecording } from '@/contexts/AudioRecordingContext';
 
 interface MPCInterfaceProps {
   selectedKey: KeySignature;
@@ -31,9 +30,6 @@ export default function MPCInterface({
   // Subscription state - commented out until backend is deployed
   // const [isSubscribed] = useState(false);
   const [activeSounds, setActiveSounds] = useState<Record<string, HTMLAudioElement>>({}); // Track active playing sounds
-
-  // Recording context for capturing audio
-  const { connectAudioElement } = useAudioRecording();
 
   // Sound file mappings for chords (diatonic + chromatic)
   const getChordSoundPath = useCallback((chordName: string, soundType: SoundType): string | null => {
@@ -147,12 +143,6 @@ export default function MPCInterface({
   const getOrCreateAudio = useCallback((chordName: string, soundType: SoundType): HTMLAudioElement | null => {
     // Check if already loaded
     if (chordAudios[chordName]) {
-      // Try to connect to recording if not already connected
-      try {
-        connectAudioElement(chordAudios[chordName]);
-      } catch {
-        // Already connected or recording not ready
-      }
       return chordAudios[chordName];
     }
 
@@ -163,32 +153,17 @@ export default function MPCInterface({
       audio.preload = 'auto';
       audio.src = path;
       
-      // Always try to connect to recording context
-      try {
-        connectAudioElement(audio);
-      } catch {
-        // Recording not initialized yet, which is fine
-        console.log('Recording context not ready yet - will connect later if INIT is clicked');
-      }
-      
       setChordAudios(prev => ({ ...prev, [chordName]: audio }));
-      console.log('📦 Lazy loaded:', chordName);
       return audio;
     }
     
     return null;
-  }, [chordAudios, getChordSoundPath, connectAudioElement]);
+  }, [chordAudios, getChordSoundPath]);
 
   // Lazy load bass audio on first play
   const getOrCreateBassAudio = useCallback((note: string): HTMLAudioElement | null => {
     // Check if already loaded
     if (bassAudios[note]) {
-      // Try to connect to recording if not already connected
-      try {
-        connectAudioElement(bassAudios[note]);
-      } catch {
-        // Already connected or recording not ready
-      }
       return bassAudios[note];
     }
 
@@ -199,21 +174,12 @@ export default function MPCInterface({
       audio.preload = 'auto';
       audio.src = path;
       
-      // Always try to connect to recording context
-      try {
-        connectAudioElement(audio);
-      } catch {
-        // Recording not initialized yet, which is fine
-        console.log('Recording context not ready yet - will connect later if INIT is clicked');
-      }
-      
       setBassAudios(prev => ({ ...prev, [note]: audio }));
-      console.log('📦 Lazy loaded bass:', note);
       return audio;
     }
     
     return null;
-  }, [bassAudios, getBassSoundPath, connectAudioElement]);
+  }, [bassAudios, getBassSoundPath]);
 
   // Auto-switch to Piano when chromatic is selected
   useEffect(() => {
