@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import * as Tone from 'tone';
 import { Instrument, KeySignature, ChordProgression } from '@/types/chords';
+import { useRecording } from '@/contexts/RecordingContext';
 
 interface MPCInterfaceProps {
   selectedKey: KeySignature;
@@ -30,6 +32,10 @@ export default function MPCInterface({
   // Subscription state - commented out until backend is deployed
   // const [isSubscribed] = useState(false);
   const [activeSounds, setActiveSounds] = useState<Record<string, HTMLAudioElement>>({}); // Track active playing sounds
+  const [tonePlayers, setTonePlayers] = useState<Record<string, Tone.Player>>({});
+  
+  // Recording context
+  const { isRecordingMode } = useRecording();
 
   // Sound file mappings for chords (diatonic + chromatic)
   const getChordSoundPath = useCallback((chordName: string, soundType: SoundType): string | null => {
@@ -109,6 +115,22 @@ export default function MPCInterface({
     const filename = bassFilenames[note];
     return filename ? `/sounds/bass/tones/Bass/${encodeURIComponent(filename)}` : '';
   }, []);
+
+  // Get or create Tone.js Player for recording mode
+  const getOrCreateTonePlayer = useCallback((soundPath: string, soundId: string): Tone.Player | null => {
+    if (tonePlayers[soundId]) {
+      return tonePlayers[soundId];
+    }
+
+    if (soundPath) {
+      const player = new Tone.Player(soundPath).toDestination();
+      player.loop = false;
+      setTonePlayers(prev => ({ ...prev, [soundId]: player }));
+      return player;
+    }
+    
+    return null;
+  }, [tonePlayers]);
 
   // Initialize audio - FAST unlock only, lazy load sounds on first play
   const initializeAudio = useCallback(async () => {
@@ -272,86 +294,87 @@ export default function MPCInterface({
   // Play chord (organ-style - sustain while held) - iOS Safari optimized with lazy loading
   const playChord = useCallback((chordName: string, keyId: string) => {
     if (!isAudioInitialized) {
-      console.log('⚠️ Audio not initialized yet');
       return;
     }
 
-    // Lazy load audio on demand
+    // Use Tone.js in recording mode for proper audio capture
+    if (isRecordingMode) {
+      const path = getChordSoundPath(chordName, selectedChordSound);
+      if (!path) return;
+
+      const player = getOrCreateTonePlayer(path, `chord-${chordName}`);
+      if (player && player.loaded) {
+        player.start();
+      }
+      return;
+    }
+
+    // Use HTML5 Audio for normal mode (better mobile performance)
     const audio = getOrCreateAudio(chordName, selectedChordSound);
-    if (!audio) {
-      console.error('❌ Audio not found for chord:', chordName);
-      return;
-    }
+    if (!audio) return;
 
-    // Clone and play to allow overlapping sounds
     const sound = audio.cloneNode() as HTMLAudioElement;
     sound.volume = 0.7;
-    sound.loop = true; // Loop for sustained organ effect
+    sound.loop = true;
     
-    // Play with comprehensive error handling for iOS
     const playPromise = sound.play();
     if (playPromise !== undefined) {
       playPromise
         .then(() => {
-          console.log('✅ Playing chord:', chordName);
+          // Set loop after successful play (iOS compatibility)
+          sound.loop = true;
         })
         .catch(err => {
-          console.error('❌ Error playing chord:', chordName, err);
-          // iOS fallback: disable loop and retry
+          console.error('Error playing:', err);
           sound.loop = false;
-          setTimeout(() => {
-            sound.play()
-              .then(() => console.log('✅ Retry succeeded for:', chordName))
-              .catch(e => console.error('❌ Retry also failed:', e));
-          }, 50);
+          setTimeout(() => sound.play().catch(() => {}), 50);
         });
     }
     
-    // Store active sound for later stopping
     setActiveSounds(prev => ({ ...prev, [keyId]: sound }));
-  }, [isAudioInitialized, getOrCreateAudio, selectedChordSound]);
+  }, [isAudioInitialized, isRecordingMode, getOrCreateAudio, getChordSoundPath, getOrCreateTonePlayer, selectedChordSound]);
 
   // Play bass note (organ-style - sustain while held) - iOS Safari optimized with lazy loading
   const playBass = useCallback((note: string, keyId: string) => {
     if (!isAudioInitialized) {
-      console.log('⚠️ Audio not initialized yet');
       return;
     }
 
-    // Lazy load audio on demand
+    // Use Tone.js in recording mode for proper audio capture
+    if (isRecordingMode) {
+      const path = getBassSoundPath(note);
+      if (!path) return;
+
+      const player = getOrCreateTonePlayer(path, `bass-${note}`);
+      if (player && player.loaded) {
+        player.start();
+      }
+      return;
+    }
+
+    // Use HTML5 Audio for normal mode
     const audio = getOrCreateBassAudio(note);
-    if (!audio) {
-      console.error('❌ Audio not found for bass note:', note);
-      return;
-    }
+    if (!audio) return;
 
-    // Clone and play to allow overlapping sounds
     const sound = audio.cloneNode() as HTMLAudioElement;
     sound.volume = 0.8;
-    sound.loop = true; // Loop for sustained organ effect
+    sound.loop = true;
     
-    // Play with comprehensive error handling for iOS
     const playPromise = sound.play();
     if (playPromise !== undefined) {
       playPromise
         .then(() => {
-          console.log('✅ Playing bass:', note);
+          sound.loop = true;
         })
         .catch(err => {
-          console.error('❌ Error playing bass:', note, err);
-          // iOS fallback: disable loop and retry
+          console.error('Error playing bass:', err);
           sound.loop = false;
-          setTimeout(() => {
-            sound.play()
-              .then(() => console.log('✅ Retry succeeded for bass:', note))
-              .catch(e => console.error('❌ Retry also failed:', e));
-          }, 50);
+          setTimeout(() => sound.play().catch(() => {}), 50);
         });
     }
     
-    // Store active sound for later stopping
     setActiveSounds(prev => ({ ...prev, [keyId]: sound }));
-  }, [isAudioInitialized, getOrCreateBassAudio]);
+  }, [isAudioInitialized, isRecordingMode, getOrCreateBassAudio, getBassSoundPath, getOrCreateTonePlayer]);
 
   // Stop sound with fade out (when key is released)
   const stopSound = useCallback((keyId: string) => {

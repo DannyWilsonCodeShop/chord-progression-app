@@ -6,6 +6,7 @@ import * as Tone from 'tone';
 import { Amplify } from 'aws-amplify';
 import outputs from '../../amplify_outputs.json';
 import AuthProvider from '@/components/AuthProvider';
+import { RecordingProvider } from '@/contexts/RecordingContext';
 import ChordKeyboard from '@/components/ChordKeyboard';
 import ChordSelector from '@/components/ChordSelector';
 import MPCInterface from '@/components/MPCInterface';
@@ -149,11 +150,13 @@ function HomeContent() {
   );
 }
 
-// Wrap with authentication
+// Wrap with authentication and recording context
 export default function Home() {
   return (
     <AuthProvider>
-      <HomeContent />
+      <RecordingProvider>
+        <HomeContent />
+      </RecordingProvider>
     </AuthProvider>
   );
 }
