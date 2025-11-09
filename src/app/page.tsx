@@ -12,6 +12,8 @@ import ChordSelector from '@/components/ChordSelector';
 import MPCInterface from '@/components/MPCInterface';
 import RecordingInterface from '@/components/RecordingInterface';
 import SubscriptionManager from '@/components/SubscriptionManager';
+import Metronome from '@/components/Metronome';
+import LoopStation from '@/components/LoopStation';
 import { ChordProgression, KeySignature } from '@/types/chords';
 import { useSubscription } from '@/hooks/useSubscription';
 
@@ -114,13 +116,17 @@ function HomeContent() {
           </div>
 
           {/* Subscription & Recording Panel */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1 space-y-4">
             {!isSubscribed && (
               <SubscriptionManager
                 isSubscribed={isSubscribed}
                 onSubscriptionUpdate={() => refetchSubscription()}
               />
             )}
+            
+            <Metronome />
+            
+            {isSubscribed && <LoopStation />}
             
             <RecordingInterface
               isSubscribed={isSubscribed}

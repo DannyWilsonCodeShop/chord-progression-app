@@ -67,13 +67,102 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
     };
   };
 
-  const downloadRecording = (recording: {name: string, blob: Blob}) => {
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(recording.blob);
-    link.download = `${recording.name}.webm`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const downloadRecording = async (recording: {name: string, blob: Blob}, format: 'webm' | 'wav' = 'webm') => {
+    if (format === 'webm') {
+      // Download original WebM
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(recording.blob);
+      link.download = `${recording.name}.webm`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else if (format === 'wav') {
+      // Convert to WAV
+      try {
+        const arrayBuffer = await recording.blob.arrayBuffer();
+        const audioContext = new AudioContext();
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        
+        // Convert AudioBuffer to WAV
+        const wav = audioBufferToWav(audioBuffer);
+        const wavBlob = new Blob([wav], { type: 'audio/wav' });
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(wavBlob);
+        link.download = `${recording.name}.wav`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('WAV conversion failed:', error);
+        alert('WAV export failed. Try WebM format instead.');
+      }
+    }
+  };
+
+  // Convert AudioBuffer to WAV format
+  const audioBufferToWav = (buffer: AudioBuffer): ArrayBuffer => {
+    const length = buffer.length * buffer.numberOfChannels * 2;
+    const arrayBuffer = new ArrayBuffer(44 + length);
+    const view = new DataView(arrayBuffer);
+    const channels: Float32Array[] = [];
+    let offset = 0;
+    let pos = 0;
+
+    // Write WAV header
+    const setUint16 = (data: number) => {
+      view.setUint16(pos, data, true);
+      pos += 2;
+    };
+    const setUint32 = (data: number) => {
+      view.setUint32(pos, data, true);
+      pos += 4;
+    };
+
+    // RIFF identifier
+    setUint32(0x46464952);
+    // File length
+    setUint32(36 + length);
+    // RIFF type
+    setUint32(0x45564157);
+    // Format chunk identifier
+    setUint32(0x20746d66);
+    // Format chunk length
+    setUint32(16);
+    // Sample format (PCM)
+    setUint16(1);
+    // Channel count
+    setUint16(buffer.numberOfChannels);
+    // Sample rate
+    setUint32(buffer.sampleRate);
+    // Byte rate
+    setUint32(buffer.sampleRate * 2 * buffer.numberOfChannels);
+    // Block align
+    setUint16(buffer.numberOfChannels * 2);
+    // Bits per sample
+    setUint16(16);
+    // Data chunk identifier
+    setUint32(0x61746164);
+    // Data chunk length
+    setUint32(length);
+
+    // Get channels
+    for (let i = 0; i < buffer.numberOfChannels; i++) {
+      channels.push(buffer.getChannelData(i));
+    }
+
+    // Interleave channels
+    while (pos < arrayBuffer.byteLength) {
+      for (let i = 0; i < buffer.numberOfChannels; i++) {
+        let sample = channels[i][offset];
+        sample = Math.max(-1, Math.min(1, sample));
+        view.setInt16(pos, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+        pos += 2;
+      }
+      offset++;
+    }
+
+    return arrayBuffer;
   };
 
   const deleteRecording = (index: number) => {
@@ -256,22 +345,42 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
                         </div>
                       </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="grid grid-cols-4 gap-1">
                       <button
                         onClick={() => playRecording(recording.url)}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-1 rounded font-mono text-xs"
+                        className="bg-blue-600 hover:bg-blue-700 text-white py-1 rounded font-mono text-xs"
+                        title="Play recording"
                       >
                         ▶️
                       </button>
                       <button
-                        onClick={() => downloadRecording(recording)}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white py-1 rounded font-mono text-xs"
+                        onClick={() => downloadRecording(recording, 'webm')}
+                        className="bg-green-600 hover:bg-green-700 text-white py-1 rounded font-mono text-xs"
+                        title="Download as WebM"
                       >
-                        💾
+                        WebM
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!isSubscribed) {
+                            alert('WAV export is a Pro feature! Subscribe for $9.99/month or use promo code STUDENT2024');
+                            return;
+                          }
+                          downloadRecording(recording, 'wav');
+                        }}
+                        className={`py-1 rounded font-mono text-xs ${
+                          isSubscribed 
+                            ? 'bg-purple-600 hover:bg-purple-700 text-white'
+                            : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                        }`}
+                        title={isSubscribed ? "Download as WAV (Pro)" : "WAV export requires Pro subscription"}
+                      >
+                        {isSubscribed ? 'WAV' : '🔒'}
                       </button>
                       <button
                         onClick={() => deleteRecording(index)}
-                        className="flex-1 bg-red-600 hover:bg-red-700 text-white py-1 rounded font-mono text-xs"
+                        className="bg-red-600 hover:bg-red-700 text-white py-1 rounded font-mono text-xs"
+                        title="Delete recording"
                       >
                         🗑️
                       </button>
