@@ -12,7 +12,7 @@ interface SequencerProps {
 export default function Sequencer({ selectedKey, selectedProgression, isSubscribed }: SequencerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [bpm, setBpm] = useState(120);
-  const [pattern, setPattern] = useState<'whole' | 'half' | 'quarter'>('whole');
+  const [pattern, setPattern] = useState<'whole' | 'half' | 'quarter'>('quarter');
   const sequenceRef = useRef<Tone.Sequence | null>(null);
   const synthRef = useRef<Tone.PolySynth | null>(null);
 
@@ -179,64 +179,6 @@ export default function Sequencer({ selectedKey, selectedProgression, isSubscrib
           </div>
         </div>
 
-        {/* Reverb Control */}
-        <div className="pt-4 border-t border-gray-700">
-          <div className="flex items-center justify-between mb-3">
-            <label className="text-gray-300 text-sm font-mono">
-              Reverb {!isSubscribed && '🔒'}
-            </label>
-            <button
-              onClick={toggleReverb}
-              disabled={!isSubscribed}
-              className={`px-4 py-1 rounded font-mono text-xs font-bold transition-colors ${
-                reverbEnabled
-                  ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                  : isSubscribed
-                  ? 'bg-gray-700 hover:bg-gray-600 text-white'
-                  : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-              }`}
-            >
-              {reverbEnabled ? 'ON' : 'OFF'}
-            </button>
-          </div>
-
-          {reverbEnabled && isSubscribed && (
-            <div className="space-y-2 pl-2">
-              <div>
-                <div className="flex justify-between mb-1">
-                  <label className="text-gray-400 text-xs font-mono">Decay</label>
-                  <span className="text-purple-400 font-mono text-xs">{reverbDecay}s</span>
-                </div>
-                <input
-                  type="range"
-                  min="0.5"
-                  max="10"
-                  step="0.5"
-                  value={reverbDecay}
-                  onChange={(e) => setReverbDecay(parseFloat(e.target.value))}
-                  className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-400"
-                />
-              </div>
-
-              <div>
-                <div className="flex justify-between mb-1">
-                  <label className="text-gray-400 text-xs font-mono">Mix</label>
-                  <span className="text-purple-400 font-mono text-xs">{Math.round(reverbWet * 100)}%</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={reverbWet}
-                  onChange={(e) => setReverbWet(parseFloat(e.target.value))}
-                  className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-purple-400"
-                />
-              </div>
-            </div>
-          )}
-        </div>
-
         {/* Play/Stop Button */}
         <button
           onClick={isPlaying ? stopSequence : startSequence}
@@ -257,17 +199,6 @@ export default function Sequencer({ selectedKey, selectedProgression, isSubscrib
             Sequencer requires Pro subscription
           </div>
         )}
-      </div>
-
-      {/* Volume Legend */}
-      <div className="mt-4 pt-4 border-t border-gray-700">
-        <div className="text-gray-400 text-xs font-mono">
-          <div className="mb-1">💡 Volume Tips:</div>
-          <div className="text-gray-500 text-xs space-y-1">
-            <div>• Master: Overall output level</div>
-            <div>• Chord/Bass: Coming soon (balance control)</div>
-          </div>
-        </div>
       </div>
     </div>
   );
