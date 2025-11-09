@@ -14,6 +14,8 @@ import RecordingInterface from '@/components/RecordingInterface';
 import SubscriptionManager from '@/components/SubscriptionManager';
 import Metronome from '@/components/Metronome';
 import LoopStation from '@/components/LoopStation';
+import EffectsPanel from '@/components/EffectsPanel';
+import Sequencer from '@/components/Sequencer';
 import { ChordProgression, KeySignature } from '@/types/chords';
 import { useSubscription } from '@/hooks/useSubscription';
 
@@ -115,7 +117,7 @@ function HomeContent() {
             />
           </div>
 
-          {/* Subscription & Recording Panel */}
+          {/* Right Panel: Tools & Features */}
           <div className="lg:col-span-1 space-y-4">
             {!isSubscribed && (
               <SubscriptionManager
@@ -125,6 +127,14 @@ function HomeContent() {
             )}
             
             <Metronome />
+            
+            <Sequencer 
+              selectedKey={selectedKey}
+              selectedProgression={selectedProgression}
+              isSubscribed={isSubscribed}
+            />
+            
+            <EffectsPanel isSubscribed={isSubscribed} />
             
             {isSubscribed && <LoopStation />}
             
