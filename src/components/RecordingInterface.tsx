@@ -18,14 +18,13 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
   const { isRecordingMode, isRecording, recordedBlob, startRecordingMode, startRecording, stopRecording, exitRecordingMode, clearRecording } = useRecording();
   
   const [recordings, setRecordings] = useState<Array<{name: string, url: string, blob: Blob, date: Date}>>([]);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [currentAudioUrl, setCurrentAudioUrl] = useState<string>('');
 
   const handleStartRecordingMode = async () => {
     try {
       await startRecordingMode();
       alert('Recording mode activated! The app will now use Tone.js for audio (works with recording). Play sounds normally and they will be captured.');
-    } catch (error) {
+    } catch {
       alert('Failed to start recording mode. Please try again.');
     }
   };
@@ -34,7 +33,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
     const blob = await stopRecording();
     if (blob && blob.size > 1000) {
       const recordingName = `Recording ${recordings.length + 1}`;
-      const url = URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
       
       // Save to cloud
       if (isSubscribed) {
@@ -46,7 +45,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
         name: recordingName,
         url,
         blob,
-        date: new Date()
+          date: new Date()
       }]);
       
       alert('Recording saved! You can now playback or download it.');
@@ -58,11 +57,9 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
   const playRecording = (url: string) => {
     const audio = new Audio(url);
     audio.play();
-    setIsPlaying(true);
     setCurrentAudioUrl(url);
     
     audio.onended = () => {
-      setIsPlaying(false);
       setCurrentAudioUrl('');
     };
   };
@@ -246,12 +243,12 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
           {/* Recording Controls */}
           {!isRecordingMode ? (
             <div className="text-center py-6">
-              <button
+            <button
                 onClick={handleStartRecordingMode}
                 className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors font-mono"
               >
                 🎙️ ENABLE RECORDING MODE
-              </button>
+            </button>
               <p className="text-gray-400 text-xs mt-3">
                 This switches audio to Tone.js for proper recording
               </p>
@@ -278,21 +275,21 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
               {/* Control Buttons */}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 {!isRecording && !recordedBlob && (
-                  <button
+            <button
                     onClick={startRecording}
                     className="col-span-2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition-colors font-mono"
                   >
                     ⏺️ START REC
-                  </button>
+            </button>
                 )}
-                
+
                 {isRecording && (
-                  <button
+            <button
                     onClick={handleStopRecording}
                     className="col-span-2 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-lg transition-colors font-mono"
-                  >
+            >
                     ⏹️ STOP REC
-                  </button>
+            </button>
                 )}
 
                 {recordedBlob && (

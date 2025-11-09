@@ -306,6 +306,7 @@ export default function MPCInterface({
       if (player && player.loaded) {
         player.start();
         // Store player reference for stopping
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setActiveSounds(prev => ({ ...prev, [keyId]: player as any }));
       }
       return;
@@ -351,6 +352,7 @@ export default function MPCInterface({
       if (player && player.loaded) {
         player.start();
         // Store player reference for stopping
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setActiveSounds(prev => ({ ...prev, [keyId]: player as any }));
       }
       return;
