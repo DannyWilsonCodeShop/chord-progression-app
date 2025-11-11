@@ -5,17 +5,32 @@ import type { Schema } from '../../amplify/data/resource';
 
 const client = generateClient<Schema>();
 
+// Check if we're in dev mode
+const isDev = process.env.NEXT_PUBLIC_DEV_MODE === 'true' || process.env.NODE_ENV === 'development';
+
 export function useSubscription() {
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [subscriptionStatus, setSubscriptionStatus] = useState<'active' | 'cancelled' | 'past_due' | 'none'>('none');
+  const [isSubscribed, setIsSubscribed] = useState(isDev); // Default to true in dev mode
+  const [loading, setLoading] = useState(!isDev); // No loading in dev mode
+  const [subscriptionStatus, setSubscriptionStatus] = useState<'active' | 'cancelled' | 'past_due' | 'none'>(
+    isDev ? 'active' : 'none'
+  );
   const [currentPeriodEnd, setCurrentPeriodEnd] = useState<string | null>(null);
 
   useEffect(() => {
-    checkSubscription();
+    if (!isDev) {
+      checkSubscription();
+    }
   }, []);
 
   const checkSubscription = async () => {
+    // Skip subscription check in dev mode
+    if (isDev) {
+      setIsSubscribed(true);
+      setSubscriptionStatus('active');
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       

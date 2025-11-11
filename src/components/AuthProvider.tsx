@@ -3,11 +3,38 @@
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { Amplify } from 'aws-amplify';
-import outputs from '../../amplify_outputs.json';
 
-Amplify.configure(outputs);
+// Check if we're in dev mode (for local testing without Amplify)
+const isDev = process.env.NEXT_PUBLIC_DEV_MODE === 'true' || process.env.NODE_ENV === 'development';
+
+// Only configure Amplify in production or if explicitly enabled
+if (!isDev) {
+  try {
+    const outputs = require('../../amplify_outputs.json');
+    Amplify.configure(outputs);
+  } catch (e) {
+    console.warn('Amplify outputs not found, running in dev mode');
+  }
+}
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
+  // In dev mode, skip authentication entirely
+  if (isDev) {
+    return (
+      <div>
+        <div className="bg-yellow-900/50 p-3 border-b border-yellow-700">
+          <div className="max-w-7xl mx-auto text-center">
+            <span className="text-yellow-300 font-mono text-xs">
+              ⚠️ DEV MODE: Authentication disabled - All features unlocked for testing
+            </span>
+          </div>
+        </div>
+        {children}
+      </div>
+    );
+  }
+
+  // Production mode with Amplify authentication
   return (
     <Authenticator
       formFields={{

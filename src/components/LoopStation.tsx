@@ -25,11 +25,13 @@ export default function LoopStation() {
       Tone.getDestination().connect(recorder);
       recorderRef.current = recorder;
       
-      recorder.start();
+      await recorder.start();
       setIsRecording(true);
+      
+      alert('Loop recording started! Play your pattern now. The loop will capture everything you play.');
     } catch (error) {
       console.error('Failed to start loop recording:', error);
-      alert('Recording failed. Please try again.');
+      alert('Recording failed. Please enable recording mode in Recording Studio first, then try again.');
     }
   };
 
@@ -125,6 +127,14 @@ export default function LoopStation() {
       <h3 className="text-lg font-semibold mb-4 text-purple-400 font-mono tracking-wider">
         LOOP STATION
       </h3>
+
+      {/* Important Note */}
+      <div className="bg-yellow-900/30 border border-yellow-700/50 rounded-lg p-3 mb-4">
+        <div className="text-yellow-300 text-xs font-bold mb-1">⚠️ IMPORTANT:</div>
+        <div className="text-yellow-200/90 text-xs">
+          Enable Recording Mode in Recording Studio first for loops to work!
+        </div>
+      </div>
 
       {/* Recording Controls */}
       <div className="mb-4">

@@ -15,7 +15,6 @@ import SubscriptionManager from '@/components/SubscriptionManager';
 import Metronome from '@/components/Metronome';
 import LoopStation from '@/components/LoopStation';
 import EffectsPanel from '@/components/EffectsPanel';
-import Sequencer from '@/components/Sequencer';
 import { ChordProgression, KeySignature } from '@/types/chords';
 import { useSubscription } from '@/hooks/useSubscription';
 
@@ -97,8 +96,17 @@ function HomeContent() {
 
         {/* Main Interface */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Settings Panel */}
-          <div className="lg:col-span-1">
+          {/* MPC Interface - Shows FIRST on mobile */}
+          <div className="lg:col-span-2 order-1 lg:order-2">
+            <MPCInterface
+              selectedKey={selectedKey}
+              selectedProgression={selectedProgression}
+              keyboardMapping={keyboardMapping}
+            />
+          </div>
+
+          {/* Settings Panel - Shows SECOND on mobile */}
+          <div className="lg:col-span-1 order-2 lg:order-1">
             <ChordSelector
               selectedKey={selectedKey}
               selectedProgression={selectedProgression}
@@ -108,17 +116,8 @@ function HomeContent() {
             />
           </div>
 
-          {/* MPC Interface */}
-          <div className="lg:col-span-2">
-            <MPCInterface
-              selectedKey={selectedKey}
-              selectedProgression={selectedProgression}
-              keyboardMapping={keyboardMapping}
-            />
-          </div>
-
           {/* Right Panel: Tools & Features */}
-          <div className="lg:col-span-1 space-y-4">
+          <div className="lg:col-span-1 space-y-4 order-3">
             {!isSubscribed && (
               <SubscriptionManager
                 isSubscribed={isSubscribed}
@@ -127,12 +126,6 @@ function HomeContent() {
             )}
             
             <Metronome />
-            
-            <Sequencer 
-              selectedKey={selectedKey}
-              selectedProgression={selectedProgression}
-              isSubscribed={isSubscribed}
-            />
             
             <EffectsPanel isSubscribed={isSubscribed} />
             

@@ -1,6 +1,7 @@
 'use client';
 
 import { KeySignature, ChordProgression } from '@/types/chords';
+import { useState, useEffect } from 'react';
 
 interface ChordSelectorProps {
   selectedKey: KeySignature;
@@ -71,15 +72,55 @@ export default function ChordSelector({
   onProgressionChange,
   isSubscribed = false,
 }: ChordSelectorProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect if we're on mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+      // Auto-open on desktop
+      if (window.innerWidth >= 1024) {
+        setIsOpen(true);
+      }
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   return (
-    <div className="bg-gray-900 rounded-lg shadow-lg p-6 border-2 border-gray-700">
-      <h3 className="text-xl font-semibold mb-6 text-green-400 font-mono tracking-wider">CHORD SETTINGS</h3>
-      
-      {/* Key Selection */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-300 mb-3 font-mono">
-          SELECT KEY SIGNATURE
-        </label>
+    <div className="bg-gray-900 rounded-lg shadow-lg border-2 border-gray-700">
+      {/* Header - always visible, clickable on mobile */}
+      <button
+        onClick={() => isMobile && setIsOpen(!isOpen)}
+        className={`w-full text-left p-4 lg:p-6 flex items-center justify-between ${
+          isMobile ? 'cursor-pointer hover:bg-gray-800/50' : 'cursor-default'
+        } transition-colors`}
+      >
+        <div>
+          <h3 className="text-lg lg:text-xl font-semibold text-green-400 font-mono tracking-wider">
+            CHORD SETTINGS
+          </h3>
+          <p className="text-xs text-gray-400 mt-1 font-mono">
+            {selectedKey} • {progressions.find(p => p.value === selectedProgression)?.name}
+          </p>
+        </div>
+        {isMobile && (
+          <span className="text-green-400 text-xl font-bold ml-2">
+            {isOpen ? '−' : '+'}
+          </span>
+        )}
+      </button>
+
+      {/* Content - collapsible on mobile, always open on desktop */}
+      <div className={`${isMobile && !isOpen ? 'hidden' : 'block'} p-4 lg:p-6 pt-0`}>
+        {/* Key Selection */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-300 mb-3 font-mono">
+            SELECT KEY SIGNATURE
+          </label>
         <div className="grid grid-cols-5 gap-2">
           {keys.map((key) => {
             const isLocked = key !== 'C' && !isSubscribed;
@@ -166,6 +207,7 @@ export default function ChordSelector({
             );
           })}
         </div>
+      </div>
       </div>
     </div>
   );
