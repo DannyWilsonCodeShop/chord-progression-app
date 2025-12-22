@@ -19,6 +19,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
   
   const [recordings, setRecordings] = useState<Array<{name: string, url: string, blob: Blob, date: Date}>>([]);
   const [currentAudioUrl, setCurrentAudioUrl] = useState<string>('');
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   const handleStartRecordingMode = async () => {
     try {
@@ -58,9 +59,11 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
     const audio = new Audio(url);
     audio.play();
     setCurrentAudioUrl(url);
+    setIsPlaying(true);
     
     audio.onended = () => {
       setCurrentAudioUrl('');
+      setIsPlaying(false);
     };
   };
 
