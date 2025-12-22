@@ -5,18 +5,18 @@ import Link from 'next/link';
 import * as Tone from 'tone';
 import { Amplify } from 'aws-amplify';
 import outputs from '../../amplify_outputs.json';
-import AuthProvider from '@/components/AuthProvider';
+import OptionalAuthProvider from '@/components/OptionalAuthProvider';
 import { RecordingProvider } from '@/contexts/RecordingContext';
 import ChordKeyboard from '@/components/ChordKeyboard';
 import ChordSelector from '@/components/ChordSelector';
 import MPCInterface from '@/components/MPCInterface';
 import RecordingInterface from '@/components/RecordingInterface';
-import SubscriptionManager from '@/components/SubscriptionManager';
+import OptionalSubscriptionManager from '@/components/OptionalSubscriptionManager';
 import Metronome from '@/components/Metronome';
 import LoopStation from '@/components/LoopStation';
 import EffectsPanel from '@/components/EffectsPanel';
 import { ChordProgression, KeySignature } from '@/types/chords';
-import { useSubscription } from '@/hooks/useSubscription';
+import { useOptionalSubscription } from '@/hooks/useOptionalSubscription';
 
 Amplify.configure(outputs, { ssr: true });
 
@@ -29,7 +29,7 @@ function HomeContent() {
   const [, setShowSubscriptionModal] = useState(false);
   
   // Use real subscription state from Amplify backend
-  const { isSubscribed, refetch: refetchSubscription } = useSubscription();
+  const { isSubscribed, refetch: refetchSubscription } = useOptionalSubscription();
 
   // Initialize audio context and synthesizer (legacy)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -89,9 +89,25 @@ function HomeContent() {
           <h1 className="text-6xl font-bold text-green-400 mb-4 font-mono tracking-wider sound-system-text">
             MPC STUDIO
           </h1>
-          <p className="text-xl text-gray-300 mb-8 font-mono">
+          <p className="text-xl text-gray-300 mb-4 font-mono">
             Professional Music Production Center
           </p>
+          
+          {/* Welcome Message for New Users */}
+          <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-4 max-w-4xl mx-auto">
+            <div className="text-blue-400 font-mono text-sm font-bold mb-2">
+              🎹 WELCOME TO MPC STUDIO
+            </div>
+            <div className="text-gray-300 text-sm">
+              <p className="mb-2">
+                <strong>Try it now:</strong> Click the pads below to play chord progressions instantly! 
+                Change keys and progressions in the left panel.
+              </p>
+              <p>
+                <strong>Want more?</strong> Sign up for Pro to record, save, and download your music with advanced effects.
+              </p>
+            </div>
+          </div>
         </header>
 
         {/* Main Interface */}
@@ -118,12 +134,10 @@ function HomeContent() {
 
           {/* Right Panel: Tools & Features */}
           <div className="lg:col-span-1 space-y-4 order-3">
-            {!isSubscribed && (
-              <SubscriptionManager
-                isSubscribed={isSubscribed}
-                onSubscriptionUpdate={() => refetchSubscription()}
-              />
-            )}
+            <OptionalSubscriptionManager
+              isSubscribed={isSubscribed}
+              onSubscriptionUpdate={() => refetchSubscription()}
+            />
             
             <Metronome />
             
@@ -159,14 +173,14 @@ function HomeContent() {
   );
 }
 
-// Wrap with authentication and recording context
+// Wrap with optional authentication and recording context
 export default function Home() {
   return (
-    <AuthProvider>
+    <OptionalAuthProvider>
       <RecordingProvider>
         <HomeContent />
       </RecordingProvider>
-    </AuthProvider>
+    </OptionalAuthProvider>
   );
 }
 

@@ -6,6 +6,7 @@ import { generateClient } from 'aws-amplify/data';
 import { getCurrentUser } from 'aws-amplify/auth';
 import type { Schema } from '../../amplify/data/resource';
 import { useRecording } from '@/contexts/RecordingContext';
+import { useAuth } from '@/components/OptionalAuthProvider';
 
 const client = generateClient<Schema>();
 
@@ -16,6 +17,7 @@ interface RecordingInterfaceProps {
 
 export default function RecordingInterface({ isSubscribed, onUpgrade }: RecordingInterfaceProps) {
   const { isRecordingMode, isRecording, recordedBlob, startRecordingMode, startRecording, stopRecording, exitRecordingMode, clearRecording } = useRecording();
+  const { isAuthenticated, openAuthModal } = useAuth();
   
   const [recordings, setRecordings] = useState<Array<{name: string, url: string, blob: Blob, date: Date}>>([]);
   const [currentAudioUrl, setCurrentAudioUrl] = useState<string>('');
@@ -174,6 +176,10 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
   };
 
   const saveToCloud = async (blob: Blob, name: string) => {
+    if (!isAuthenticated) {
+      return false; // Skip cloud save if not authenticated
+    }
+
     try {
       const user = await getCurrentUser();
       const userId = user.userId;
@@ -217,12 +223,26 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
           <p className="text-gray-300 mb-6">
             Recording is available for MPC Studio Pro subscribers
           </p>
-          <button
-            onClick={onUpgrade}
-            className="bg-green-600 hover:bg-green-700 text-black font-bold py-3 px-6 rounded-lg transition-colors font-mono"
-          >
-            UPGRADE TO PRO - $9.99/MONTH
-          </button>
+          {!isAuthenticated ? (
+            <div className="space-y-3">
+              <button
+                onClick={openAuthModal}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors font-mono block w-full"
+              >
+                SIGN IN TO UPGRADE
+              </button>
+              <p className="text-gray-400 text-sm">
+                Create account or sign in to access Pro features
+              </p>
+            </div>
+          ) : (
+            <button
+              onClick={onUpgrade}
+              className="bg-green-600 hover:bg-green-700 text-black font-bold py-3 px-6 rounded-lg transition-colors font-mono"
+            >
+              UPGRADE TO PRO - $9.99/MONTH
+            </button>
+          )}
         </div>
       ) : (
         <>

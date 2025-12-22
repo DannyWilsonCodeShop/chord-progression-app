@@ -1,0 +1,331 @@
+'use client';
+
+import { useState } from 'react';
+import { useAuth } from './OptionalAuthProvider';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../amplify/data/resource';
+
+const client = generateClient<Schema>();
+
+// Valid promo codes
+const VALID_PROMO_CODES: Record<string, { description: string }> = {
+  'STUDENT2024': { description: 'Student Free Access' },
+  'EDUCATION': { description: 'Education Free Access' },
+  'TEACHER': { description: 'Teacher Free Access' },
+};
+
+interface OptionalSubscriptionManagerProps {
+  isSubscribed: boolean;
+  onSubscriptionUpdate: () => void;
+}
+
+export default function OptionalSubscriptionManager({ isSubscribed, onSubscriptionUpdate }: OptionalSubscriptionManagerProps) {
+  const { isAuthenticated, openAuthModal, user, signOutUser } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>('');
+  const [promoCode, setPromoCode] = useState<string>('');
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoSuccess, setPromoSuccess] = useState<string>('');
+
+  const handleSubscribe = async () => {
+    if (!isAuthenticated) {
+      openAuthModal();
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      // Get email from authenticated user
+      const email = user?.signInDetails?.loginId;
+      
+      if (!email) {
+        setError('Could not get user email. Please sign in again.');
+        setLoading(false);
+        return;
+      }
+
+      // Create checkout session
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+        }),
+      });
+
+      const { url, error: apiError } = await response.json();
+
+      if (apiError) {
+        setError(apiError);
+        return;
+      }
+
+      if (url) {
+        // Redirect to Stripe Checkout
+        window.location.href = url;
+      }
+    } catch (err) {
+      setError('Failed to start subscription process. Please try again.');
+      console.error('Subscription error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    setLoading(true);
+    setError('');
+
+    try {
+      // Create customer portal session
+      const response = await fetch('/api/create-portal-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const { url } = await response.json();
+
+      if (url) {
+        // Redirect to Stripe Customer Portal
+        window.location.href = url;
+      }
+    } catch (err) {
+      setError('Failed to open subscription management. Please try again.');
+      console.error('Portal error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApplyPromoCode = async () => {
+    if (!isAuthenticated) {
+      openAuthModal();
+      return;
+    }
+
+    if (!promoCode.trim()) {
+      setError('Please enter a promo code');
+      return;
+    }
+
+    setPromoLoading(true);
+    setError('');
+    setPromoSuccess('');
+
+    try {
+      // Validate promo code
+      const codeUpper = promoCode.trim().toUpperCase();
+      const validCode = VALID_PROMO_CODES[codeUpper];
+
+      if (!validCode) {
+        setError('Invalid promo code');
+        setPromoLoading(false);
+        return;
+      }
+
+      // Get email from authenticated user
+      const email = user?.signInDetails?.loginId;
+      
+      if (!email) {
+        setError('Could not get user email. Please sign in again.');
+        setPromoLoading(false);
+        return;
+      }
+
+      // Check if user exists in database
+      const { data: users } = await client.models.User.list({
+        filter: { email: { eq: email } },
+        limit: 1,
+      });
+
+      const currentPeriodEnd = new Date();
+      currentPeriodEnd.setFullYear(currentPeriodEnd.getFullYear() + 100); // Effectively forever
+
+      if (users && users.length > 0) {
+        // Update existing user
+        await client.models.User.update({
+          id: users[0].id,
+          subscriptionStatus: 'active',
+          subscriptionId: `promo_${codeUpper}`,
+          subscriptionPriceId: 'promo_code_free',
+          subscriptionCurrentPeriodEnd: currentPeriodEnd.toISOString(),
+        });
+      } else {
+        // Create new user with promo code
+        await client.models.User.create({
+          email: email,
+          subscriptionStatus: 'active',
+          subscriptionId: `promo_${codeUpper}`,
+          subscriptionPriceId: 'promo_code_free',
+          subscriptionCurrentPeriodEnd: currentPeriodEnd.toISOString(),
+        });
+      }
+
+      setPromoSuccess(`${validCode.description} applied! Refreshing in 2 seconds...`);
+      setPromoCode('');
+      
+      // Wait for database to commit, then reload
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (err) {
+      setError('Failed to apply promo code. Please try again.');
+      console.error('Promo code error:', err);
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-gray-900 rounded-lg p-6 border-2 border-gray-700">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-xl font-semibold text-green-400 font-mono tracking-wider">
+          UPGRADE TO PRO
+        </h3>
+        {isAuthenticated && (
+          <div className="flex items-center gap-2">
+            <span className="text-green-400 text-xs font-mono">
+              {user?.signInDetails?.loginId}
+            </span>
+            <button
+              onClick={signOutUser}
+              className="text-gray-400 hover:text-red-400 text-xs"
+              title="Sign out"
+            >
+              🚪
+            </button>
+          </div>
+        )}
+      </div>
+
+      {error && (
+        <div className="bg-red-900 border border-red-700 text-red-300 px-4 py-3 rounded mb-4">
+          {error}
+        </div>
+      )}
+
+      {isSubscribed ? (
+        <div>
+          <div className="bg-green-900/20 border border-green-700/30 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="text-green-400 text-lg">✅</span>
+                <span className="text-green-400 font-mono text-sm font-bold">PRO MEMBER</span>
+              </div>
+              <button
+                onClick={onSubscriptionUpdate}
+                className="bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 px-3 py-1 rounded text-xs font-mono transition-colors"
+                title="Refresh subscription status"
+              >
+                🔄
+              </button>
+            </div>
+            
+            <div className="text-gray-400 text-xs mb-3">
+              All features unlocked. Enjoy recording!
+            </div>
+
+            {isAuthenticated && (
+              <button
+                onClick={handleManageSubscription}
+                disabled={loading}
+                className="w-full bg-gray-700/50 hover:bg-gray-600/50 disabled:bg-gray-600 text-gray-300 font-mono py-2 px-3 rounded text-xs transition-colors"
+              >
+                {loading ? 'Loading...' : 'Manage Subscription'}
+              </button>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div className="text-center mb-6">
+            <div className="text-3xl font-bold text-green-400 font-mono mb-2">
+              MPC STUDIO PRO
+            </div>
+            <div className="text-2xl font-bold text-white mb-1">
+              $9.99
+            </div>
+            <div className="text-gray-400 text-sm">
+              per month
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="text-gray-300">
+              <div className="font-mono text-sm mb-2">PRO FEATURES:</div>
+              <ul className="list-disc list-inside space-y-1 text-sm">
+                <li>🎵 Record your chord progressions</li>
+                <li>💾 Save and download recordings</li>
+                <li>☁️ Cloud storage for your tracks</li>
+                <li>🎛️ Advanced audio effects</li>
+                <li>📱 Access from any device</li>
+                <li>🔄 Sync across all devices</li>
+              </ul>
+            </div>
+
+            <button
+              onClick={handleSubscribe}
+              disabled={loading}
+              className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-black font-bold py-3 px-4 rounded-lg transition-colors font-mono"
+            >
+              {loading ? 'PROCESSING...' : 
+               !isAuthenticated ? 'SIGN IN TO SUBSCRIBE - $9.99/MONTH' : 
+               'SUBSCRIBE NOW - $9.99/MONTH'}
+            </button>
+
+            <div className="text-center text-xs text-gray-500">
+              {!isAuthenticated && 'Create account or sign in • '}
+              Cancel anytime. Secure payment powered by Stripe.
+            </div>
+
+            {/* Promo Code Section */}
+            <div className="border-t border-gray-700 pt-4 mt-4">
+              <div className="text-center text-sm text-gray-400 mb-3 font-mono">
+                📚 HAVE A STUDENT OR PROMO CODE?
+              </div>
+              
+              {promoSuccess && (
+                <div className="bg-green-900 border border-green-700 text-green-300 px-4 py-3 rounded mb-3 text-sm">
+                  <div className="font-bold mb-1">✅ {promoSuccess}</div>
+                  <div className="text-xs text-green-400">
+                    If Recording Studio doesn&apos;t appear, refresh the page (F5)
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-2 items-stretch">
+                <input
+                  type="text"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                  onKeyPress={(e) => e.key === 'Enter' && handleApplyPromoCode()}
+                  placeholder="CODE"
+                  disabled={promoLoading}
+                  className="flex-1 bg-gray-800 border border-gray-600 text-white px-3 py-2 rounded-lg focus:outline-none focus:border-green-400 disabled:bg-gray-700 font-mono text-xs"
+                />
+                <button
+                  onClick={handleApplyPromoCode}
+                  disabled={promoLoading || !promoCode.trim()}
+                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold px-3 py-2 rounded-lg transition-colors text-xs flex-shrink-0"
+                >
+                  {promoLoading ? '⏳' : '✓'}
+                </button>
+              </div>
+              
+              <div className="text-center text-xs text-gray-500 mt-2">
+                Students & educators get free access with a valid code.
+                {!isAuthenticated && ' Sign in required.'}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
