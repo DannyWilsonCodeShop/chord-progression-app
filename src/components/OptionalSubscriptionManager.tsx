@@ -249,7 +249,7 @@ export default function OptionalSubscriptionManager({ isSubscribed, onSubscripti
               MPC STUDIO PRO
             </div>
             <div className="text-2xl font-bold text-white mb-1">
-              $9.99
+              $3.99
             </div>
             <div className="text-gray-400 text-sm">
               per month
@@ -275,8 +275,8 @@ export default function OptionalSubscriptionManager({ isSubscribed, onSubscripti
               className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-black font-bold py-3 px-4 rounded-lg transition-colors font-mono"
             >
               {loading ? 'PROCESSING...' : 
-               !isAuthenticated ? 'SIGN IN TO SUBSCRIBE - $9.99/MONTH' : 
-               'SUBSCRIBE NOW - $9.99/MONTH'}
+               !isAuthenticated ? 'SIGN IN TO SUBSCRIBE - $3.99/MONTH' : 
+               'SUBSCRIBE NOW - $3.99/MONTH'}
             </button>
 
             <div className="text-center text-xs text-gray-500">

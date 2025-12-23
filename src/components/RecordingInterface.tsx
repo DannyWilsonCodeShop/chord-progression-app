@@ -240,7 +240,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
               onClick={onUpgrade}
               className="bg-green-600 hover:bg-green-700 text-black font-bold py-3 px-6 rounded-lg transition-colors font-mono"
             >
-              UPGRADE TO PRO - $9.99/MONTH
+              UPGRADE TO PRO - $3.99/MONTH
             </button>
           )}
         </div>
@@ -383,7 +383,7 @@ export default function RecordingInterface({ isSubscribed, onUpgrade }: Recordin
                       <button
                         onClick={() => {
                           if (!isSubscribed) {
-                            alert('WAV export is a Pro feature! Subscribe for $9.99/month or use promo code STUDENT2024');
+                            alert('WAV export is a Pro feature! Subscribe for $3.99/month or use promo code STUDENT2024');
                             return;
                           }
                           downloadRecording(recording, 'wav');

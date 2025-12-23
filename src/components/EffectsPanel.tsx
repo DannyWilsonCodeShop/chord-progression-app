@@ -22,7 +22,7 @@ export default function EffectsPanel({ isSubscribed }: EffectsPanelProps) {
 
   const toggleReverb = async () => {
     if (!isSubscribed) {
-      alert('Reverb is a Pro feature! Subscribe for $9.99/month or use code STUDENT2024');
+      alert('Reverb is a Pro feature! Subscribe for $3.99/month or use code STUDENT2024');
       return;
     }
 
